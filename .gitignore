@@ -1,0 +1,19 @@
+# Dependencias (se regeneran con npm install)
+node_modules/
+
+# Resultado de la compilación
+dist/
+
+# Secretos: NUNCA se suben a GitHub
+.env
+.env.local
+.env.*.local
+
+# Copias de seguridad de la base de datos (contienen datos de usuarios)
+backups/
+
+# Otros
+*.log
+.DS_Store
+.vscode/*
+!.vscode/extensions.json

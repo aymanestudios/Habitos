@@ -1,8 +1,8 @@
-# Racha (nombre provisional)
+# Progress&Go
 
 App web de hábitos con XP, rachas y amigos. Se instalará como PWA, pensada primero para iPhone y adaptada a escritorio.
 
-**Estado: Fase 1 en curso.** Hecho: 1.1 login y perfiles. Pendiente: 1.2 hábitos, 1.3 marcar hábitos, 1.4 XP y racha, 1.5 PWA. Las pantallas de Hoy, Hábitos, Amigos y Perfil siguen siendo diseño con datos ficticios hasta que las conectemos.
+**Estado: Fase 1 en curso.** Hecho: 1.1 login y perfiles, 1.2 hábitos (crear, editar y archivar). Pendiente: 1.3 marcar hábitos, 1.4 XP y racha, 1.5 PWA. Las pantallas de Hoy y Amigos, y la parte de estadísticas y privacidad de Perfil, siguen siendo diseño con datos ficticios hasta que las conectemos.
 
 ## Qué usamos y para qué
 

@@ -1,11 +1,12 @@
 import { Navigate, Route, Routes } from 'react-router'
-import { ComingSoon } from '@/components/ComingSoon'
 import { AuthProvider } from '@/features/auth/AuthProvider'
 import { LoginPage } from '@/features/auth/LoginPage'
 import { RequireAuth } from '@/features/auth/RequireAuth'
 import { DashboardPage } from '@/features/dashboard/DashboardPage'
 import { FriendsPage } from '@/features/friends/FriendsPage'
+import { EditHabitPage } from '@/features/habits/EditHabitPage'
 import { HabitsPage } from '@/features/habits/HabitsPage'
+import { NewHabitPage } from '@/features/habits/NewHabitPage'
 import { ProfilePage } from '@/features/profile/ProfilePage'
 import { StatusPage } from '@/features/system/StatusPage'
 import { AppLayout } from './AppLayout'
@@ -23,15 +24,8 @@ export function AppRoutes() {
           <Route element={<RequireAuth />}>
             <Route index element={<DashboardPage />} />
             <Route path="habitos" element={<HabitsPage />} />
-            <Route
-              path="habitos/nuevo"
-              element={
-                <ComingSoon
-                  title="Nuevo hábito"
-                  text="El formulario para crear hábitos llega en la parte 1.2."
-                />
-              }
-            />
+            <Route path="habitos/nuevo" element={<NewHabitPage />} />
+            <Route path="habitos/:id/editar" element={<EditHabitPage />} />
             <Route path="amigos" element={<FriendsPage />} />
             <Route path="perfil" element={<ProfilePage />} />
             <Route path="*" element={<Navigate to="/" replace />} />

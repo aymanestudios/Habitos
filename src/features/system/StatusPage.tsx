@@ -85,7 +85,7 @@ export function StatusPage() {
             detail={
               isSupabaseConfigured
                 ? 'VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY encontradas.'
-                : 'Faltan VITE_SUPABASE_URL y/o VITE_SUPABASE_ANON_KEY.'
+                : 'Faltan VITE_SUPABASE_URL y/o VITE_SUPABASE_ANON_KEY, o siguen con los valores de ejemplo.'
             }
             state={isSupabaseConfigured ? 'ok' : 'skipped'}
           />

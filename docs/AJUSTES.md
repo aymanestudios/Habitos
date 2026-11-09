@@ -22,14 +22,14 @@ Estas decisiones **no se programan en la Fase 0**: quedan fijadas aquí para que
 - `habit_logs.value` guarda el **total acumulado del día**; hay una única fila por hábito y día.
 - Una función del servidor `add_habit_progress(habit_id, delta)` suma al total. El hábito cuenta como completado cuando `value >= target_value`.
 - El progreso parcial (5 de 8 vasos) se muestra con barra, pero **la XP solo se concede al alcanzar la meta**. Es simple y no se puede abusar.
-- Los hábitos semanales con meta (30 km a la semana) suman los registros de la semana.
+- Los hábitos con meta semanal (30 km a la semana) usan la frecuencia `weekly_total`: suman los registros de toda la semana y la meta es obligatoria.
 
 **Se aplica en:** Fase 1.
 
 ## 3. Frecuencias diarias y semanales
 
 **Solución:**
-- Tres tipos: `daily`, `days_of_week` (por ejemplo lunes a viernes) y `weekly_count` (N veces por semana).
+- Cuatro tipos: `daily`, `days_of_week` (por ejemplo lunes a viernes), `weekly_count` (N veces por semana) y `weekly_total` (una cantidad total a la semana, como 30 km).
 - La **semana va de lunes a domingo**, en la zona horaria del usuario (`weekStart()` ya existe en `src/lib/dates.ts`).
 - La regla "¿toca este hábito hoy?" se escribe una vez como función pura y se prueba con casos límite (cambio de semana, mes, año y de hora). En el servidor existe su equivalente en SQL para que rachas y rankings no dependan del navegador.
 - La racha cuenta un día si se cumple al menos el 70 % de lo programado. Los hábitos `weekly_count` cuentan al cerrar la semana, no por día.
@@ -72,7 +72,7 @@ create policy "habits: amigos ven los compartidos"
 **Solución:**
 - Cada perfil guarda su zona (`timezone`, por ejemplo `Europe/Madrid`), detectada con `Intl` al registrarse.
 - Un "día" es una **fecha** (`local_date`, tipo `date`), no un instante en UTC. Así el cambio de hora no rompe nada.
-- La fecha de hoy la calcula el **servidor** con la zona del usuario; el navegador no manda la fecha. Evita trampas y desajustes de reloj.
+- La fecha de hoy la calcula el **servidor** con la zona del usuario; el navegador no manda la fecha. Evita trampas y desajustes de reloj. Ya aplicado al inicio de cada hábito (`habits.start_date`, migración 0002).
 - Decisión pendiente para la Fase 1: ¿permitimos marcar "ayer" (un día de margen)? Recomendado: sí, solo ayer.
 - Si el usuario cambia de zona, el cambio vale desde ese momento; los días pasados no se recalculan.
 - Ya incluido: `src/lib/dates.ts` con `getUserTimezone`, `localDateString`, `localHour` y `weekStart`.

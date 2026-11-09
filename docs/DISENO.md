@@ -1,6 +1,6 @@
 # Identidad visual
 
-Nombre de trabajo: **Racha** (se cambia en `src/lib/constants.ts`).
+Nombre: **Progress&Go** (se cambia en `src/lib/constants.ts` y en `index.html`).
 
 Objetivo: moderna, premium, minimalista y juvenil. Transmite **productividad, progreso y motivación**, sin parecerse a Notion ni a Duolingo.
 

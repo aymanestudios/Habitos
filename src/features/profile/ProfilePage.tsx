@@ -1,3 +1,4 @@
+import { Link } from 'react-router'
 import { Avatar } from '@/components/Avatar'
 import { Card } from '@/components/Card'
 import { ChoiceChips } from '@/components/ChoiceChips'
@@ -82,6 +83,20 @@ export function ProfilePage() {
           </Card>
         </>
       )}
+
+      <Link
+        to="/estadisticas"
+        className="flex items-center gap-4 rounded-3xl border-2 border-line bg-surface p-5 shadow-card transition-transform active:scale-[0.98]"
+      >
+        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-brand-soft text-brand-ink">
+          <Icon name="chart" className="h-6 w-6" />
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block text-lg font-bold">Estadísticas</span>
+          <span className="block text-sm text-muted">Calendario, semanas y hábitos más constantes</span>
+        </span>
+        <span className="text-2xl text-muted" aria-hidden="true">›</span>
+      </Link>
 
       <Card>
         <h2 className="text-lg font-bold">Apariencia</h2>

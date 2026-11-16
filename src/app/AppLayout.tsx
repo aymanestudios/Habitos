@@ -67,6 +67,8 @@ export function AppLayout() {
           {navItems.map((item) => (
             <SidebarLink key={item.to} item={item} />
           ))}
+          {/* Solo en la barra lateral: en el móvil se entra desde Perfil (abajo solo caben 4 pestañas) */}
+          <SidebarLink item={{ to: '/estadisticas', label: 'Estadísticas', icon: 'chart' }} />
         </nav>
 
         <Link

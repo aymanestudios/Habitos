@@ -1,13 +1,22 @@
 import type { ReactNode } from 'react'
 
+type Tone = 'brand' | 'good'
+
+// Las clases se escriben completas (no se montan con texto) para que Tailwind las detecte.
+const tones: Record<Tone, string> = {
+  brand: 'stroke-brand',
+  good: 'stroke-good',
+}
+
 type Props = {
   value: number // 0 a 100
+  tone?: Tone // 'good' (verde) cuando el día está completo
   size?: number
   stroke?: number
   children?: ReactNode // contenido que va dentro del anillo
 }
 
-export function ProgressRing({ value, size = 132, stroke = 12, children }: Props) {
+export function ProgressRing({ value, size = 132, stroke = 12, tone = 'brand', children }: Props) {
   const radius = (size - stroke) / 2
   const circumference = 2 * Math.PI * radius
   const pct = Math.min(Math.max(value, 0), 100)
@@ -36,7 +45,7 @@ export function ProgressRing({ value, size = 132, stroke = 12, children }: Props
           strokeLinecap="round"
           strokeDasharray={circumference}
           strokeDashoffset={offset}
-          className="stroke-brand transition-[stroke-dashoffset] duration-700 ease-out"
+          className={`${tones[tone]} transition-[stroke-dashoffset,stroke] duration-700 ease-out`}
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">{children}</div>

@@ -2,7 +2,7 @@
 
 App web de hábitos con XP, rachas y amigos. Se instalará como PWA, pensada primero para iPhone y adaptada a escritorio.
 
-**Estado: Fase 1 en curso.** Hecho: 1.1 login y perfiles, 1.2 hábitos (crear, editar y archivar), identidad visual nueva (paleta naranja/crema/marrón/verde y mascota panda). Pendiente: 1.3 marcar hábitos, 1.4 XP y racha, 1.5 PWA. Las pantallas de Hoy y Amigos, y la parte de estadísticas y privacidad de Perfil, siguen siendo diseño con datos ficticios hasta que las conectemos.
+**Estado: Fase 1 en curso.** Hecho: 1.1 login y perfiles, 1.2 hábitos (crear, editar y archivar), identidad visual nueva (paleta naranja/crema/marrón/verde y mascota panda), 1.3 marcar hábitos en la pantalla Hoy (con "ayer" y efectos). Pendiente: 1.4 XP y racha, 1.5 PWA. Amigos y la parte de estadísticas y privacidad de Perfil siguen siendo diseño con datos ficticios hasta que las conectemos.
 
 ## Qué usamos y para qué
 
@@ -73,7 +73,7 @@ docs/             # AJUSTES.md, DISENO.md, COPIAS-SEGURIDAD.md
 
 ## Reglas del proyecto
 
-- Una carpeta de `features/` no importa de otra `feature`, salvo de `auth` (la sesión la necesita todo el mundo). Si algo más se comparte, sube a `components/` o `lib/`.
+- Una carpeta de `features/` no importa de otra `feature`, salvo de `auth` (la sesión la necesita todo el mundo). Si algo más se comparte, sube a `components/` o `lib/`. Única excepción: `dashboard` (la pantalla Hoy), que junta hábitos y perfil.
 - Las llamadas a Supabase van en `features/<nombre>/`, nunca dentro de componentes visuales.
 - El XP, las rachas y los permisos los decide el servidor, no el navegador.
 - Cada cambio de base de datos es una migración nueva en `supabase/migrations/`.

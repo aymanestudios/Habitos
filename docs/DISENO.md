@@ -46,6 +46,22 @@ El modo oscuro sigue el ajuste del móvil o del ordenador (no hay interruptor to
 - Icono de la app: la cabeza del panda sobre azul marino, `public/icon-512.png` (y `icon-192.png`, `apple-touch-icon.png`, `favicon.png`).
 - Los originales los aportó el autor; para cambiar la mascota basta con reemplazar `mascota.webp` por otra imagen con fondo transparente.
 
+## Efectos y movimiento
+
+Pocos y solo en los momentos de premio, para que llamen la atención sin cansar:
+
+| Momento | Efecto | Dónde está |
+| --- | --- | --- |
+| Marcar un hábito | El círculo hace un rebote (`animate-pop`) y suelta un chispazo de confeti | `HabitRow.tsx` |
+| Avanzar el día | El anillo se llena con suavidad; al llegar al 100 % se pone verde | `ProgressRing.tsx` |
+| Completar el día | Explosión de confeti y la mascota baila (`animate-tada`) | `DashboardPage.tsx` |
+| Siempre | La mascota flota despacito (`animate-float`) | `DashboardPage.tsx` |
+
+- El confeti está hecho a mano en `src/lib/confetti.ts` (sin librerías): piezas con los colores de la marca, leídos de las variables CSS, así que cambian solos en modo oscuro.
+- No se dispara al abrir la app ni al cambiar entre Hoy y Ayer, solo cuando tú completas algo (`usePulse`).
+- Con "reducir movimiento" activado en el móvil o el ordenador, no hay confeti ni animaciones.
+- La mascota reacciona con movimiento y con el texto del día ("Empezamos suave", "Vas muy bien", "¡Día completo!"). Cuando haya más poses del panda (contento, dormido...), se cambia la imagen según el estado.
+
 ## Tipografía y formas
 
 - Fuente: Inter si está instalada; si no, la del sistema (SF Pro en iPhone). Sin descargar fuentes externas, para que cargue rápido.
@@ -75,4 +91,4 @@ El modo oscuro sigue el ajuste del móvil o del ordenador (no hay interruptor to
 
 ## Pantallas diseñadas en la Fase 0
 
-Hoy, Hábitos, Amigos y Perfil existen como **diseño con datos ficticios** para validar el aspecto. Cada una lleva la etiqueta "Diseño de ejemplo" hasta que la conectemos a la base de datos en la Fase 1.
+Las pantallas se diseñaron primero con datos ficticios y se van conectando a la base de datos. **Ya reales:** Hoy (1.3), Hábitos (1.2) y la cuenta en Perfil (1.1). **Aún con datos de ejemplo** (llevan la etiqueta "Diseño de ejemplo"): Amigos y las estadísticas y privacidad de Perfil.

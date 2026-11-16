@@ -20,7 +20,7 @@ Estas decisiones **no se programan en la Fase 0**: quedan fijadas aquí para que
 **Solución:**
 - `habits.target_value` (número, vacío = hábito de sí/no) y `habits.unit` (vasos, km, páginas...).
 - `habit_logs.value` guarda el **total acumulado del día**; hay una única fila por hábito y día.
-- Una función del servidor `add_habit_progress(habit_id, delta)` suma al total. El hábito cuenta como completado cuando `value >= target_value`.
+- Una función del servidor `add_habit_progress(habit_id, delta, day_offset)` suma al total (ya creada en la migración 0003; `day_offset` es 0 = hoy o -1 = ayer). El hábito cuenta como completado cuando `value >= target_value`.
 - El progreso parcial (5 de 8 vasos) se muestra con barra, pero **la XP solo se concede al alcanzar la meta**. Es simple y no se puede abusar.
 - Los hábitos con meta semanal (30 km a la semana) usan la frecuencia `weekly_total`: suman los registros de toda la semana y la meta es obligatoria.
 
@@ -73,7 +73,7 @@ create policy "habits: amigos ven los compartidos"
 - Cada perfil guarda su zona (`timezone`, por ejemplo `Europe/Madrid`), detectada con `Intl` al registrarse.
 - Un "día" es una **fecha** (`local_date`, tipo `date`), no un instante en UTC. Así el cambio de hora no rompe nada.
 - La fecha de hoy la calcula el **servidor** con la zona del usuario; el navegador no manda la fecha. Evita trampas y desajustes de reloj. Ya aplicado al inicio de cada hábito (`habits.start_date`, migración 0002).
-- Decisión pendiente para la Fase 1: ¿permitimos marcar "ayer" (un día de margen)? Recomendado: sí, solo ayer.
+- **Decidido:** se puede marcar hoy y ayer, nada más antiguo. El navegador no manda la fecha, manda `0` (hoy) o `-1` (ayer) y el servidor calcula el día real con la zona horaria del perfil (`add_habit_progress`, migración 0003).
 - Si el usuario cambia de zona, el cambio vale desde ese momento; los días pasados no se recalculan.
 - Ya incluido: `src/lib/dates.ts` con `getUserTimezone`, `localDateString`, `localHour` y `weekStart`.
 

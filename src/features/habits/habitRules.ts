@@ -250,3 +250,19 @@ export function friendlyHabitError(message: string): string {
     return 'No se pudo conectar con Supabase. Revisa .env.local y tu conexión.'
   return message || 'Algo ha salido mal. Inténtalo de nuevo.'
 }
+
+// Traduce los errores de add_habit_progress (0003_habit_logs.sql) a algo que se entienda.
+export function friendlyProgressError(message: string): string {
+  const text = message.toLowerCase()
+  if (text.includes('habit_archived')) return 'Ese hábito está archivado.'
+  if (text.includes('before_start')) return 'Ese día es anterior al inicio del hábito.'
+  if (text.includes('after_end')) return 'El hábito ya había terminado ese día.'
+  if (text.includes('not_scheduled')) return 'Ese hábito no toca ese día.'
+  if (text.includes('day_not_allowed')) return 'Solo se puede marcar hoy y ayer.'
+  if (text.includes('habit_not_found')) return 'No se encontró el hábito.'
+  if (text.includes('not_authenticated') || text.includes('jwt')) return 'Tu sesión ha caducado. Vuelve a entrar.'
+  if (text.includes('add_habit_progress') || text.includes('habit_logs'))
+    return 'No se pudo guardar. ¿Has ejecutado la migración 0003_habit_logs.sql en Supabase?'
+  if (text.includes('failed to fetch') || text.includes('network')) return 'No hay conexión. Inténtalo de nuevo.'
+  return 'No se pudo guardar. Inténtalo de nuevo.'
+}

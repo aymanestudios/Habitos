@@ -38,6 +38,21 @@ export function weekStart(localDate: string): string {
   return d.toISOString().slice(0, 10)
 }
 
+/** Suma (o resta) días a una fecha local ('YYYY-MM-DD'). Funciona con cambios de mes, año y bisiestos. */
+export function addDays(localDate: string, days: number): string {
+  const [year, month, day] = localDate.split('-').map(Number)
+  const d = new Date(Date.UTC(year, month - 1, day))
+  d.setUTCDate(d.getUTCDate() + days)
+  return d.toISOString().slice(0, 10)
+}
+
+/** Día de la semana de una fecha local: 1 = lunes ... 7 = domingo (igual que days_of_week en la base de datos). */
+export function isoWeekday(localDate: string): number {
+  const [year, month, day] = localDate.split('-').map(Number)
+  const jsDay = new Date(Date.UTC(year, month - 1, day)).getUTCDay() // 0 = domingo
+  return jsDay === 0 ? 7 : jsDay
+}
+
 /** Saludo según la hora local. */
 export function greetingFor(hour: number): string {
   if (hour >= 6 && hour < 13) return 'Buenos días'

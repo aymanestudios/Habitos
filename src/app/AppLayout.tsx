@@ -67,7 +67,8 @@ export function AppLayout() {
           {navItems.map((item) => (
             <SidebarLink key={item.to} item={item} />
           ))}
-          {/* Solo en la barra lateral: en el móvil se entra desde Perfil (abajo solo caben 4 pestañas) */}
+          {/* Solo en la barra lateral: en el móvil se entra desde Hoy y Perfil (abajo solo caben 4 pestañas) */}
+          <SidebarLink item={{ to: '/recordatorios', label: 'Recordatorios', icon: 'bell' }} />
           <SidebarLink item={{ to: '/estadisticas', label: 'Estadísticas', icon: 'chart' }} />
         </nav>
 

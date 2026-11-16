@@ -205,6 +205,16 @@
   animation: rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) backwards;
 }
 
+@keyframes pop-in {
+  from { opacity: 0; transform: translateY(-4px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Paneles pequeños que se abren (posponer, menús) */
+@utility animate-pop-in {
+  animation: pop-in 0.18s ease-out backwards;
+}
+
 @utility animate-pop {
   animation: pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }

@@ -8,6 +8,7 @@ import { EditHabitPage } from '@/features/habits/EditHabitPage'
 import { HabitsPage } from '@/features/habits/HabitsPage'
 import { NewHabitPage } from '@/features/habits/NewHabitPage'
 import { ProfilePage } from '@/features/profile/ProfilePage'
+import { RemindersPage } from '@/features/reminders/RemindersPage'
 import { StatsPage } from '@/features/stats/StatsPage'
 import { StatusPage } from '@/features/system/StatusPage'
 import { AppLayout } from './AppLayout'
@@ -29,6 +30,7 @@ export function AppRoutes() {
             <Route path="habitos/:id/editar" element={<EditHabitPage />} />
             <Route path="amigos" element={<FriendsPage />} />
             <Route path="perfil" element={<ProfilePage />} />
+            <Route path="recordatorios" element={<RemindersPage />} />
             <Route path="estadisticas" element={<StatsPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Route>

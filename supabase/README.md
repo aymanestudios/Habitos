@@ -7,6 +7,7 @@ Aquí vivirá todo lo del servidor.
   2. `0002_habits.sql`: tabla de hábitos.
   3. `0003_habit_logs.sql`: registro diario (marcar, desmarcar, progreso) y la función `add_habit_progress`.
   4. `0004_xp_streaks.sql`: XP, niveles y rachas (`xp_events`, `get_my_progress`; `add_habit_progress` ahora también calcula el XP).
+  5. `0005_reminders.sql`: recordatorios personales (privados, con repetición diaria o semanal).
 
 Siguen `docs/AJUSTES.md`. Las fases siguientes (XP y racha, amigos) añadirán más archivos con el siguiente número.
 

@@ -1,6 +1,6 @@
 type Props = {
   label: string
-  type?: 'text' | 'email' | 'password' | 'date'
+  type?: 'text' | 'email' | 'password' | 'date' | 'datetime-local'
   value: string
   onChange: (value: string) => void
   autoComplete?: string

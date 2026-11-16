@@ -15,10 +15,13 @@ import { errorMessage, friendlyProgressError } from '@/features/habits/habitRule
 import { useAddProgress, useHabitLogs } from '@/features/habits/useHabitLogs'
 import { useHabits } from '@/features/habits/useHabits'
 import { streakHint, streakLabel, xpToastText } from '@/features/profile/progressRules'
+import { completeChanges, groupReminders, timeLabel } from '@/features/reminders/reminderRules'
+import { useReminders, useUpdateReminder } from '@/features/reminders/useReminders'
 import { useProfile } from '@/features/profile/useProfile'
 import { useProgress } from '@/features/profile/useProgress'
 import { burst } from '@/lib/confetti'
 import { addDays, getUserTimezone, greetingFor, localHour, weekStart } from '@/lib/dates'
+import { useNow } from '@/lib/useNow'
 import { useToday } from '@/lib/useToday'
 
 type View = 'today' | 'yesterday'
@@ -42,6 +45,9 @@ export function DashboardPage() {
   const from = weekStart(addDays(today, -1))
   const logs = useHabitLogs(from, today)
   const progress = useProgress()
+  const reminders = useReminders()
+  const updateReminder = useUpdateReminder()
+  const now = useNow()
 
   // Aviso flotante "+20 XP": el servidor dice cuántos XP ha ganado (o quitado) cada toque
   const [toast, setToast] = useState<{ id: number; text: string; gain: boolean } | null>(null)
@@ -142,6 +148,54 @@ export function DashboardPage() {
   const hasHabits = habits.data.some((habit) => habit.archived_at === null)
   const dailyItems = items.filter((item) => isDailyKind(item.habit))
   const weeklyItems = items.filter((item) => !isDailyKind(item.habit))
+
+  // Recordatorios pendientes de hoy (y atrasados). Si la tabla aún no existe, la tarjeta simplemente no sale.
+  const reminderGroups = groupReminders(reminders.data ?? [], now)
+  const pendingReminders = [...reminderGroups.overdue, ...reminderGroups.today]
+  const remindersCard = reminders.data && (
+    <Card>
+      <div className="flex items-center justify-between gap-3">
+        <h2 className="flex items-center gap-2 text-lg font-bold">
+          <Icon name="bell" className="h-5 w-5 text-brand-ink" />
+          Recordatorios
+        </h2>
+        <Link to="/recordatorios" className="text-sm font-bold text-brand-ink">
+          {reminders.data.length === 0 ? 'Añadir' : 'Ver todos'}
+        </Link>
+      </div>
+      {pendingReminders.length === 0 ? (
+        <p className="mt-1 text-sm text-muted">Nada pendiente para hoy.</p>
+      ) : (
+        <ul className="mt-1 divide-y divide-line">
+          {pendingReminders.slice(0, 3).map((reminder) => (
+            <li key={reminder.id} className="flex items-center gap-3 py-2.5">
+              <span
+                className={`w-12 shrink-0 text-sm font-bold ${
+                  new Date(reminder.due_at) < now ? 'text-danger' : 'text-muted'
+                }`}
+              >
+                {timeLabel(reminder.due_at)}
+              </span>
+              <span className="min-w-0 flex-1 truncate font-semibold">{reminder.title}</span>
+              <button
+                type="button"
+                aria-label={`Marcar como hecho: ${reminder.title}`}
+                onClick={() =>
+                  updateReminder.mutate({ id: reminder.id, changes: completeChanges(reminder, new Date()) })
+                }
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border-2 border-line text-transparent transition-all hover:border-brand hover:text-brand-ink active:scale-90"
+              >
+                <Icon name="check" className="h-4 w-4" />
+              </button>
+            </li>
+          ))}
+          {pendingReminders.length > 3 && (
+            <li className="pt-2 text-sm text-muted">Y {pendingReminders.length - 3} más.</li>
+          )}
+        </ul>
+      )}
+    </Card>
+  )
 
   function change(item: DayItem, delta: number) {
     addProgress.mutate({ habit: item.habit, date, dayOffset: isToday ? 0 : -1, delta })
@@ -255,6 +309,8 @@ export function DashboardPage() {
                     <div className="divide-y divide-line">{dailyItems.map(renderRow)}</div>
                   </Card>
                 )}
+
+                {isToday && remindersCard}
               </div>
 
               {weeklyItems.length > 0 && (

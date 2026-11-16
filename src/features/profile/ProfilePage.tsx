@@ -7,6 +7,7 @@ import { LevelBar } from '@/components/LevelBar'
 import { PageHeader } from '@/components/PageHeader'
 import { useTheme } from '@/lib/theme'
 import type { ThemeChoice } from '@/lib/theme'
+import { achievementsSummary, buildAchievements } from './achievements'
 import { AccountCard } from './AccountCard'
 import { freezesText, xpToNext } from './progressRules'
 import { useProfile } from './useProfile'
@@ -83,6 +84,39 @@ export function ProfilePage() {
           </Card>
         </>
       )}
+
+      {progress.data &&
+        (() => {
+          const achievements = buildAchievements(progress.data)
+          return (
+            <Card>
+              <div className="flex items-baseline justify-between gap-3">
+                <h2 className="text-lg font-bold">Logros</h2>
+                <span className="text-sm font-semibold text-muted">{achievementsSummary(achievements)}</span>
+              </div>
+              <ul className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+                {achievements.map((item) => (
+                  <li
+                    key={item.id}
+                    className={`rounded-2xl border-2 p-3 text-center ${
+                      item.unlocked ? 'border-accent bg-accent-soft' : 'border-dashed border-line opacity-60'
+                    }`}
+                  >
+                    <span
+                      className={`mx-auto flex h-10 w-10 items-center justify-center rounded-full ${
+                        item.unlocked ? 'bg-accent text-on-brand' : 'bg-surface-2 text-muted'
+                      }`}
+                    >
+                      <Icon name={item.unlocked ? 'check' : 'shield'} className="h-5 w-5" />
+                    </span>
+                    <span className="mt-2 block text-sm font-bold">{item.title}</span>
+                    <span className="block text-xs text-muted">{item.text}</span>
+                  </li>
+                ))}
+              </ul>
+            </Card>
+          )
+        })()}
 
       <Link
         to="/estadisticas"

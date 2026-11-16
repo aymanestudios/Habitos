@@ -35,6 +35,13 @@ const paths = {
       <path d="M5 15V6a2 2 0 0 1 2-2h9" />
     </>
   ),
+  bell: <path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15zM10 20.5a2 2 0 0 0 4 0" />,
+  clock: (
+    <>
+      <circle cx="12" cy="12" r="8.5" />
+      <path d="M12 7.5V12l3 2" />
+    </>
+  ),
   chart: <path d="M5 20v-8M12 20V5M19 20v-5" />,
   shield: <path d="M12 3 4 6v6c0 5 3.4 8.2 8 9 4.6-.8 8-4 8-9V6z" />,
 } as const

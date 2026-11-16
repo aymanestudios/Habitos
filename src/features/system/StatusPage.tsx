@@ -46,6 +46,9 @@ async function checkSupabase() {
     headers: { apikey: env.supabaseAnonKey },
   })
   if (!response.ok) throw new Error(`Supabase respondió con el código ${response.status}`)
+
+  // TanStack Query v5 no admite que una consulta devuelva "undefined": hay que devolver algo.
+  return true
 }
 
 export function StatusPage() {

@@ -1,10 +1,8 @@
 // Edge Function "send-reminders": envía los avisos push de los recordatorios que ya tocan.
 // La llama pg_cron cada minuto (ver 0009_push.sql). Nadie más puede usarla: exige el secreto del cron.
 //
-// Secretos que necesita (Supabase > Edge Functions > Secrets), los pones TÚ:
-//   VAPID_PUBLIC_KEY   la misma que VITE_VAPID_PUBLIC_KEY de la app
-//   VAPID_PRIVATE_KEY  la privada: NUNCA en el código ni en Render
-// SUPABASE_URL y SUPABASE_SERVICE_ROLE_KEY los pone Supabase solo.
+// Claves VAPID: la primera vez las genera ella misma y las guarda cifradas en Vault (0010_vapid_vault.sql).
+// Nadie las copia a mano. SUPABASE_URL y la clave de servicio las pone Supabase solo.
 
 import webpush from 'npm:web-push@3.6.7'
 import { createClient } from 'npm:@supabase/supabase-js@2'
@@ -29,6 +27,15 @@ function serviceKey(): string {
   }
 }
 
+type Keys = { public_key: string; private_key: string }
+
+// deno-lint-ignore no-explicit-any
+async function readKeys(supabase: any): Promise<Keys | null> {
+  const { data } = await supabase.rpc('get_vapid_keys')
+  const row = (Array.isArray(data) ? data[0] : data) as Keys | undefined
+  return row?.public_key && row?.private_key ? row : null
+}
+
 Deno.serve(async (req) => {
   if (req.method !== 'POST') return json({ error: 'method_not_allowed' }, 405)
 
@@ -42,11 +49,15 @@ Deno.serve(async (req) => {
   })
   if (allowed !== true) return json({ error: 'unauthorized' }, 401)
 
-  // 2. Sin claves VAPID no se puede enviar: salimos ANTES de marcar nada como avisado.
-  const publicKey = Deno.env.get('VAPID_PUBLIC_KEY') ?? ''
-  const privateKey = Deno.env.get('VAPID_PRIVATE_KEY') ?? ''
-  if (!publicKey || !privateKey) return json({ error: 'missing_vapid_keys' }, 500)
-  webpush.setVapidDetails(SUBJECT, publicKey, privateKey)
+  // 2. Claves VAPID desde Vault; si aún no existen, se generan y se guardan (solo la primera vez).
+  let keys = await readKeys(supabase)
+  if (!keys) {
+    const fresh = webpush.generateVAPIDKeys()
+    await supabase.rpc('store_vapid_keys', { p_public: fresh.publicKey, p_private: fresh.privateKey })
+    keys = await readKeys(supabase) // se relee: si otra ejecución ganó, se usan las suyas
+  }
+  if (!keys) return json({ error: 'missing_vapid_keys' }, 500)
+  webpush.setVapidDetails(SUBJECT, keys.public_key, keys.private_key)
 
   // 3. Recordatorios que tocan (se marcan como avisados en el mismo paso).
   const { data, error } = await supabase.rpc('claim_due_reminders')

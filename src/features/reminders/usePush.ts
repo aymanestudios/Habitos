@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
-import { env } from '@/lib/env'
 import { errorMessage } from '@/features/habits/habitRules'
 import { base64UrlToBytes, friendlyPushError, isIosDevice, pushStatus } from './pushRules'
 import type { PushStatus } from './pushRules'
@@ -22,6 +21,13 @@ async function currentSubscription(): Promise<PushSubscription | null> {
   return registration ? registration.pushManager.getSubscription() : null
 }
 
+// Clave pública de los avisos: la genera y guarda Supabase (0010_vapid_vault.sql). null = aún no existe.
+async function fetchPublicKey(): Promise<string | null> {
+  const { data, error } = await supabase.rpc('get_vapid_public_key')
+  if (error || typeof data !== 'string' || data.length === 0) return null
+  return data
+}
+
 async function saveSubscription(subscription: PushSubscription) {
   const data = subscription.toJSON()
   const { error } = await supabase.rpc('save_push_subscription', {
@@ -37,15 +43,18 @@ export function usePush() {
   const [status, setStatus] = useState<PushStatus | null>(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [publicKey, setPublicKey] = useState<string | null>(null)
 
   const refresh = useCallback(async () => {
     const subscription = await currentSubscription().catch(() => null)
+    const key = await fetchPublicKey()
+    setPublicKey(key)
     setStatus(
       pushStatus({
         supported: supported(),
         ios: isIosDevice(navigator.userAgent, navigator.maxTouchPoints ?? 0),
         standalone: standalone(),
-        configured: env.vapidPublicKey.length > 0,
+        configured: key !== null,
         production: import.meta.env.PROD,
         permission: 'Notification' in window ? Notification.permission : 'default',
         subscribed: subscription !== null,
@@ -65,6 +74,7 @@ export function usePush() {
     setBusy(true)
     setError(null)
     try {
+      if (!publicKey) throw new Error('not_configured')
       const permission = await Notification.requestPermission()
       if (permission !== 'granted') {
         await refresh()
@@ -75,7 +85,7 @@ export function usePush() {
         (await registration.pushManager.getSubscription()) ??
         (await registration.pushManager.subscribe({
           userVisibleOnly: true,
-          applicationServerKey: base64UrlToBytes(env.vapidPublicKey),
+          applicationServerKey: base64UrlToBytes(publicKey),
         }))
       await saveSubscription(subscription)
       await refresh()

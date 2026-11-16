@@ -17,3 +17,4 @@ En la Fase 0 solo creas el proyecto en supabase.com y copias su URL y su clave p
 - `0007_activity_categories.sql`: categorías de hábitos, actividad de amigos y reacciones (🔥 👏 💪 🎉). El nombre de un hábito solo se ve si tiene visibilidad "Mis amigos".
 - `0008_challenges.sql`: retos cooperativos semanales (tú + un amigo, meta de XP conjunta). Solo se crean con amigos aceptados.
 - `0009_push.sql`: avisos al móvil (suscripciones, cron cada minuto y secreto en Vault). Necesita la Edge Function `functions/send-reminders` y las claves VAPID: ver docs/AVISOS.md.
+- `0010_vapid_vault.sql`: las claves de los avisos se generan solas y se guardan cifradas en Vault. La app solo lee la pública.

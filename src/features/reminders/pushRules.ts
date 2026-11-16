@@ -3,7 +3,7 @@
 export type PushStatus =
   | 'unsupported' // este navegador no tiene avisos push
   | 'ios-install' // iPhone/iPad: hay que añadir la app a la pantalla de inicio primero
-  | 'not-configured' // falta VITE_VAPID_PUBLIC_KEY
+  | 'not-configured' // Supabase aún no ha generado las claves (o no hay conexión)
   | 'dev' // npm run dev: el service worker no está activo
   | 'denied' // el usuario bloqueó los avisos
   | 'off'
@@ -37,7 +37,7 @@ export const STATUS_TEXT: Record<PushStatus, string> = {
   unsupported: 'Este navegador no permite avisos. Prueba con Chrome, Edge, Firefox o la app instalada.',
   'ios-install':
     'En iPhone, primero añade la app a tu pantalla de inicio: botón Compartir → "Añadir a pantalla de inicio". Luego ábrela desde el icono y activa los avisos aquí.',
-  'not-configured': 'Los avisos aún no están configurados en esta versión de la app (falta la clave pública).',
+  'not-configured': 'Los avisos se están preparando en el servidor. Vuelve a abrir esta pantalla en un par de minutos.',
   dev: 'En modo desarrollo (npm run dev) los avisos no funcionan. Pruébalos en la web publicada.',
   denied:
     'Bloqueaste los avisos para esta web. Actívalos en los ajustes del navegador (o del iPhone: Ajustes → Notificaciones → Progress&Go).',

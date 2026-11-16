@@ -6,18 +6,12 @@
 3. La función busca los recordatorios que ya tocan y manda un aviso a cada dispositivo.
 Render no interviene: solo sirve la web.
 
-## Claves VAPID (una sola vez)
-Sirven para firmar los avisos. La **pública** puede ir en la app; la **privada** solo en Supabase.
-
-1. Genera las dos claves en tu ordenador:
-   `npx web-push generate-vapid-keys`
-2. Supabase → Edge Functions → **Secrets** → añade:
-   - `VAPID_PUBLIC_KEY` = la pública
-   - `VAPID_PRIVATE_KEY` = la privada
-3. En `.env.local` añade `VITE_VAPID_PUBLIC_KEY=` con la **pública**.
-4. En Render → tu web → **Environment** → añade `VITE_VAPID_PUBLIC_KEY` con la **pública** y vuelve a desplegar.
-
-La privada nunca va en `.env.local`, en Render ni en GitHub.
+## Claves VAPID (automáticas)
+Sirven para firmar los avisos. **No hay que hacer nada**: la primera vez que se ejecuta,
+la Edge Function las genera y las guarda cifradas en **Vault** de Supabase (`0010_vapid_vault.sql`).
+- La app pide la clave **pública** a Supabase (`get_vapid_public_key`).
+- La **privada** solo la puede leer la Edge Function. No está en Render, ni en `.env.local`, ni en GitHub.
+- No borres los secretos `vapid_*` de Vault: si cambian, cada dispositivo tendría que volver a activar los avisos.
 
 ## iPhone
 Solo funciona con la app instalada: Safari → Compartir → "Añadir a pantalla de inicio",
@@ -27,7 +21,7 @@ abrirla desde el icono y activar los avisos dentro (iOS 16.4 o superior).
 - "Probar aviso" en Recordatorios muestra un aviso local (comprueba el permiso).
 - Para el envío real: crea un recordatorio para dentro de 2 minutos y cierra la app.
 - Errores del envío: Supabase → SQL → `select status_code, content from net._http_response order by created desc limit 5;`
-  `missing_vapid_keys` = faltan los secretos del paso 2.
+  Lo normal es `200` con `{"due":0,...}`.
 
 ## Límites
 - Avisa una vez por cada hora programada (si lo pospones, vuelve a avisar).

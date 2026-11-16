@@ -5,6 +5,7 @@ import { ChoiceChips } from '@/components/ChoiceChips'
 import { Icon } from '@/components/Icon'
 import { TextField } from '@/components/TextField'
 import {
+  CATEGORY_OPTIONS,
   DAY_LETTERS,
   DAY_NAMES,
   DESCRIPTION_MAX,
@@ -181,6 +182,16 @@ export function HabitForm({ initial, submitLabel, startDate, onSubmit }: Props) 
       </div>
 
       <div>
+        <span className={sectionLabel}>Categoría</span>
+        <ChoiceChips
+          label="Categoría"
+          options={CATEGORY_OPTIONS}
+          value={values.category}
+          onChange={(value) => update('category', value)}
+        />
+      </div>
+
+      <div>
         <span className={sectionLabel}>Dificultad</span>
         <ChoiceChips
           label="Dificultad"
@@ -188,7 +199,7 @@ export function HabitForm({ initial, submitLabel, startDate, onSubmit }: Props) 
           value={values.difficulty}
           onChange={(value) => update('difficulty', value)}
         />
-        <p className={hint}>Decidirá cuánta XP da. Se activa en la parte 1.4.</p>
+        <p className={hint}>Fácil 10 XP, media 20 XP, difícil 30 XP al día.</p>
       </div>
 
       <div>

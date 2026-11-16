@@ -4,7 +4,7 @@ import { supabase } from '@/lib/supabase'
 import type { Habit, HabitChanges, HabitPayload } from './habitRules'
 
 const COLUMNS =
-  'id, title, description, frequency_type, days_of_week, weekly_target, target_value, unit, difficulty, visibility, start_date, end_date, archived_at, created_at'
+  'id, title, description, frequency_type, days_of_week, weekly_target, target_value, unit, difficulty, visibility, category, start_date, end_date, archived_at, created_at'
 
 // Todos los hábitos del usuario (activos y archivados). Las políticas RLS hacen que solo lleguen los suyos.
 export function useHabits() {

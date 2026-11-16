@@ -4,6 +4,7 @@
 export type FrequencyType = 'daily' | 'days_of_week' | 'weekly_count' | 'weekly_total'
 export type Difficulty = 'easy' | 'medium' | 'hard'
 export type Visibility = 'private' | 'friends'
+export type Category = 'health' | 'sport' | 'study' | 'mind' | 'work' | 'home' | 'social' | 'other'
 
 // Un hábito tal como lo devuelve la base de datos (tabla habits)
 export type Habit = {
@@ -17,6 +18,7 @@ export type Habit = {
   unit: string | null
   difficulty: Difficulty
   visibility: Visibility
+  category: Category
   start_date: string
   end_date: string | null
   archived_at: string | null
@@ -34,6 +36,7 @@ export type HabitPayload = {
   unit: string | null
   difficulty: Difficulty
   visibility: Visibility
+  category: Category
   end_date: string | null
 }
 
@@ -51,6 +54,7 @@ export type HabitFormValues = {
   unit: string
   difficulty: Difficulty
   visibility: Visibility
+  category: Category
   endDate: string
 }
 
@@ -77,6 +81,21 @@ export const VISIBILITY_OPTIONS: { value: Visibility; label: string }[] = [
   { value: 'friends', label: 'Mis amigos' },
 ]
 
+export const CATEGORY_OPTIONS: { value: Category; label: string }[] = [
+  { value: 'health', label: 'Salud' },
+  { value: 'sport', label: 'Deporte' },
+  { value: 'study', label: 'Estudio' },
+  { value: 'mind', label: 'Mente' },
+  { value: 'work', label: 'Trabajo' },
+  { value: 'home', label: 'Casa' },
+  { value: 'social', label: 'Social' },
+  { value: 'other', label: 'Otro' },
+]
+
+export const CATEGORY_LABEL = Object.fromEntries(
+  CATEGORY_OPTIONS.map((option) => [option.value, option.label]),
+) as Record<Category, string>
+
 export const DIFFICULTY_LABEL: Record<Difficulty, string> = {
   easy: 'Fácil',
   medium: 'Media',
@@ -98,6 +117,7 @@ export const emptyHabitForm: HabitFormValues = {
   unit: '',
   difficulty: 'medium',
   visibility: 'private',
+  category: 'other',
   endDate: '',
 }
 
@@ -113,6 +133,7 @@ export function habitToForm(habit: Habit): HabitFormValues {
     unit: habit.unit ?? '',
     difficulty: habit.difficulty,
     visibility: habit.visibility,
+    category: habit.category ?? 'other',
     endDate: habit.end_date ?? '',
   }
 }
@@ -177,6 +198,7 @@ export function formToPayload(values: HabitFormValues): HabitPayload {
     unit: hasTarget && unit ? unit : null,
     difficulty: values.difficulty,
     visibility: values.visibility,
+    category: values.category,
     end_date: values.endDate || null,
   }
 }

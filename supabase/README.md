@@ -8,7 +8,10 @@ Aquí vivirá todo lo del servidor.
   3. `0003_habit_logs.sql`: registro diario (marcar, desmarcar, progreso) y la función `add_habit_progress`.
   4. `0004_xp_streaks.sql`: XP, niveles y rachas (`xp_events`, `get_my_progress`; `add_habit_progress` ahora también calcula el XP).
   5. `0005_reminders.sql`: recordatorios personales (privados, con repetición diaria o semanal).
+  6. `0006_friends.sql`: amigos (código de amigo, solicitudes y ranking semanal). De un amigo solo se comparte nivel, XP y racha.
 
 Siguen `docs/AJUSTES.md`. Las fases siguientes (XP y racha, amigos) añadirán más archivos con el siguiente número.
 
 En la Fase 0 solo creas el proyecto en supabase.com y copias su URL y su clave pública en `.env.local`.
+
+- `0007_activity_categories.sql`: categorías de hábitos, actividad de amigos y reacciones (🔥 👏 💪 🎉). El nombre de un hábito solo se ve si tiene visibilidad "Mis amigos".

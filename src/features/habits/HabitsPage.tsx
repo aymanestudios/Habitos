@@ -6,16 +6,22 @@ import { ChoiceChips } from '@/components/ChoiceChips'
 import { Icon } from '@/components/Icon'
 import { Mascot } from '@/components/Mascot'
 import { PageHeader } from '@/components/PageHeader'
-import { DIFFICULTY_LABEL, habitMeta } from './habitRules'
-import type { Habit } from './habitRules'
+import { CATEGORY_LABEL, CATEGORY_OPTIONS, DIFFICULTY_LABEL, habitMeta } from './habitRules'
+import type { Category, Habit } from './habitRules'
 import { useHabits } from './useHabits'
 
 type Filter = 'all' | 'daily' | 'weekly'
+type CategoryFilter = 'all' | Category
 
 const FILTERS: { value: Filter; label: string }[] = [
   { value: 'all', label: 'Todos' },
   { value: 'daily', label: 'Diarios' },
   { value: 'weekly', label: 'Semanales' },
+]
+
+const CATEGORY_FILTERS: { value: CategoryFilter; label: string }[] = [
+  { value: 'all', label: 'Todas' },
+  ...CATEGORY_OPTIONS,
 ]
 
 // "Diarios" = cada día o días concretos. "Semanales" = veces por semana o total semanal.
@@ -36,7 +42,9 @@ function HabitListRow({ habit, muted = false }: { habit: Habit; muted?: boolean 
       </span>
       <div className="min-w-0 flex-1">
         <p className="truncate font-semibold">{habit.title}</p>
-        <p className="truncate text-sm text-muted">{habitMeta(habit)}</p>
+        <p className="truncate text-sm text-muted">
+          {CATEGORY_LABEL[habit.category] ?? 'Otro'} · {habitMeta(habit)}
+        </p>
       </div>
       <span className="shrink-0 rounded-full bg-surface-2 px-3 py-1 text-xs font-semibold text-muted">
         {DIFFICULTY_LABEL[habit.difficulty]}
@@ -48,12 +56,15 @@ function HabitListRow({ habit, muted = false }: { habit: Habit; muted?: boolean 
 export function HabitsPage() {
   const habits = useHabits()
   const [filter, setFilter] = useState<Filter>('all')
+  const [category, setCategory] = useState<CategoryFilter>('all')
   const [showArchived, setShowArchived] = useState(false)
 
   const all = habits.data ?? []
   const active = all.filter((habit) => habit.archived_at === null)
   const archived = all.filter((habit) => habit.archived_at !== null)
-  const visible = active.filter((habit) => matchesFilter(habit, filter))
+  const visible = active.filter(
+    (habit) => matchesFilter(habit, filter) && (category === 'all' || habit.category === category),
+  )
 
   return (
     <div className="stagger space-y-6">
@@ -99,6 +110,14 @@ export function HabitsPage() {
       {habits.isSuccess && active.length > 0 && (
         <>
           <ChoiceChips label="Filtrar hábitos" options={FILTERS} value={filter} onChange={setFilter} />
+          {new Set(active.map((habit) => habit.category)).size > 1 && (
+            <ChoiceChips
+              label="Filtrar por categoría"
+              options={CATEGORY_FILTERS}
+              value={category}
+              onChange={setCategory}
+            />
+          )}
 
           <Card>
             {visible.length === 0 ? (

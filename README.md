@@ -2,7 +2,7 @@
 
 App web de hábitos con XP, rachas y amigos. Se instalará como PWA, pensada primero para iPhone y adaptada a escritorio.
 
-**Estado: Fase 1 en curso.** Hecho: 1.1 login y perfiles, 1.2 hábitos (crear, editar y archivar), identidad visual nueva (paleta naranja/crema/marrón/verde y mascota panda), 1.3 marcar hábitos en la pantalla Hoy (con "ayer" y efectos), 1.4 XP, nivel y racha (ver `docs/XP-Y-RACHAS.md`). Pendiente: 1.5 PWA. Amigos y la privacidad de Perfil siguen siendo diseño con datos ficticios hasta que las conectemos.
+**Estado: Fase 1 en curso.** Hecho: 1.1 login y perfiles, 1.2 hábitos (crear, editar y archivar), identidad visual nueva (paleta naranja/crema/marrón/verde y mascota panda), 1.3 marcar hábitos en la pantalla Hoy (con "ayer" y efectos), 1.4 XP, nivel y racha (ver `docs/XP-Y-RACHAS.md`). 1.5 app instalable (ver `docs/PWA.md`). Pendiente: publicar la web (hace falta para instalarla en el iPhone) y la Fase 2 de amigos. Amigos y la privacidad de Perfil llegan en la Fase 2 (la pantalla de Amigos dice "Muy pronto").
 
 ## Qué usamos y para qué
 

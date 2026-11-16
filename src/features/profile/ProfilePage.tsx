@@ -1,6 +1,5 @@
 import { Avatar } from '@/components/Avatar'
 import { Card } from '@/components/Card'
-import { DemoNotice } from '@/components/DemoNotice'
 import { Icon } from '@/components/Icon'
 import { LevelBar } from '@/components/LevelBar'
 import { PageHeader } from '@/components/PageHeader'
@@ -8,13 +7,6 @@ import { AccountCard } from './AccountCard'
 import { freezesText, xpToNext } from './progressRules'
 import { useProfile } from './useProfile'
 import { useProgress } from './useProgress'
-
-// Estos ajustes de privacidad son de ejemplo hasta la fase de amigos.
-const privacy = [
-  { label: 'Perfil visible para amigos', on: true },
-  { label: 'Mostrar mi racha', on: true },
-  { label: 'Hábitos nuevos privados por defecto', on: true },
-]
 
 export function ProfilePage() {
   const profile = useProfile()
@@ -82,33 +74,6 @@ export function ProfilePage() {
       )}
 
       <AccountCard />
-
-      <Card>
-        <h2 className="mb-1 flex items-center gap-2 text-lg font-bold">
-          <Icon name="shield" className="h-5 w-5 text-brand-ink" />
-          Privacidad
-        </h2>
-        <div className="mb-1">
-          <DemoNotice />
-        </div>
-        <ul className="divide-y divide-line">
-          {privacy.map((item) => (
-            <li key={item.label} className="flex items-center justify-between gap-4 py-3">
-              <span>{item.label}</span>
-              <span
-                className={`relative h-7 w-12 shrink-0 rounded-full ${item.on ? 'bg-brand' : 'bg-surface-2'}`}
-                aria-hidden="true"
-              >
-                <span
-                  className={`absolute top-1 h-5 w-5 rounded-full bg-white transition-all ${
-                    item.on ? 'left-6' : 'left-1'
-                  }`}
-                />
-              </span>
-            </li>
-          ))}
-        </ul>
-      </Card>
     </div>
   )
 }

@@ -91,7 +91,7 @@ Pocos y solo en los momentos de premio, para que llamen la atención sin cansar:
 
 ## Pantallas diseñadas en la Fase 0
 
-Las pantallas se diseñaron primero con datos ficticios y se van conectando a la base de datos. **Ya reales:** Hoy (1.3 y 1.4), Hábitos (1.2) y Perfil con nivel, XP y racha (1.1 y 1.4). **Aún con datos de ejemplo** (llevan la etiqueta "Diseño de ejemplo"): Amigos y los ajustes de privacidad de Perfil.
+Las pantallas se diseñaron primero con datos ficticios y se van conectando a la base de datos. **Ya reales:** Hoy (1.3 y 1.4), Hábitos (1.2) y Perfil con nivel, XP y racha (1.1 y 1.4). **Amigos** muestra un "Muy pronto" honesto hasta la Fase 2; ya no queda ningún dato ficticio en la app.
 
 ## XP y nivel
 

@@ -82,3 +82,5 @@ create policy "habits: amigos ven los compartidos"
 ## 7. Copias de seguridad
 
 Ver [COPIAS-SEGURIDAD.md](./COPIAS-SEGURIDAD.md).
+
+- **XP, niveles y rachas:** los números exactos están en `docs/XP-Y-RACHAS.md` (migración 0004).

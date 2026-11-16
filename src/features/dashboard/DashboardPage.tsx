@@ -4,6 +4,7 @@ import { Card } from '@/components/Card'
 import { ChoiceChips } from '@/components/ChoiceChips'
 import { HabitRow } from '@/components/HabitRow'
 import { Icon } from '@/components/Icon'
+import { LevelBar } from '@/components/LevelBar'
 import { Mascot } from '@/components/Mascot'
 import { ProgressRing } from '@/components/ProgressRing'
 // Hoy es la pantalla que junta cosas de otras partes, por eso (y solo por eso) importa de habits y profile.
@@ -12,7 +13,9 @@ import type { DayItem } from '@/features/habits/dayRules'
 import { errorMessage, friendlyProgressError } from '@/features/habits/habitRules'
 import { useAddProgress, useHabitLogs } from '@/features/habits/useHabitLogs'
 import { useHabits } from '@/features/habits/useHabits'
+import { streakHint, streakLabel, xpToastText } from '@/features/profile/progressRules'
 import { useProfile } from '@/features/profile/useProfile'
+import { useProgress } from '@/features/profile/useProgress'
 import { burst } from '@/lib/confetti'
 import { addDays, getUserTimezone, greetingFor, localHour, weekStart } from '@/lib/dates'
 import { useToday } from '@/lib/useToday'
@@ -37,14 +40,32 @@ export function DashboardPage() {
   // Se piden los registros desde el lunes de la semana de "ayer" hasta hoy: cubre ambas vistas
   const from = weekStart(addDays(today, -1))
   const logs = useHabitLogs(from, today)
-  const addProgress = useAddProgress(from, today)
+  const progress = useProgress()
+
+  // Aviso flotante "+20 XP": el servidor dice cuántos XP ha ganado (o quitado) cada toque
+  const [toast, setToast] = useState<{ id: number; text: string; gain: boolean } | null>(null)
+  const toastTimer = useRef<number | undefined>(undefined)
+  function showToast(text: string, gain: boolean, ms = 1800) {
+    window.clearTimeout(toastTimer.current)
+    setToast({ id: Date.now(), text, gain })
+    toastTimer.current = window.setTimeout(() => setToast(null), ms)
+  }
+  const addProgress = useAddProgress(from, today, (xpDelta, change) => {
+    const text = xpToastText(xpDelta)
+    if (text) {
+      showToast(text, xpDelta > 0)
+    } else if (change.delta > 0 && change.habit.target_value === null && change.date === change.habit.start_date) {
+      // El día que se crea un hábito no da XP (regla anti-trampas): se lo explicamos en vez de callar
+      showToast('Primer día: mañana ya suma XP', false, 2600)
+    }
+  })
 
   const items = useMemo(
     () => buildDayItems(habits.data ?? [], logs.data ?? [], date),
     [habits.data, logs.data, date],
   )
   const summary = summarizeDay(items)
-  const message = dayMessage(summary, isToday)
+  const message = dayMessage(summary, isToday, progress.data?.current_streak ?? 0)
   const allDone = summary.total > 0 && summary.done === summary.total
   const ready = profile.isSuccess && habits.isSuccess && logs.isSuccess
 
@@ -66,14 +87,38 @@ export function DashboardPage() {
     lastDay.current = { date, allDone }
   }, [ready, date, allDone])
 
-  useEffect(() => () => window.clearTimeout(celebrationTimer.current), [])
+  // Subida de nivel: solo cuando el nivel SUBE mientras estás en la pantalla (no al abrir la app)
+  const lastLevel = useRef<number | null>(null)
+  const level = progress.data?.level
+  useEffect(() => {
+    if (level === undefined) return
+    const previous = lastLevel.current
+    lastLevel.current = level
+    if (previous !== null && level > previous) {
+      burst(window.innerWidth / 2, window.innerHeight * 0.3, { count: 90, power: 1.6 })
+      setCelebrating(true)
+      window.clearTimeout(celebrationTimer.current)
+      celebrationTimer.current = window.setTimeout(() => setCelebrating(false), 1200)
+      window.clearTimeout(toastTimer.current)
+      setToast({ id: Date.now(), text: `¡Nivel ${level}!`, gain: true })
+      toastTimer.current = window.setTimeout(() => setToast(null), 2600)
+    }
+  }, [level])
+
+  useEffect(
+    () => () => {
+      window.clearTimeout(celebrationTimer.current)
+      window.clearTimeout(toastTimer.current)
+    },
+    [],
+  )
 
   if (profile.isError || habits.isError || logs.isError) {
     return (
       <Card>
         <p className="text-danger">
-          No se pudieron cargar tus hábitos. ¿Has ejecutado las migraciones 0002_habits.sql y 0003_habit_logs.sql en
-          Supabase?
+          No se pudieron cargar tus hábitos. ¿Has ejecutado las migraciones 0002_habits.sql, 0003_habit_logs.sql y
+          0004_xp_streaks.sql en Supabase?
         </p>
       </Card>
     )
@@ -122,6 +167,18 @@ export function DashboardPage() {
 
   return (
     <div className="space-y-6">
+      {toast && (
+        <div
+          key={toast.id}
+          role="status"
+          className={`animate-xp pointer-events-none fixed left-1/2 top-20 z-50 rounded-full px-5 py-2 text-lg font-bold shadow-lg ${
+            toast.gain ? 'bg-accent text-on-brand' : 'bg-surface-2 text-muted'
+          }`}
+        >
+          {toast.text}
+        </div>
+      )}
+
       <header className="flex items-start justify-between gap-4">
         <div className="min-w-0">
           <p className="text-sm text-muted first-letter:uppercase">{dateLabel}</p>
@@ -160,6 +217,25 @@ export function DashboardPage() {
 
           <div className={`grid gap-6 ${weeklyItems.length > 0 ? 'lg:grid-cols-3' : ''}`}>
             <div className={`space-y-6 ${weeklyItems.length > 0 ? 'lg:col-span-2' : ''}`}>
+              {progress.data && (
+                <Card className="grid gap-4 sm:grid-cols-2 sm:items-center">
+                  <div className="flex items-center gap-3">
+                    <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-brand-soft text-brand-ink">
+                      <Icon name="flame" className="h-7 w-7" />
+                    </span>
+                    <div className="min-w-0">
+                      <p className="text-lg font-bold leading-tight">{streakLabel(progress.data.current_streak)}</p>
+                      <p className="text-sm text-muted">{streakHint(progress.data)}</p>
+                    </div>
+                  </div>
+                  <LevelBar
+                    level={progress.data.level}
+                    xpIntoLevel={progress.data.xp_into_level}
+                    xpLevelSize={progress.data.xp_level_size}
+                  />
+                </Card>
+              )}
+
               <Card className="flex items-center gap-5">
                 <ProgressRing value={summary.percent} size={112} stroke={11} tone={allDone ? 'good' : 'brand'}>
                   <span className="text-2xl font-bold">{summary.total === 0 ? '—' : `${summary.percent}%`}</span>

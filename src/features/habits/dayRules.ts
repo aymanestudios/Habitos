@@ -132,7 +132,11 @@ export function applyDelta(logs: LogRow[], habit: Habit, date: string, delta: nu
 }
 
 /** Texto animado del panda según cómo va el día. Tono siempre positivo. */
-export function dayMessage(summary: DaySummary, isToday: boolean): { title: string; text: string } {
+export function dayMessage(
+  summary: DaySummary,
+  isToday: boolean,
+  streak = 0,
+): { title: string; text: string } {
   const { total, done } = summary
   const left = total - done
 
@@ -143,7 +147,10 @@ export function dayMessage(summary: DaySummary, isToday: boolean): { title: stri
   }
   if (done === total) {
     return isToday
-      ? { title: '¡Día completo!', text: 'Todo hecho. Mañana seguimos.' }
+      ? {
+          title: '¡Día completo!',
+          text: streak >= 2 ? `Todo hecho. ¡${streak} días seguidos!` : 'Todo hecho. Mañana seguimos.',
+        }
       : { title: 'Ayer lo clavaste', text: 'Todo hecho.' }
   }
   if (!isToday) {

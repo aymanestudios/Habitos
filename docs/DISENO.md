@@ -91,4 +91,10 @@ Pocos y solo en los momentos de premio, para que llamen la atención sin cansar:
 
 ## Pantallas diseñadas en la Fase 0
 
-Las pantallas se diseñaron primero con datos ficticios y se van conectando a la base de datos. **Ya reales:** Hoy (1.3), Hábitos (1.2) y la cuenta en Perfil (1.1). **Aún con datos de ejemplo** (llevan la etiqueta "Diseño de ejemplo"): Amigos y las estadísticas y privacidad de Perfil.
+Las pantallas se diseñaron primero con datos ficticios y se van conectando a la base de datos. **Ya reales:** Hoy (1.3 y 1.4), Hábitos (1.2) y Perfil con nivel, XP y racha (1.1 y 1.4). **Aún con datos de ejemplo** (llevan la etiqueta "Diseño de ejemplo"): Amigos y los ajustes de privacidad de Perfil.
+
+## XP y nivel
+
+- Aviso flotante **"+20 XP"** (ámbar, sube y se desvanece en 1,8 s; gris con "−20 XP" al desmarcar). Clase `animate-xp`.
+- **Subida de nivel:** confeti grande, la mascota baila y aviso "¡Nivel N!". Solo salta cuando el nivel sube mientras estás en la pantalla, no al abrir la app.
+- Tarjeta de racha + barra de nivel arriba de Hoy.

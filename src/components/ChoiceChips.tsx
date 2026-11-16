@@ -20,8 +20,10 @@ export function ChoiceChips<T extends string>({ label, options, value, onChange 
             role="radio"
             aria-checked={selected}
             onClick={() => onChange(option.value)}
-            className={`rounded-full px-4 py-2.5 text-sm font-semibold transition-colors ${
-              selected ? 'bg-brand text-on-brand' : 'bg-surface-2 text-muted hover:text-ink'
+            className={`rounded-full border-2 px-4 py-2.5 text-sm font-bold transition-all active:scale-95 ${
+              selected
+                ? 'border-brand bg-brand-soft text-brand-ink'
+                : 'border-line bg-surface text-muted hover:text-ink'
             }`}
           >
             {option.label}

@@ -1,3 +1,4 @@
+import { PageSkeleton } from '@/components/Skeleton'
 import { useState } from 'react'
 import { Link } from 'react-router'
 import { Card } from '@/components/Card'
@@ -55,14 +56,14 @@ export function HabitsPage() {
   const visible = active.filter((habit) => matchesFilter(habit, filter))
 
   return (
-    <div className="space-y-6">
+    <div className="stagger space-y-6">
       <PageHeader
         title="Hábitos"
         subtitle="Todo lo que quieres sostener en el tiempo"
         action={
           <Link
             to="/habitos/nuevo"
-            className="hidden items-center gap-2 rounded-2xl bg-brand px-4 py-2.5 font-semibold text-on-brand transition-transform active:scale-95 md:flex"
+            className="hidden items-center gap-2 btn-primary px-4 py-2.5 md:flex"
           >
             <Icon name="plus" className="h-5 w-5" />
             Nuevo
@@ -70,7 +71,7 @@ export function HabitsPage() {
         }
       />
 
-      {habits.isPending && <p className="text-muted">Cargando...</p>}
+      {habits.isPending && <PageSkeleton />}
 
       {habits.isError && (
         <Card>
@@ -87,7 +88,7 @@ export function HabitsPage() {
           <p className="mt-1 text-muted">Crea el primero y empieza tu racha.</p>
           <Link
             to="/habitos/nuevo"
-            className="mt-4 inline-flex items-center gap-2 rounded-2xl bg-brand px-5 py-3 font-semibold text-on-brand transition-transform active:scale-95"
+            className="mt-4 inline-flex items-center gap-2 btn-primary px-5 py-3"
           >
             <Icon name="plus" className="h-5 w-5" />
             Crear mi primer hábito

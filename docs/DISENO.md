@@ -98,3 +98,23 @@ Las pantallas se diseñaron primero con datos ficticios y se van conectando a la
 - Aviso flotante **"+20 XP"** (ámbar, sube y se desvanece en 1,8 s; gris con "−20 XP" al desmarcar). Clase `animate-xp`.
 - **Subida de nivel:** confeti grande, la mascota baila y aviso "¡Nivel N!". Solo salta cuando el nivel sube mientras estás en la pantalla, no al abrir la app.
 - Tarjeta de racha + barra de nivel arriba de Hoy.
+
+## Tacto "pegatina" (inspirado en Duolingo)
+
+Inspirado en el estilo de Duolingo (referencia: styles.refero.design), pero con nuestra paleta naranja/crema y el panda; no copiamos su verde ni su tipografía.
+
+- **Superficies planas:** tarjetas con borde de 2 px y sin sombras.
+- **Botones "gordos"** (`btn-primary`, `btn-fab`): relleno plano, borde inferior grueso y mayúsculas; al pulsar se hunden 3 px.
+- **Chips** con borde de 2 px (seleccionado: borde naranja y fondo suave).
+- **Tipografía:** Nunito (redondeada), paquete `@fontsource-variable/nunito`.
+- **Fluidez:** al abrir cada pantalla, sus bloques aparecen uno tras otro subiendo suave (`stagger`). Con "reducir movimiento" activado en el sistema, se desactiva.
+
+## Rediseño crema + turquesa (sustituye a la paleta naranja de arriba)
+
+- **Claro:** fondo crema `#F7F3E9`, tarjetas `#FFFCF5`, turquesa de marca `#8ADBD0`, turquesa oscuro para texto `#1F6F69`, texto `#263B38`.
+- **Oscuro:** fondo verde-azulado `#0F1B1C`, tarjetas `#17282A`, turquesa luminoso `#7FDCCF`.
+- El dorado queda solo para XP y nivel; el verde, para "completado"; el rojo, para errores.
+- Todos los pares texto/fondo pasan de 4,5:1 de contraste.
+- **Tema:** `src/lib/theme.ts`. Selector en Perfil (Claro / Oscuro / Automático), guardado en el dispositivo (`localStorage`, clave `pg-theme`). Se aplica con `data-theme` en `<html>`; un script en `index.html` lo pone antes de pintar para que no haya destello.
+- **Nuevo:** esqueletos de carga (`Skeleton`), contador de XP que sube (`useCountUp`), sombra sutil en tarjetas, foco visible.
+- La mascota (panda) y el icono siguen siendo los tuyos: `Mascot.tsx` es un hueco, basta cambiar `public/mascota.webp`.

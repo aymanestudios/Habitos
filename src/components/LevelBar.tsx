@@ -1,3 +1,4 @@
+import { useCountUp } from '@/lib/useCountUp'
 import { ProgressBar } from './ProgressBar'
 
 type Props = { level: number; xpIntoLevel: number; xpLevelSize: number; className?: string }
@@ -5,6 +6,7 @@ type Props = { level: number; xpIntoLevel: number; xpLevelSize: number; classNam
 // Insignia de nivel + barra de XP hacia el siguiente nivel.
 export function LevelBar({ level, xpIntoLevel, xpLevelSize, className = '' }: Props) {
   const pct = (xpIntoLevel / xpLevelSize) * 100
+  const shownXp = useCountUp(xpIntoLevel) // el XP sube contando, no de golpe
   return (
     <div className={`flex items-center gap-3 ${className}`}>
       <span
@@ -17,7 +19,7 @@ export function LevelBar({ level, xpIntoLevel, xpLevelSize, className = '' }: Pr
         <div className="mb-1 flex justify-between text-xs text-muted">
           <span>Nivel {level}</span>
           <span>
-            {xpIntoLevel} / {xpLevelSize} XP
+            {shownXp} / {xpLevelSize} XP
           </span>
         </div>
         <ProgressBar value={pct} tone="accent" />

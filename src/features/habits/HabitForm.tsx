@@ -115,8 +115,8 @@ export function HabitForm({ initial, submitLabel, startDate, onSubmit }: Props) 
                   aria-label={DAY_NAMES[index]}
                   aria-pressed={selected}
                   onClick={() => toggleDay(day)}
-                  className={`flex h-11 w-11 items-center justify-center rounded-full text-sm font-bold transition-colors ${
-                    selected ? 'bg-brand text-on-brand' : 'bg-surface-2 text-muted'
+                  className={`flex h-11 w-11 items-center justify-center rounded-full border-2 text-sm font-bold transition-all active:scale-90 ${
+                    selected ? 'border-brand bg-brand-soft text-brand-ink' : 'border-line bg-surface text-muted'
                   }`}
                 >
                   {letter}
@@ -221,7 +221,7 @@ export function HabitForm({ initial, submitLabel, startDate, onSubmit }: Props) 
         <button
           type="submit"
           disabled={busy}
-          className="rounded-2xl bg-brand px-6 py-3 font-semibold text-on-brand transition-transform active:scale-95 disabled:opacity-60"
+          className="btn-primary px-6 py-3"
         >
           {busy ? 'Guardando...' : submitLabel}
         </button>

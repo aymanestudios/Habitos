@@ -66,7 +66,7 @@ export function LoginPage() {
 
   function tabClass(tab: Mode) {
     return `rounded-xl py-2.5 text-sm font-semibold transition-colors ${
-      mode === tab ? 'bg-surface text-ink shadow-card' : 'text-muted'
+      mode === tab ? 'bg-surface text-ink shadow-sm' : 'text-muted'
     }`
   }
 
@@ -137,7 +137,7 @@ export function LoginPage() {
             <button
               type="submit"
               disabled={busy}
-              className="w-full rounded-2xl bg-brand px-4 py-3 font-semibold text-on-brand transition-transform active:scale-95 disabled:opacity-60"
+              className="w-full btn-primary px-4 py-3"
             >
               {busy ? 'Un momento...' : mode === 'login' ? 'Entrar' : 'Crear cuenta'}
             </button>

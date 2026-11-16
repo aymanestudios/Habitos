@@ -71,7 +71,7 @@ export function AppLayout() {
 
         <Link
           to="/habitos/nuevo"
-          className="mt-6 flex items-center justify-center gap-2 rounded-2xl bg-brand px-4 py-3 font-semibold text-on-brand transition-transform active:scale-95"
+          className="mt-6 flex items-center justify-center gap-2 btn-primary px-4 py-3"
         >
           <Icon name="plus" className="h-5 w-5" />
           Nuevo hábito
@@ -104,7 +104,7 @@ export function AppLayout() {
           <Link
             to="/habitos/nuevo"
             aria-label="Crear hábito"
-            className="-mt-7 flex h-14 w-14 items-center justify-center justify-self-center rounded-full bg-brand text-on-brand shadow-lg shadow-brand/30 transition-transform active:scale-95"
+            className="-mt-7 justify-self-center btn-fab"
           >
             <Icon name="plus" className="h-7 w-7" />
           </Link>

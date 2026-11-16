@@ -1,3 +1,4 @@
+import { PageSkeleton } from '@/components/Skeleton'
 import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
 import { Card } from '@/components/Card'
@@ -14,7 +15,7 @@ export function EditHabitPage() {
   const [actionError, setActionError] = useState<string | null>(null)
 
   if (habits.isPending) {
-    return <p className="text-muted">Cargando...</p>
+    return <PageSkeleton />
   }
 
   const habit = habits.data?.find((item) => item.id === id)
@@ -61,7 +62,7 @@ export function EditHabitPage() {
             type="button"
             onClick={() => void setArchived(false)}
             disabled={updateHabit.isPending}
-            className="shrink-0 rounded-2xl bg-brand px-4 py-2.5 font-semibold text-on-brand disabled:opacity-60"
+            className="shrink-0 btn-primary px-4 py-2.5"
           >
             Restaurar
           </button>

@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "@fontsource-variable/nunito"; /* tipografía redondeada y amable */
 
 /*
   IDENTIDAD VISUAL (ver docs/DISENO.md)
@@ -7,51 +8,64 @@
 */
 
 :root {
-  --bg: #fff8ef; /* crema */
-  --surface: #ffffff;
-  --surface-2: #f7ebdd;
-  --ink: #42251f; /* marrón oscuro */
-  --muted: #7a5b52;
-  --line: #ebddcc;
-  --brand: #f16b36; /* naranja energético: relleno (botones, anillos) */
-  --brand-ink: #b03f0f; /* el mismo naranja, más oscuro, para TEXTO sobre fondo claro */
-  --on-brand: #42251f; /* texto encima de un relleno naranja */
-  --brand-soft: #ffe5d6;
-  --accent: #f5a524; /* dorado: XP y estrellas */
-  --accent-ink: #8f5400;
-  --accent-soft: #fff0cc;
-  --good: #65b98a; /* verde: objetivos completados */
-  --good-ink: #2a7350;
-  --good-soft: #dcf2e5;
-  --danger: #bc2d32;
-  --danger-soft: #fde6e4;
+  color-scheme: light;
+  --bg: #f7f3e9; /* crema cálido */
+  --surface: #fffcf5;
+  --surface-2: #efeadc;
+  --ink: #263b38;
+  --muted: #5a6a65;
+  --line: #e4dfd1;
+  --brand: #8adbd0; /* turquesa de marca: relleno (botones, anillos) */
+  --brand-edge: #5dbdb0; /* borde inferior de los botones "gordos" */
+  --brand-ink: #1f6f69; /* turquesa oscuro, para TEXTO sobre fondo claro */
+  --on-brand: #173a36; /* texto encima de un relleno turquesa */
+  --brand-soft: #d7f2ec;
+  --accent: #f2b33d; /* dorado: solo XP y nivel */
+  --accent-ink: #7a5200;
+  --accent-soft: #fbebc4;
+  --good: #6cc79a; /* verde: objetivos completados */
+  --good-ink: #22694a;
+  --good-soft: #ddf3e6;
+  --danger: #b93a3a;
+  --danger-soft: #fbe4e1;
+  --card-shadow: 0 1px 2px rgb(38 59 56 / 0.04), 0 8px 24px -16px rgb(38 59 56 / 0.18);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #1f1310;
-    --surface: #2a1a16;
-    --surface-2: #36231d;
-    --ink: #fff3e6;
-    --muted: #c9afa3;
-    --line: #473029;
-    --brand: #f16b36;
-    --brand-ink: #ff8f63;
-    --on-brand: #42251f;
-    --brand-soft: #4a2517;
-    --accent: #ffc15a;
-    --accent-ink: #ffc15a;
-    --accent-soft: #3f2e12;
-    --good: #65b98a;
-    --good-ink: #86d3a7;
-    --good-soft: #1e3a2b;
-    --danger: #ff8a8e;
-    --danger-soft: #432021;
-  }
+/* MODO OSCURO con identidad propia (fondo verde-azulado, turquesa luminoso).
+   Lo activa src/lib/theme.ts poniendo data-theme="dark" en <html> (elección del usuario o del sistema). */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #0f1b1c;
+  --surface: #17282a;
+  --surface-2: #203537;
+  --ink: #e8f3f0;
+  --muted: #9fb5b0;
+  --line: #2b4346;
+  --brand: #7fdccf;
+  --brand-edge: #4ba89c;
+  --brand-ink: #8fe3d7;
+  --on-brand: #0e2b28;
+  --brand-soft: #1c403d;
+  --accent: #ffc866;
+  --accent-ink: #ffc866;
+  --accent-soft: #3c3015;
+  --good: #6cc79a;
+  --good-ink: #8adbb0;
+  --good-soft: #1b3a2c;
+  --danger: #ff9a94;
+  --danger-soft: #45211f;
+  --card-shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 10px 28px -16px rgb(0 0 0 / 0.6);
+}
+
+/* Cambio de tema fluido: solo durante el cambio (theme.ts pone y quita esta clase) */
+:root.theme-switching,
+:root.theme-switching * {
+  transition: background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease !important;
 }
 
 /* "inline" hace que Tailwind use las variables de arriba en lugar de copiar sus valores */
 @theme inline {
+  --shadow-card: var(--card-shadow);
   --color-bg: var(--bg);
   --color-surface: var(--surface);
   --color-surface-2: var(--surface-2);
@@ -73,8 +87,7 @@
 }
 
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
-  --shadow-card: 0 1px 2px rgb(66 37 31 / 0.05), 0 10px 28px -14px rgb(66 37 31 / 0.18);
+  --font-sans: "Nunito Variable", ui-rounded, "SF Pro Rounded", ui-sans-serif, system-ui, -apple-system, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
 }
 
 /* Márgenes de seguridad del iPhone (notch y barra de inicio) */
@@ -120,6 +133,67 @@
   animation: xp-rise 1.8s ease-out forwards;
 }
 
+@keyframes enter {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Los hijos de un contenedor con "stagger" aparecen uno tras otro, subiendo suave (entrada fluida de cada pantalla) */
+@utility stagger {
+  & > * {
+    animation: enter 0.45s cubic-bezier(0.22, 1, 0.36, 1) backwards; /* backwards: al acabar no deja ninguna transformación puesta */
+  }
+  & > *:nth-child(2) { animation-delay: 60ms; }
+  & > *:nth-child(3) { animation-delay: 120ms; }
+  & > *:nth-child(4) { animation-delay: 180ms; }
+  & > *:nth-child(5) { animation-delay: 240ms; }
+  & > *:nth-child(n + 6) { animation-delay: 300ms; }
+}
+
+/* BOTONES "GORDOS": relleno plano con borde inferior grueso; al pulsar se hunden */
+@utility btn-primary {
+  background-color: var(--brand);
+  color: var(--on-brand);
+  border-bottom: 4px solid var(--brand-edge);
+  border-radius: 1rem;
+  font-weight: 800;
+  font-size: 0.875rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-align: center;
+  transition: transform 0.08s, border-bottom-width 0.08s, filter 0.15s;
+  &:hover { filter: brightness(1.05); }
+  &:active { transform: translateY(3px); border-bottom-width: 1px; }
+  &:disabled { opacity: 0.6; }
+}
+
+@utility btn-fab {
+  display: flex;
+  height: 3.5rem;
+  width: 3.5rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background-color: var(--brand);
+  color: var(--on-brand);
+  border-bottom: 4px solid var(--brand-edge);
+  transition: transform 0.08s, border-bottom-width 0.08s;
+  &:active { transform: translateY(3px); border-bottom-width: 1px; }
+}
+
+@keyframes shimmer {
+  0% { background-position: 150% 0; }
+  100% { background-position: -50% 0; }
+}
+
+/* Bloque gris que "respira" mientras cargan los datos */
+@utility skeleton {
+  border-radius: 1rem;
+  background: linear-gradient(90deg, var(--surface-2) 25%, var(--line) 50%, var(--surface-2) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+}
+
 @utility animate-pop {
   animation: pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
@@ -135,6 +209,11 @@
 @layer base {
   html {
     -webkit-tap-highlight-color: transparent;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--brand-ink);
+    outline-offset: 2px;
   }
 
   body {

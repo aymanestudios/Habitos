@@ -1,14 +1,24 @@
 import { Avatar } from '@/components/Avatar'
 import { Card } from '@/components/Card'
+import { ChoiceChips } from '@/components/ChoiceChips'
 import { Icon } from '@/components/Icon'
 import { LevelBar } from '@/components/LevelBar'
 import { PageHeader } from '@/components/PageHeader'
+import { useTheme } from '@/lib/theme'
+import type { ThemeChoice } from '@/lib/theme'
 import { AccountCard } from './AccountCard'
 import { freezesText, xpToNext } from './progressRules'
 import { useProfile } from './useProfile'
 import { useProgress } from './useProgress'
 
+const THEMES: { value: ThemeChoice; label: string }[] = [
+  { value: 'light', label: 'Claro' },
+  { value: 'dark', label: 'Oscuro' },
+  { value: 'auto', label: 'Automático' },
+]
+
 export function ProfilePage() {
+  const [theme, setTheme] = useTheme()
   const profile = useProfile()
   const progress = useProgress()
 
@@ -21,7 +31,7 @@ export function ProfilePage() {
     : []
 
   return (
-    <div className="space-y-6">
+    <div className="stagger space-y-6">
       <PageHeader title="Perfil" />
 
       {profile.data && (
@@ -72,6 +82,12 @@ export function ProfilePage() {
           </Card>
         </>
       )}
+
+      <Card>
+        <h2 className="text-lg font-bold">Apariencia</h2>
+        <p className="mb-3 mt-1 text-sm text-muted">Automático sigue el modo de tu dispositivo.</p>
+        <ChoiceChips label="Tema" options={THEMES} value={theme} onChange={setTheme} />
+      </Card>
 
       <AccountCard />
     </div>

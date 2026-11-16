@@ -12,7 +12,7 @@ const soon = [
 
 export function FriendsPage() {
   return (
-    <div className="space-y-6">
+    <div className="stagger space-y-6">
       <PageHeader title="Amigos" subtitle="Constancia en equipo" />
 
       <Card className="flex flex-col items-center text-center">

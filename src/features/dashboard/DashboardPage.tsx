@@ -6,6 +6,7 @@ import { HabitRow } from '@/components/HabitRow'
 import { Icon } from '@/components/Icon'
 import { LevelBar } from '@/components/LevelBar'
 import { Mascot } from '@/components/Mascot'
+import { PageSkeleton } from '@/components/Skeleton'
 import { ProgressRing } from '@/components/ProgressRing'
 // Hoy es la pantalla que junta cosas de otras partes, por eso (y solo por eso) importa de habits y profile.
 import { buildDayItems, dayMessage, isDailyKind, itemMeta, summarizeDay } from '@/features/habits/dayRules'
@@ -125,7 +126,7 @@ export function DashboardPage() {
   }
 
   if (!profile.data || !habits.data || !logs.data) {
-    return <p className="text-muted">Cargando...</p>
+    return <PageSkeleton />
   }
 
   const firstName = profile.data.display_name.split(' ')[0]
@@ -166,7 +167,7 @@ export function DashboardPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <>
       {toast && (
         <div
           key={toast.id}
@@ -179,91 +180,93 @@ export function DashboardPage() {
         </div>
       )}
 
-      <header className="flex items-start justify-between gap-4">
-        <div className="min-w-0">
-          <p className="text-sm text-muted first-letter:uppercase">{dateLabel}</p>
-          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
-            {greeting}, {firstName}
-          </h1>
-        </div>
-        {/* La mascota flota despacito; al completar el día baila */}
-        <div className="animate-float shrink-0">
-          <Mascot className={`h-20 origin-bottom ${celebrating ? 'animate-tada' : ''}`} />
-        </div>
-      </header>
+      <div className="stagger space-y-6">
+        <header className="flex items-start justify-between gap-4">
+          <div className="min-w-0">
+            <p className="text-sm text-muted first-letter:uppercase">{dateLabel}</p>
+            <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+              {greeting}, {firstName}
+            </h1>
+          </div>
+          {/* La mascota flota despacito; al completar el día baila */}
+          <div className="animate-float shrink-0">
+            <Mascot className={`h-20 origin-bottom ${celebrating ? 'animate-tada' : ''}`} />
+          </div>
+        </header>
 
-      {!hasHabits ? (
-        <Card className="flex flex-col items-center text-center">
-          <Mascot className="mb-2 h-32" />
-          <h2 className="text-lg font-bold">Aún no tienes hábitos</h2>
-          <p className="mt-1 text-muted">Crea el primero y empieza tu racha.</p>
-          <Link
-            to="/habitos/nuevo"
-            className="mt-4 inline-flex items-center gap-2 rounded-2xl bg-brand px-5 py-3 font-semibold text-on-brand transition-transform active:scale-95"
-          >
-            <Icon name="plus" className="h-5 w-5" />
-            Crear mi primer hábito
-          </Link>
-        </Card>
-      ) : (
-        <>
-          <ChoiceChips label="Día" options={VIEWS} value={view} onChange={setView} />
+        {!hasHabits ? (
+          <Card className="flex flex-col items-center text-center">
+            <Mascot className="mb-2 h-32" />
+            <h2 className="text-lg font-bold">Aún no tienes hábitos</h2>
+            <p className="mt-1 text-muted">Crea el primero y empieza tu racha.</p>
+            <Link
+              to="/habitos/nuevo"
+              className="mt-4 inline-flex items-center gap-2 btn-primary px-5 py-3"
+            >
+              <Icon name="plus" className="h-5 w-5" />
+              Crear mi primer hábito
+            </Link>
+          </Card>
+        ) : (
+          <>
+            <ChoiceChips label="Día" options={VIEWS} value={view} onChange={setView} />
 
-          {addProgress.isError && (
-            <p className="rounded-2xl bg-danger-soft px-4 py-3 text-sm text-danger" role="alert">
-              {friendlyProgressError(errorMessage(addProgress.error))}
-            </p>
-          )}
+            {addProgress.isError && (
+              <p className="rounded-2xl bg-danger-soft px-4 py-3 text-sm text-danger" role="alert">
+                {friendlyProgressError(errorMessage(addProgress.error))}
+              </p>
+            )}
 
-          <div className={`grid gap-6 ${weeklyItems.length > 0 ? 'lg:grid-cols-3' : ''}`}>
-            <div className={`space-y-6 ${weeklyItems.length > 0 ? 'lg:col-span-2' : ''}`}>
-              {progress.data && (
-                <Card className="grid gap-4 sm:grid-cols-2 sm:items-center">
-                  <div className="flex items-center gap-3">
-                    <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-brand-soft text-brand-ink">
-                      <Icon name="flame" className="h-7 w-7" />
-                    </span>
-                    <div className="min-w-0">
-                      <p className="text-lg font-bold leading-tight">{streakLabel(progress.data.current_streak)}</p>
-                      <p className="text-sm text-muted">{streakHint(progress.data)}</p>
+            <div className={`grid gap-6 ${weeklyItems.length > 0 ? 'lg:grid-cols-3' : ''}`}>
+              <div className={`space-y-6 ${weeklyItems.length > 0 ? 'lg:col-span-2' : ''}`}>
+                {progress.data && (
+                  <Card className="grid gap-4 sm:grid-cols-2 sm:items-center">
+                    <div className="flex items-center gap-3">
+                      <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-brand-soft text-brand-ink">
+                        <Icon name="flame" className="h-7 w-7" />
+                      </span>
+                      <div className="min-w-0">
+                        <p className="text-lg font-bold leading-tight">{streakLabel(progress.data.current_streak)}</p>
+                        <p className="text-sm text-muted">{streakHint(progress.data)}</p>
+                      </div>
                     </div>
+                    <LevelBar
+                      level={progress.data.level}
+                      xpIntoLevel={progress.data.xp_into_level}
+                      xpLevelSize={progress.data.xp_level_size}
+                    />
+                  </Card>
+                )}
+
+                <Card className="flex items-center gap-5">
+                  <ProgressRing value={summary.percent} size={112} stroke={11} tone={allDone ? 'good' : 'brand'}>
+                    <span className="text-2xl font-bold">{summary.total === 0 ? '—' : `${summary.percent}%`}</span>
+                    <span className="text-xs text-muted">{isToday ? 'de hoy' : 'de ayer'}</span>
+                  </ProgressRing>
+                  <div className="min-w-0">
+                    <h2 className="text-lg font-bold">{message.title}</h2>
+                    <p className="mt-1 text-muted">{message.text}</p>
                   </div>
-                  <LevelBar
-                    level={progress.data.level}
-                    xpIntoLevel={progress.data.xp_into_level}
-                    xpLevelSize={progress.data.xp_level_size}
-                  />
                 </Card>
-              )}
 
-              <Card className="flex items-center gap-5">
-                <ProgressRing value={summary.percent} size={112} stroke={11} tone={allDone ? 'good' : 'brand'}>
-                  <span className="text-2xl font-bold">{summary.total === 0 ? '—' : `${summary.percent}%`}</span>
-                  <span className="text-xs text-muted">{isToday ? 'de hoy' : 'de ayer'}</span>
-                </ProgressRing>
-                <div className="min-w-0">
-                  <h2 className="text-lg font-bold">{message.title}</h2>
-                  <p className="mt-1 text-muted">{message.text}</p>
-                </div>
-              </Card>
+                {dailyItems.length > 0 && (
+                  <Card>
+                    <h2 className="mb-1 text-lg font-bold">{isToday ? 'Tus hábitos de hoy' : 'Tus hábitos de ayer'}</h2>
+                    <div className="divide-y divide-line">{dailyItems.map(renderRow)}</div>
+                  </Card>
+                )}
+              </div>
 
-              {dailyItems.length > 0 && (
-                <Card>
-                  <h2 className="mb-1 text-lg font-bold">{isToday ? 'Tus hábitos de hoy' : 'Tus hábitos de ayer'}</h2>
-                  <div className="divide-y divide-line">{dailyItems.map(renderRow)}</div>
+              {weeklyItems.length > 0 && (
+                <Card className="self-start">
+                  <h2 className="mb-1 text-lg font-bold">Esta semana</h2>
+                  <div className="divide-y divide-line">{weeklyItems.map(renderRow)}</div>
                 </Card>
               )}
             </div>
-
-            {weeklyItems.length > 0 && (
-              <Card className="self-start">
-                <h2 className="mb-1 text-lg font-bold">Esta semana</h2>
-                <div className="divide-y divide-line">{weeklyItems.map(renderRow)}</div>
-              </Card>
-            )}
-          </div>
-        </>
-      )}
+          </>
+        )}
     </div>
+    </>
   )
 }

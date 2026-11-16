@@ -8,6 +8,7 @@ import { PageHeader } from '@/components/PageHeader'
 import { PageSkeleton } from '@/components/Skeleton'
 import { TextField } from '@/components/TextField'
 import { useNow } from '@/lib/useNow'
+import { PushCard } from './PushCard'
 import {
   REMINDER_NOTE_MAX,
   REMINDER_TITLE_MAX,
@@ -192,6 +193,8 @@ export function RemindersPage() {
           )
         }
       />
+
+      <PushCard />
 
       {editing && (
         <Card>

@@ -4,6 +4,8 @@
 export const env = {
   supabaseUrl: (import.meta.env.VITE_SUPABASE_URL ?? '').trim(),
   supabaseAnonKey: (import.meta.env.VITE_SUPABASE_ANON_KEY ?? '').trim(),
+  // Clave PÚBLICA de los avisos push (VAPID). Es pública: la privada va solo en Supabase.
+  vapidPublicKey: (import.meta.env.VITE_VAPID_PUBLIC_KEY ?? '').trim(),
 }
 
 // Los valores de ejemplo de .env.example no cuentan como configurados.

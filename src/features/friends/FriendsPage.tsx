@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { Avatar } from '@/components/Avatar'
 import { Card } from '@/components/Card'
+import { ChallengesCard } from '@/features/challenges/ChallengesCard'
 import { Icon } from '@/components/Icon'
 import { Mascot } from '@/components/Mascot'
 import { PageHeader } from '@/components/PageHeader'
@@ -264,6 +265,8 @@ export function FriendsPage() {
           </ol>
         </Card>
       )}
+
+      <ChallengesCard friends={overview.ranking.filter((row) => row.kind === 'friend')} />
 
       {overview.friendCount > 0 && (
         <Card>

@@ -2,7 +2,7 @@
 // Regla de oro: NUNCA toca las llamadas a Supabase (otro dominio) ni nada que no sea GET.
 // Así los datos (hábitos, XP, sesión) siempre vienen del servidor y no se quedan "viejos".
 // Si cambias este archivo, sube el número de VERSION para limpiar la caché antigua.
-const VERSION = 'v2'
+const VERSION = 'v3'
 const SHELL = `pg-shell-${VERSION}`
 const STATIC = `pg-static-${VERSION}`
 
@@ -65,4 +65,40 @@ self.addEventListener('fetch', (event) => {
   } else {
     event.respondWith(staleWhileRevalidate(request)) // iconos, mascota, manifest
   }
+})
+
+// AVISOS PUSH: llegan desde la Edge Function send-reminders (0009_push.sql).
+self.addEventListener('push', (event) => {
+  let data = {}
+  try {
+    data = event.data ? event.data.json() : {}
+  } catch {
+    data = { body: event.data ? event.data.text() : '' }
+  }
+  event.waitUntil(
+    self.registration.showNotification(data.title || 'Progress&Go', {
+      body: data.body || 'Tienes un recordatorio.',
+      icon: '/icon-192.png',
+      badge: '/icon-192.png',
+      tag: data.tag,
+      data: { url: data.url || '/recordatorios' },
+    }),
+  )
+})
+
+// Al tocar el aviso: abre la app (o la trae al frente) en Recordatorios.
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close()
+  const url = (event.notification.data && event.notification.data.url) || '/'
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((list) => {
+      for (const client of list) {
+        if (new URL(client.url).origin === self.location.origin && 'focus' in client) {
+          client.navigate(url)
+          return client.focus()
+        }
+      }
+      return self.clients.openWindow(url)
+    }),
+  )
 })

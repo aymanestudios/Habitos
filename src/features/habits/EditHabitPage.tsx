@@ -4,6 +4,7 @@ import { Link, useNavigate, useParams } from 'react-router'
 import { Card } from '@/components/Card'
 import { PageHeader } from '@/components/PageHeader'
 import { HabitForm } from './HabitForm'
+import { HabitHistoryCard } from './HabitHistoryCard'
 import { errorMessage, formToPayload, friendlyHabitError, habitToForm } from './habitRules'
 import { useHabits, useUpdateHabit } from './useHabits'
 
@@ -53,7 +54,7 @@ export function EditHabitPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Editar hábito" />
+      <PageHeader title={habit.title} subtitle="Historial y ajustes" />
 
       {archived && (
         <Card className="flex items-center justify-between gap-4">
@@ -68,6 +69,8 @@ export function EditHabitPage() {
           </button>
         </Card>
       )}
+
+      <HabitHistoryCard habit={habit} />
 
       <Card>
         <HabitForm

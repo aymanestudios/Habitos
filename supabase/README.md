@@ -15,3 +15,5 @@ Siguen `docs/AJUSTES.md`. Las fases siguientes (XP y racha, amigos) añadirán m
 En la Fase 0 solo creas el proyecto en supabase.com y copias su URL y su clave pública en `.env.local`.
 
 - `0007_activity_categories.sql`: categorías de hábitos, actividad de amigos y reacciones (🔥 👏 💪 🎉). El nombre de un hábito solo se ve si tiene visibilidad "Mis amigos".
+- `0008_challenges.sql`: retos cooperativos semanales (tú + un amigo, meta de XP conjunta). Solo se crean con amigos aceptados.
+- `0009_push.sql`: avisos al móvil (suscripciones, cron cada minuto y secreto en Vault). Necesita la Edge Function `functions/send-reminders` y las claves VAPID: ver docs/AVISOS.md.

@@ -1,9 +1,9 @@
 type Tone = 'brand' | 'accent' | 'good'
 
 const tones: Record<Tone, string> = {
-  brand: 'bg-brand-soft text-brand',
-  accent: 'bg-accent-soft text-accent',
-  good: 'bg-good-soft text-good',
+  brand: 'bg-brand-soft text-brand-ink',
+  accent: 'bg-accent-soft text-accent-ink',
+  good: 'bg-good-soft text-good-ink',
 }
 
 type Props = { name: string; tone?: Tone; className?: string }

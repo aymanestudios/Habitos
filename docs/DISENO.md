@@ -7,7 +7,7 @@ Objetivo: moderna, premium, minimalista y juvenil. Transmite **productividad, pr
 ## Principios
 
 1. **Mucho aire, pocas cosas.** Una idea por tarjeta.
-2. **El color significa algo.** Violeta = tu progreso y acciones. Naranja = racha y XP. Verde = hecho. Rojo solo para errores.
+2. **El color significa algo.** Naranja = tu identidad, acciones y progreso. Dorado = XP y estrellas. Verde = hecho. Rojo solo para errores.
 3. **Movimiento con intención.** Barras y anillos se llenan con una transición suave (0,7 s). Se desactivan si el móvil tiene "reducir movimiento".
 4. **Tono que anima.** Un mal día se responde con "mañana seguimos", nunca con un regaño.
 5. **Pulgar primero.** La acción principal (crear o marcar) está abajo, al alcance.
@@ -15,23 +15,36 @@ Objetivo: moderna, premium, minimalista y juvenil. Transmite **productividad, pr
 ## Colores (claro / oscuro)
 
 Definidos una sola vez en `src/styles/index.css`. Cambiar un valor ahí cambia toda la app.
+Paleta de la mascota: naranja energético `#F16B36`, crema `#FFF8EF`, marrón oscuro `#42251F` y verde `#65B98A`.
 
 | Nombre (clase Tailwind) | Claro | Oscuro | Uso |
 | --- | --- | --- | --- |
-| `bg` | `#F6F5FB` | `#0E0D14` | Fondo de la app |
-| `surface` | `#FFFFFF` | `#17151F` | Tarjetas |
-| `surface-2` | `#EEEDF7` | `#1F1C2A` | Fondos suaves, carriles de barras |
-| `ink` | `#15131F` | `#F2F1F8` | Texto principal |
-| `muted` | `#6B6880` | `#9C98B3` | Texto secundario |
-| `line` | `#E4E2EF` | `#2A2736` | Bordes y separadores |
-| `brand` | `#6D5EF5` | `#8B7FFF` | Acción principal y progreso |
-| `accent` | `#F26F1D` | `#FF9A57` | Racha y XP |
-| `good` | `#16A864` | `#3CCB86` | Completado |
-| `danger` | `#E5484D` | `#FF7A7F` | Errores |
+| `bg` | `#FFF8EF` | `#1F1310` | Fondo de la app (crema / marrón) |
+| `surface` | `#FFFFFF` | `#2A1A16` | Tarjetas |
+| `surface-2` | `#F7EBDD` | `#36231D` | Fondos suaves, carriles de barras |
+| `ink` | `#42251F` | `#FFF3E6` | Texto principal |
+| `muted` | `#7A5B52` | `#C9AFA3` | Texto secundario |
+| `line` | `#EBDDCC` | `#473029` | Bordes y separadores |
+| `brand` | `#F16B36` | `#F16B36` | **Relleno** naranja: botones, anillos, barras |
+| `brand-ink` | `#B03F0F` | `#FF8F63` | **Texto** naranja (enlaces, pestaña activa) |
+| `on-brand` | `#42251F` | `#42251F` | Texto encima de un relleno naranja |
+| `accent` / `accent-ink` | `#F5A524` / `#8F5400` | `#FFC15A` | XP y estrellas (relleno / texto) |
+| `good` / `good-ink` | `#65B98A` / `#2A7350` | `#65B98A` / `#86D3A7` | Completado (relleno / texto) |
+| `danger` | `#BC2D32` | `#FF8A8E` | Errores |
+
+Por qué hay pares "relleno" y "texto": el naranja puro `#F16B36` luce muy bien como fondo, pero como letra sobre crema
+se lee mal (contraste 2,9). Para letras se usa su versión más oscura (`-ink`), que pasa el mínimo de legibilidad (4,5).
+Por la misma razón, el texto de los botones naranjas es marrón y no blanco (4,55 frente a 3,05).
 
 Cada color de acento tiene su versión `-soft` para fondos (`brand-soft`, `accent-soft`, `good-soft`, `danger-soft`).
 
 El modo oscuro sigue el ajuste del móvil o del ordenador (no hay interruptor todavía).
+
+## Mascota e iconos
+
+- Mascota: panda rojo, `public/mascota.webp` (sin fondo, 600 px, 47 KB). Se pinta con `<Mascot />` en el login y en las pantallas vacías.
+- Icono de la app: la cabeza del panda sobre azul marino, `public/icon-512.png` (y `icon-192.png`, `apple-touch-icon.png`, `favicon.png`).
+- Los originales los aportó el autor; para cambiar la mascota basta con reemplazar `mascota.webp` por otra imagen con fondo transparente.
 
 ## Tipografía y formas
 

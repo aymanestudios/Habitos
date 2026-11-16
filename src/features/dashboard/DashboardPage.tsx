@@ -40,7 +40,7 @@ export function DashboardPage() {
           <p className="text-sm text-muted first-letter:uppercase">{dateLabel}</p>
           <h1 className="text-3xl font-bold tracking-tight">{greeting}, Alex</h1>
         </div>
-        <div className="flex items-center gap-1.5 rounded-full bg-accent-soft px-3.5 py-2 font-bold text-accent">
+        <div className="flex items-center gap-1.5 rounded-full bg-accent-soft px-3.5 py-2 font-bold text-accent-ink">
           <Icon name="flame" className="h-5 w-5" />
           12
         </div>
@@ -63,7 +63,7 @@ export function DashboardPage() {
         <Card>
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-bold">Nivel 7</h2>
-            <span className="flex items-center gap-1 text-sm font-semibold text-accent">
+            <span className="flex items-center gap-1 text-sm font-semibold text-accent-ink">
               <Icon name="bolt" className="h-4 w-4" />
               340 XP
             </span>

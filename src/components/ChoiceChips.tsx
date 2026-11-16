@@ -21,7 +21,7 @@ export function ChoiceChips<T extends string>({ label, options, value, onChange 
             aria-checked={selected}
             onClick={() => onChange(option.value)}
             className={`rounded-full px-4 py-2.5 text-sm font-semibold transition-colors ${
-              selected ? 'bg-brand text-white' : 'bg-surface-2 text-muted hover:text-ink'
+              selected ? 'bg-brand text-on-brand' : 'bg-surface-2 text-muted hover:text-ink'
             }`}
           >
             {option.label}

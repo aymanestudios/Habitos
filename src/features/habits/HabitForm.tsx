@@ -116,7 +116,7 @@ export function HabitForm({ initial, submitLabel, startDate, onSubmit }: Props) 
                   aria-pressed={selected}
                   onClick={() => toggleDay(day)}
                   className={`flex h-11 w-11 items-center justify-center rounded-full text-sm font-bold transition-colors ${
-                    selected ? 'bg-brand text-white' : 'bg-surface-2 text-muted'
+                    selected ? 'bg-brand text-on-brand' : 'bg-surface-2 text-muted'
                   }`}
                 >
                   {letter}
@@ -143,7 +143,7 @@ export function HabitForm({ initial, submitLabel, startDate, onSubmit }: Props) 
               type="button"
               aria-label="Una vez más"
               onClick={() => update('weeklyTarget', Math.min(7, values.weeklyTarget + 1))}
-              className="flex h-11 w-11 items-center justify-center rounded-full bg-surface-2 text-brand"
+              className="flex h-11 w-11 items-center justify-center rounded-full bg-surface-2 text-brand-ink"
             >
               <Icon name="plus" className="h-5 w-5" />
             </button>
@@ -221,7 +221,7 @@ export function HabitForm({ initial, submitLabel, startDate, onSubmit }: Props) 
         <button
           type="submit"
           disabled={busy}
-          className="rounded-2xl bg-brand px-6 py-3 font-semibold text-white transition-transform active:scale-95 disabled:opacity-60"
+          className="rounded-2xl bg-brand px-6 py-3 font-semibold text-on-brand transition-transform active:scale-95 disabled:opacity-60"
         >
           {busy ? 'Guardando...' : submitLabel}
         </button>

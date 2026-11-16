@@ -34,7 +34,7 @@ export function ProfilePage() {
           <h2 className="text-xl font-bold">Alex</h2>
           <p className="text-muted">@alex</p>
           <div className="mt-3 flex items-center gap-3">
-            <span className="flex items-center gap-1 text-sm font-semibold text-accent">
+            <span className="flex items-center gap-1 text-sm font-semibold text-accent-ink">
               <Icon name="bolt" className="h-4 w-4" />
               Nivel 7
             </span>
@@ -54,7 +54,7 @@ export function ProfilePage() {
 
       <Card>
         <h2 className="mb-1 flex items-center gap-2 text-lg font-bold">
-          <Icon name="shield" className="h-5 w-5 text-brand" />
+          <Icon name="shield" className="h-5 w-5 text-brand-ink" />
           Privacidad
         </h2>
         <ul className="divide-y divide-line">

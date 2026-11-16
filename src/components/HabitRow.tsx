@@ -14,7 +14,7 @@ export function HabitRow({ title, meta, done, progress }: Props) {
     <div className="flex items-center gap-4 py-3">
       <span
         className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full border-2 ${
-          done ? 'border-brand bg-brand text-white' : 'border-line text-transparent'
+          done ? 'border-brand bg-brand text-on-brand' : 'border-line text-transparent'
         }`}
       >
         <Icon name="check" className="h-5 w-5" />

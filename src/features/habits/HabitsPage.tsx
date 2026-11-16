@@ -3,6 +3,7 @@ import { Link } from 'react-router'
 import { Card } from '@/components/Card'
 import { ChoiceChips } from '@/components/ChoiceChips'
 import { Icon } from '@/components/Icon'
+import { Mascot } from '@/components/Mascot'
 import { PageHeader } from '@/components/PageHeader'
 import { DIFFICULTY_LABEL, habitMeta } from './habitRules'
 import type { Habit } from './habitRules'
@@ -29,7 +30,7 @@ function HabitListRow({ habit, muted = false }: { habit: Habit; muted?: boolean 
       to={`/habitos/${habit.id}/editar`}
       className={`flex items-center gap-4 py-3 transition-opacity hover:opacity-80 ${muted ? 'opacity-60' : ''}`}
     >
-      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand-soft text-brand">
+      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand-soft text-brand-ink">
         <Icon name="habits" className="h-5 w-5" />
       </span>
       <div className="min-w-0 flex-1">
@@ -61,7 +62,7 @@ export function HabitsPage() {
         action={
           <Link
             to="/habitos/nuevo"
-            className="hidden items-center gap-2 rounded-2xl bg-brand px-4 py-2.5 font-semibold text-white transition-transform active:scale-95 md:flex"
+            className="hidden items-center gap-2 rounded-2xl bg-brand px-4 py-2.5 font-semibold text-on-brand transition-transform active:scale-95 md:flex"
           >
             <Icon name="plus" className="h-5 w-5" />
             Nuevo
@@ -80,12 +81,13 @@ export function HabitsPage() {
       )}
 
       {habits.isSuccess && active.length === 0 && (
-        <Card className="text-center">
+        <Card className="flex flex-col items-center text-center">
+          <Mascot className="mb-2 h-32" />
           <h2 className="text-lg font-bold">Aún no tienes hábitos</h2>
           <p className="mt-1 text-muted">Crea el primero y empieza tu racha.</p>
           <Link
             to="/habitos/nuevo"
-            className="mt-4 inline-flex items-center gap-2 rounded-2xl bg-brand px-5 py-3 font-semibold text-white transition-transform active:scale-95"
+            className="mt-4 inline-flex items-center gap-2 rounded-2xl bg-brand px-5 py-3 font-semibold text-on-brand transition-transform active:scale-95"
           >
             <Icon name="plus" className="h-5 w-5" />
             Crear mi primer hábito

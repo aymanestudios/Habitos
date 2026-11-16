@@ -16,7 +16,7 @@ function MobileTab({ item }: { item: NavItem }) {
       end={item.end}
       className={({ isActive }) =>
         `flex flex-col items-center gap-1 py-2.5 text-xs font-semibold transition-colors ${
-          isActive ? 'text-brand' : 'text-muted'
+          isActive ? 'text-brand-ink' : 'text-muted'
         }`
       }
     >
@@ -33,7 +33,7 @@ function SidebarLink({ item }: { item: NavItem }) {
       end={item.end}
       className={({ isActive }) =>
         `flex items-center gap-3 rounded-2xl px-4 py-3 font-semibold transition-colors ${
-          isActive ? 'bg-brand-soft text-brand' : 'text-muted hover:bg-surface-2 hover:text-ink'
+          isActive ? 'bg-brand-soft text-brand-ink' : 'text-muted hover:bg-surface-2 hover:text-ink'
         }`
       }
     >
@@ -52,9 +52,14 @@ export function AppLayout() {
       {/* Barra lateral: solo escritorio */}
       <aside className="fixed inset-y-0 left-0 hidden w-64 flex-col border-r border-line bg-surface px-4 py-6 md:flex">
         <div className="mb-8 flex items-center gap-3 px-2">
-          <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-brand text-white">
-            <Icon name="flame" />
-          </span>
+          <img
+            src="/icon-192.png"
+            alt=""
+            aria-hidden="true"
+            width={40}
+            height={40}
+            className="h-10 w-10 rounded-2xl"
+          />
           <span className="text-xl font-bold tracking-tight">{APP_NAME}</span>
         </div>
 
@@ -66,7 +71,7 @@ export function AppLayout() {
 
         <Link
           to="/habitos/nuevo"
-          className="mt-6 flex items-center justify-center gap-2 rounded-2xl bg-brand px-4 py-3 font-semibold text-white transition-transform active:scale-95"
+          className="mt-6 flex items-center justify-center gap-2 rounded-2xl bg-brand px-4 py-3 font-semibold text-on-brand transition-transform active:scale-95"
         >
           <Icon name="plus" className="h-5 w-5" />
           Nuevo hábito
@@ -99,7 +104,7 @@ export function AppLayout() {
           <Link
             to="/habitos/nuevo"
             aria-label="Crear hábito"
-            className="-mt-7 flex h-14 w-14 items-center justify-center justify-self-center rounded-full bg-brand text-white shadow-lg shadow-brand/30 transition-transform active:scale-95"
+            className="-mt-7 flex h-14 w-14 items-center justify-center justify-self-center rounded-full bg-brand text-on-brand shadow-lg shadow-brand/30 transition-transform active:scale-95"
           >
             <Icon name="plus" className="h-7 w-7" />
           </Link>

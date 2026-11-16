@@ -10,7 +10,7 @@ import { supabase } from '@/lib/supabase'
 type State = 'ok' | 'error' | 'loading' | 'skipped'
 
 const badge: Record<State, string> = {
-  ok: 'bg-good-soft text-good',
+  ok: 'bg-good-soft text-good-ink',
   error: 'bg-danger-soft text-danger',
   loading: 'bg-surface-2 text-muted',
   skipped: 'bg-surface-2 text-muted',

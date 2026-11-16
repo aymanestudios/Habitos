@@ -25,7 +25,7 @@ export function EditHabitPage() {
         <PageHeader title="Hábito no encontrado" />
         <Card>
           <p className="text-muted">Este hábito no existe o no es tuyo.</p>
-          <Link to="/habitos" className="mt-4 inline-block font-semibold text-brand">
+          <Link to="/habitos" className="mt-4 inline-block font-semibold text-brand-ink">
             Volver a Hábitos
           </Link>
         </Card>
@@ -61,7 +61,7 @@ export function EditHabitPage() {
             type="button"
             onClick={() => void setArchived(false)}
             disabled={updateHabit.isPending}
-            className="shrink-0 rounded-2xl bg-brand px-4 py-2.5 font-semibold text-white disabled:opacity-60"
+            className="shrink-0 rounded-2xl bg-brand px-4 py-2.5 font-semibold text-on-brand disabled:opacity-60"
           >
             Restaurar
           </button>

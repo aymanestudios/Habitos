@@ -13,7 +13,7 @@ import { TourScene } from './TourScenes'
 // Bienvenida → 6 pasos → final con confeti. Se avanza con botones, flechas del teclado o deslizando.
 // Con "reducir movimiento" del sistema todo aparece sin animaciones (regla global en index.css).
 
-type Props = {
+export type TourProps = {
   replay: boolean // abierto a mano desde Perfil
   onSkip: () => void
   onDone: () => void
@@ -254,7 +254,7 @@ function FinalScreen({ onEnter, replay }: { onEnter: () => void; replay: boolean
   )
 }
 
-export function OnboardingTour({ replay, onSkip, onDone }: Props) {
+export function OnboardingTour({ replay, onSkip, onDone }: TourProps) {
   const [screen, setScreen] = useState(0)
   const [direction, setDirection] = useState<'next' | 'prev'>('next')
   const [closing, setClosing] = useState(false)

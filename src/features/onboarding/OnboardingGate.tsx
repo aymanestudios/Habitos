@@ -1,10 +1,12 @@
 import { lazy, Suspense } from 'react'
+import type { ComponentType } from 'react'
 import { useNavigate } from 'react-router'
+import type { TourProps } from './OnboardingTour'
 import { useOnboarding } from './useOnboarding'
 
 // El tutorial se descarga aparte (solo lo necesitan las cuentas nuevas).
 // Si la descarga fallase, no se enseña: nunca debe impedir usar la app.
-const OnboardingTour = lazy(() =>
+const OnboardingTour = lazy<ComponentType<TourProps>>(() =>
   import('./OnboardingTour')
     .then((module) => ({ default: module.OnboardingTour }))
     .catch(() => ({ default: () => null })),

@@ -39,3 +39,13 @@ el color de la siguiente etapa, hasta un 75 %; el resto llega al desbloquearla, 
 ## Probar
 Necesitas dos cuentas amigas: Amigos → Rachas compartidas → Nueva → elegir amigo.
 Marcad los dos vuestros hábitos de hoy → la tarjeta debe mostrar "¡Racha mantenida!" y 1 día.
+
+## Que no se apague (0014_streak_nudges.sql)
+- **En el inicio**: las rachas compartidas salen arriba del todo en "Hoy" (con "En peligro" si alguno no ha cumplido).
+- **Dar un toque**: si tu amigo aún no ha cumplido, le mandas un aviso al móvil
+  ("🔥 Aymane te da un toque · ¡Que se apaga vuestra racha!"). Uno al día por persona y racha.
+  Si no tiene los avisos activados, lo verá en la tarjeta ("Aymane te ha dado un toque").
+- **Aviso automático a las 20:00** (hora de cada uno): si hay racha (1+ días) y aún no has cumplido.
+  Una comprobación al día por persona y racha.
+- Los envía la Edge Function `send-reminders` (cada minuto) con `claim_push_queue`
+  (recordatorios + toques + rachas en peligro). Cada aviso se marca como enviado al salir.

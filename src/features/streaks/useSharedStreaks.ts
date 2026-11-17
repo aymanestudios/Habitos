@@ -44,3 +44,15 @@ export function useEndSharedStreak() {
     onSettled: refresh,
   })
 }
+
+// "Dar un toque": le llega un aviso al móvil a tu amigo (si tiene los avisos activados).
+export function useNudge() {
+  const refresh = useRefresh()
+  return useMutation({
+    mutationFn: async (streakId: string) => {
+      const { error } = await supabase.rpc('nudge_partner', { p_streak: streakId })
+      if (error) throw error
+    },
+    onSettled: refresh,
+  })
+}

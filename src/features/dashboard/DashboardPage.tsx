@@ -10,6 +10,7 @@ import { MOOD_ANIMATION, mascotMood } from './mascotRules'
 import { completesHabit } from '@/features/posts/postRules'
 import { SharePostSheet } from '@/features/posts/SharePostSheet'
 import { useMyRecentPosts } from '@/features/posts/usePosts'
+import { HomeStreaks } from '@/features/streaks/HomeStreaks'
 import { PageSkeleton } from '@/components/Skeleton'
 import { ProgressRing } from '@/components/ProgressRing'
 // Hoy es la pantalla que junta cosas de otras partes, por eso (y solo por eso) importa de habits y profile.
@@ -296,6 +297,9 @@ export function DashboardPage() {
             </h1>
           </div>
         </header>
+
+        {/* Rachas compartidas: lo primero que se ve al entrar */}
+        <HomeStreaks />
 
         {/* La mascota reacciona a cómo va el día (mascotRules.ts); al completarlo baila */}
         <div className="flex items-end gap-3">

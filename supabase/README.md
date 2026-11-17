@@ -21,3 +21,4 @@ En la Fase 0 solo creas el proyecto en supabase.com y copias su URL y su clave p
 - `0011_profile_style.sql`: emoji, color y frase del perfil. Los amigos ven emoji y color en el ranking.
 - `0012_photos.sql`: fotos de perfil (bucket público `avatars`) y fotos de hábitos (bucket privado `evidence`, tabla `habit_posts`, reacciones a publicaciones). Ver docs/FOTOS.md.
 - `0013_shared_streaks.sql`: rachas compartidas entre dos amigos (solo pareja y fecha de inicio; la racha y el récord se calculan). Ver docs/FUEGO.md.
+- `0014_streak_nudges.sql`: "dar un toque" al amigo de racha y aviso automático a las 20:00 si la racha peligra. La Edge Function usa ahora `claim_push_queue`.

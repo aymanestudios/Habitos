@@ -386,6 +386,12 @@
 }
 
 /* En modo oscuro el tinte del fuego en las tarjetas brilla un poco más */
+[data-theme='dark'] .dark-nudge {
+  background: rgb(251 146 60 / 0.12);
+  color: #fdba74;
+  border-color: #fb923c;
+}
+
 [data-theme='dark'] .dark-boost {
   opacity: 0.32;
 }

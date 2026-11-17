@@ -1,4 +1,4 @@
-// Edge Function "send-reminders": envía los avisos push de los recordatorios que ya tocan.
+// Edge Function "send-reminders": envía los avisos push (recordatorios, toques de amigos y racha en peligro).
 // La llama pg_cron cada minuto (ver 0009_push.sql). Nadie más puede usarla: exige el secreto del cron.
 //
 // Claves VAPID: la primera vez las genera ella misma y las guarda cifradas en Vault (0010_vapid_vault.sql).
@@ -9,7 +9,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2'
 
 const SUBJECT = 'https://habitosandatomicos.onrender.com'
 
-type Due = { reminder_id: string; title: string; note: string | null; endpoint: string; p256dh: string; auth: string }
+type Due = { tag: string; title: string; body: string; url: string; endpoint: string; p256dh: string; auth: string }
 
 function json(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } })
@@ -59,8 +59,8 @@ Deno.serve(async (req) => {
   if (!keys) return json({ error: 'missing_vapid_keys' }, 500)
   webpush.setVapidDetails(SUBJECT, keys.public_key, keys.private_key)
 
-  // 3. Recordatorios que tocan (se marcan como avisados en el mismo paso).
-  const { data, error } = await supabase.rpc('claim_due_reminders')
+  // 3. Avisos pendientes (claim_push_queue, 0014): se marcan como enviados en el mismo paso.
+  const { data, error } = await supabase.rpc('claim_push_queue')
   if (error) return json({ error: error.message }, 500)
   const due = (data ?? []) as Due[]
 
@@ -68,12 +68,7 @@ Deno.serve(async (req) => {
   let failed = 0
   await Promise.all(
     due.map(async (row) => {
-      const payload = JSON.stringify({
-        title: row.title,
-        body: row.note ?? 'Es la hora de tu recordatorio.',
-        url: '/recordatorios',
-        tag: row.reminder_id,
-      })
+      const payload = JSON.stringify({ title: row.title, body: row.body, url: row.url, tag: row.tag })
       try {
         await webpush.sendNotification(
           { endpoint: row.endpoint, keys: { p256dh: row.p256dh, auth: row.auth } },

@@ -7,6 +7,7 @@ import { useProfile } from '@/features/profile/useProfile'
 import { getUserTimezone } from '@/lib/dates'
 import { useToday } from '@/lib/useToday'
 import { Flame } from './Flame'
+import { NudgeButton } from './NudgeButton'
 import type { FlameMoment } from './Flame'
 import { fireLook, milestoneText, progressToNext } from './fireRules'
 import { friendlyStreakError, stateText, takeMoment, todayMessage } from './sharedStreakRules'
@@ -120,15 +121,12 @@ export function SharedStreaksCard({ friends }: { friends: Friend[] }) {
   )
 }
 
-function StreakCard({ streak }: { streak: SharedStreak }) {
+/** Animación especial (encender / evolucionar / racha mantenida), una vez por momento y dispositivo. */
+export function useFireMoment(streak: SharedStreak): FlameMoment {
   const profile = useProfile()
   const today = useToday(profile.data?.timezone ?? getUserTimezone())
-  const end = useEndSharedStreak()
   const [moment, setMoment] = useState<FlameMoment>(null)
-  const [confirming, setConfirming] = useState(false)
-  const look = fireLook(streak.current)
 
-  // Animación especial (encender / evolucionar / racha mantenida), una vez por momento
   useEffect(() => {
     const next = takeMoment(streak, today)
     if (next) setMoment(next)
@@ -140,8 +138,22 @@ function StreakCard({ streak }: { streak: SharedStreak }) {
     return () => window.clearTimeout(timer)
   }, [moment])
 
-  const banner =
-    moment === 'kept' ? '¡Racha mantenida!' : moment === 'evolve' ? `¡Nuevo fuego: ${look.stage.name}!` : null
+  return moment
+}
+
+export function momentBanner(moment: FlameMoment, stageName: string): string | null {
+  if (moment === 'kept') return '¡Racha mantenida!'
+  if (moment === 'evolve') return `¡Nuevo fuego: ${stageName}!`
+  return null
+}
+
+function StreakCard({ streak }: { streak: SharedStreak }) {
+  const end = useEndSharedStreak()
+  const moment = useFireMoment(streak)
+  const [confirming, setConfirming] = useState(false)
+  const look = fireLook(streak.current)
+
+  const banner = momentBanner(moment, look.stage.name)
 
   return (
     <Card className="relative overflow-hidden">
@@ -220,6 +232,9 @@ function StreakCard({ streak }: { streak: SharedStreak }) {
         <span>{todayMessage(streak)}</span>
         <span className="shrink-0">Récord: {streak.best} d</span>
       </div>
+      <div className="relative mt-3">
+        <NudgeButton streak={streak} />
+      </div>
 
       <div className="relative mt-2">
         {confirming ? (
@@ -255,7 +270,7 @@ function StreakCard({ streak }: { streak: SharedStreak }) {
   )
 }
 
-function MeAvatar() {
+export function MeAvatar() {
   const profile = useProfile()
   if (!profile.data) return <span className="h-8 w-8 rounded-full bg-surface-2 ring-2 ring-surface" />
   return (

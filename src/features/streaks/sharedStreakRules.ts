@@ -15,6 +15,8 @@ export type SharedStreak = {
   todayCounted: boolean
   me: DayProgress
   partner: DayProgress
+  iNudged: boolean // hoy ya le diste un toque
+  nudgedMe: boolean // te ha dado un toque (últimas horas)
 }
 
 export type DayProgress = { scheduled: number; done: number; state: 'ok' | 'free' | 'pending' }
@@ -43,6 +45,8 @@ export function buildSharedStreaks(raw: unknown): SharedStreak[] {
       todayCounted: Boolean(row.today_counted),
       me: dayProgress(Number(row.my_scheduled ?? 0), Number(row.my_done ?? 0)),
       partner: dayProgress(Number(row.partner_scheduled ?? 0), Number(row.partner_done ?? 0)),
+      iNudged: Boolean(row.i_nudged_today),
+      nudgedMe: Boolean(row.nudged_me_today),
     }))
 }
 
@@ -52,9 +56,20 @@ export function stateText(progress: DayProgress): string {
   return `${progress.done}/${progress.scheduled} hechos`
 }
 
+/** ¿Puedo darle un toque? Solo si aún no ha cumplido y hoy no se lo he dado ya. */
+export function canNudge(streak: SharedStreak): boolean {
+  return streak.partner.state === 'pending' && !streak.iNudged
+}
+
+/** ¿Peligra la racha? (hay días que perder y alguno aún no ha cumplido) */
+export function inDanger(streak: SharedStreak): boolean {
+  return streak.current > 0 && !streak.todayCounted
+}
+
 /** Frase debajo de la llama según cómo va hoy. */
 export function todayMessage(streak: SharedStreak): string {
   if (streak.todayCounted) return 'Hoy ya está: racha mantenida.'
+  if (streak.nudgedMe && streak.me.state === 'pending') return `🔥 ${streak.partnerName} te ha dado un toque. ¡Te toca!`
   const meDone = streak.me.state !== 'pending'
   const partnerDone = streak.partner.state !== 'pending'
   if (meDone && !partnerDone) return `Tú ya cumpliste. Falta ${streak.partnerName}.`
@@ -104,6 +119,8 @@ export function takeMoment(streak: SharedStreak, today: string): FireMoment {
 export function friendlyStreakError(message: string): string {
   if (message.includes('already_exists')) return 'Ya tenéis una racha compartida.'
   if (message.includes('not_friends')) return 'Solo puedes compartir racha con tus amigos.'
+  if (message.includes('already_nudged')) return 'Hoy ya le has dado un toque.'
+  if (message.includes('partner_done')) return '¡Ya ha cumplido! No hace falta avisar.'
   if (message.includes('streak_not_found')) return 'Esa racha ya no existe.'
   if (/shared_streak|schema cache/i.test(message)) return 'Falta ejecutar la migración 0013_shared_streaks.sql en Supabase.'
   return 'No se pudo completar. Inténtalo otra vez.'

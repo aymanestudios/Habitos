@@ -2,6 +2,7 @@ import { Link, NavLink, Outlet } from 'react-router'
 import { Icon } from '@/components/Icon'
 import { APP_NAME } from '@/lib/constants'
 import { navItems } from './navigation'
+import { useSwipeTabs } from './useSwipeTabs'
 import type { NavItem } from './navigation'
 
 // Marco común de todas las pantallas:
@@ -44,6 +45,8 @@ function SidebarLink({ item }: { item: NavItem }) {
 }
 
 export function AppLayout() {
+  const swipe = useSwipeTabs()
+
   return (
     <div className="pt-safe">
       {/* Barra lateral: solo escritorio */}
@@ -77,8 +80,17 @@ export function AppLayout() {
       </aside>
 
       {/* Contenido de la pantalla actual */}
-      <main className="md:pl-64">
-        <div className="mx-auto w-full max-w-5xl px-5 pb-32 pt-6 md:px-10 md:pb-12 md:pt-10">
+      {/* En el móvil se puede deslizar con el dedo entre las pestañas (useSwipeTabs) */}
+      <main className="touch-pan-y overflow-x-hidden md:pl-64" {...swipe.handlers}>
+        <div
+          key={swipe.pageKey}
+          className={`mx-auto w-full max-w-5xl px-5 pb-32 pt-6 md:px-10 md:pb-12 md:pt-10 ${swipe.enterClass}`}
+          style={
+            swipe.offset
+              ? { transform: `translateX(${swipe.offset}px)`, opacity: 1 - Math.min(Math.abs(swipe.offset) / 400, 0.25) }
+              : { transition: 'transform 0.25s ease, opacity 0.25s ease' }
+          }
+        >
           <Outlet />
         </div>
       </main>

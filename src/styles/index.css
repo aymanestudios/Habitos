@@ -261,6 +261,22 @@
   100% { transform: scale(1); }
 }
 
+@keyframes enter-right {
+  from { transform: translateX(36px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+@keyframes enter-left {
+  from { transform: translateX(-36px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+/* Pantalla que entra al deslizar entre pestañas */
+@utility animate-enter-right {
+  animation: enter-right 0.28s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+@utility animate-enter-left {
+  animation: enter-left 0.28s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
 /* Paneles (Sheet), fotos que aparecen y el "¡Publicado!" */
 @utility animate-sheet {
   animation: sheet-up 0.28s cubic-bezier(0.22, 1, 0.36, 1) backwards;

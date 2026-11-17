@@ -1,73 +1,143 @@
-// Reglas puras de los retos cooperativos (get_my_challenges, 0008_challenges.sql).
-// Un reto: tú y un amigo sumáis XP juntos esta semana hasta llegar a la meta.
+// Retos relámpago entre dos amigos (get_my_challenges, 0018). El progreso lo CALCULA el servidor.
+// Cada uno participa con sus propios hábitos: nadie tiene que hacer deporte si no quiere.
 
-export const TARGET_OPTIONS = [150, 300, 500, 800] as const
+export type ChallengeKind = 'xp' | 'habits' | 'category' | 'days'
 
 export type Challenge = {
   id: string
-  weekStart: string
+  kind: ChallengeKind
+  category: string | null
   target: number
+  startDate: string
+  endDate: string
   isCurrent: boolean
   createdByMe: boolean
   partnerId: string
   partnerName: string
-  myXp: number
-  partnerXp: number
-  total: number
-  percent: number // 0-100
+  partnerAvatarPath: string | null
+  partnerAvatarColor: string | null
+  myValue: number
+  partnerValue: number
   done: boolean
 }
 
-export function buildChallenges(raw: unknown): Challenge[] {
-  return (Array.isArray(raw) ? raw : [])
-    .filter((row) => row && row.id)
-    .map((row) => {
-      const target = Math.max(1, Number(row.target_xp ?? 1))
-      const myXp = Number(row.my_xp ?? 0)
-      const partnerXp = Number(row.partner_xp ?? 0)
-      const total = myXp + partnerXp
-      return {
-        id: String(row.id),
-        weekStart: String(row.week_start),
-        target,
-        isCurrent: Boolean(row.is_current),
-        createdByMe: Boolean(row.created_by_me),
-        partnerId: String(row.partner_id),
-        partnerName: String(row.partner_name ?? ''),
-        myXp,
-        partnerXp,
-        total,
-        percent: Math.min(100, Math.round((total / target) * 100)),
-        done: total >= target,
-      }
-    })
+export type Preset = {
+  id: string
+  kind: ChallengeKind
+  target: number
+  days: 3 | 7
+  category: string | null
+  title: string
+  text: string
 }
 
-/** Parte de la barra que pones tú y la que pone tu amigo (en % de la meta, sin pasar de 100 entre los dos). */
-export function shares(challenge: Challenge): { mine: number; partner: number } {
-  const mine = Math.min(100, (challenge.myXp / challenge.target) * 100)
-  const partner = Math.min(100 - mine, (challenge.partnerXp / challenge.target) * 100)
+// Retos listos para elegir: cortos, claros y sin presión
+export const PRESETS: Preset[] = [
+  { id: 'days3', kind: 'days', target: 3, days: 3, category: null, title: '3 días de constancia', text: 'Cada uno cumple su día los 3 días' },
+  { id: 'days5', kind: 'days', target: 5, days: 7, category: null, title: 'Semana constante', text: 'Cada uno cumple 5 de los 7 días' },
+  { id: 'habits10', kind: 'habits', target: 10, days: 7, category: null, title: '10 hábitos juntos', text: 'Completad 10 hábitos entre los dos' },
+  { id: 'sport4', kind: 'category', target: 4, days: 7, category: 'sport', title: '4 entrenamientos', text: 'Hábitos de Deporte entre los dos' },
+  { id: 'study5', kind: 'category', target: 5, days: 7, category: 'study', title: '5 sesiones de estudio', text: 'Hábitos de Estudio entre los dos' },
+  { id: 'health5', kind: 'category', target: 5, days: 7, category: 'health', title: 'Semana sana', text: '5 hábitos de Salud entre los dos' },
+  { id: 'mind5', kind: 'category', target: 5, days: 7, category: 'mind', title: 'Mente en calma', text: '5 hábitos de Mente entre los dos' },
+  { id: 'xp300', kind: 'xp', target: 300, days: 7, category: null, title: '300 XP juntos', text: 'Sumad 300 XP entre los dos' },
+]
+
+/** Solo retos que encajan con TUS hábitos (los de categoría, si tienes alguno de esa categoría). */
+export function availablePresets(myCategories: string[]): Preset[] {
+  const mine = new Set(myCategories)
+  return PRESETS.filter((preset) => preset.category === null || mine.has(preset.category))
+}
+
+const KINDS: ChallengeKind[] = ['xp', 'habits', 'category', 'days']
+
+export function buildChallenges(raw: unknown): Challenge[] {
+  return (Array.isArray(raw) ? raw : [])
+    .filter((row) => row && row.id && KINDS.includes(row.kind))
+    .map((row) => ({
+      id: String(row.id),
+      kind: row.kind as ChallengeKind,
+      category: row.category ?? null,
+      target: Math.max(1, Number(row.target ?? 1)),
+      startDate: String(row.start_date),
+      endDate: String(row.end_date),
+      isCurrent: Boolean(row.is_current),
+      createdByMe: Boolean(row.created_by_me),
+      partnerId: String(row.partner_id),
+      partnerName: String(row.partner_name ?? ''),
+      partnerAvatarPath: row.partner_avatar_path ?? null,
+      partnerAvatarColor: row.partner_avatar_color ?? null,
+      myValue: Number(row.my_value ?? 0),
+      partnerValue: Number(row.partner_value ?? 0),
+      done: Boolean(row.done),
+    }))
+}
+
+const CATEGORY_NAME: Record<string, string> = {
+  health: 'Salud', sport: 'Deporte', study: 'Estudio', mind: 'Mente', work: 'Trabajo', home: 'Casa', social: 'Social', other: 'Otro',
+}
+
+export function challengeTitle(c: Challenge): string {
+  if (c.kind === 'days') return `${c.target} ${c.target === 1 ? 'día' : 'días'} de constancia`
+  if (c.kind === 'xp') return `${c.target} XP juntos`
+  if (c.kind === 'category') return `${c.target} de ${CATEGORY_NAME[c.category ?? 'other'] ?? 'Otro'}`
+  return `${c.target} hábitos juntos`
+}
+
+/** "Días" = cada uno su barra. El resto = una barra compartida. */
+export function isPersonal(c: Challenge): boolean {
+  return c.kind === 'days'
+}
+
+export function percent(value: number, target: number): number {
+  return Math.min(100, Math.round((value / Math.max(1, target)) * 100))
+}
+
+/** Barra compartida: parte tuya y parte de tu amigo (sin pasar de 100 entre los dos). */
+export function sharedBar(c: Challenge): { mine: number; partner: number } {
+  const mine = Math.min(100, (c.myValue / c.target) * 100)
+  const partner = Math.min(100 - mine, (c.partnerValue / c.target) * 100)
   return { mine: Math.round(mine), partner: Math.round(partner) }
 }
 
-export function challengeMessage(challenge: Challenge): string {
-  const left = challenge.target - challenge.total
-  if (challenge.done) return challenge.isCurrent ? '¡Reto cumplido! Lo habéis conseguido juntos.' : 'Cumplido la semana pasada.'
-  if (!challenge.isCurrent) return `No llegasteis la semana pasada (faltaron ${left} XP).`
-  if (challenge.total === 0) return `Aún no habéis empezado. ¡Marca un hábito!`
-  return `Os faltan ${left} XP entre los dos.`
+export function daysLeft(c: Challenge, today: string): number {
+  const ms = Date.parse(`${c.endDate}T12:00:00Z`) - Date.parse(`${today}T12:00:00Z`)
+  return Math.max(0, Math.round(ms / 86400000) + 1)
 }
 
-/** Amigos con los que aún no tienes reto esta semana. */
-export function availablePartners<T extends { user_id: string }>(friends: T[], challenges: Challenge[]): T[] {
-  const busy = new Set(challenges.filter((c) => c.isCurrent).map((c) => c.partnerId))
-  return friends.filter((friend) => !busy.has(friend.user_id))
+export function statusText(c: Challenge, today: string): string {
+  if (c.done) return '¡Reto cumplido! Lo habéis conseguido juntos.'
+  if (!c.isCurrent) return 'Esta vez no llegasteis. ¡Otro intento cuando queráis!'
+  const left = daysLeft(c, today)
+  const when = left <= 1 ? 'Último día' : `Quedan ${left} días`
+  if (isPersonal(c)) {
+    const me = c.myValue >= c.target
+    const them = c.partnerValue >= c.target
+    if (me && !them) return `${when}. Tú ya lo tienes: ánimo a ${c.partnerName}.`
+    if (!me && them) return `${when}. ${c.partnerName} ya lo tiene. ¡Te toca!`
+    return `${when}.`
+  }
+  const missing = c.target - c.myValue - c.partnerValue
+  return `${when}. Os ${missing === 1 ? 'falta' : 'faltan'} ${missing}${c.kind === 'xp' ? ' XP' : ''}.`
 }
 
 export function friendlyChallengeError(message: string): string {
-  if (message.includes('already_exists')) return 'Ya tenéis un reto esta semana.'
+  if (message.includes('already_exists')) return 'Ya tenéis un reto activo. Terminadlo (o cancelad) antes de empezar otro.'
   if (message.includes('not_friends')) return 'Solo puedes crear retos con tus amigos.'
-  if (message.includes('invalid_target')) return 'La meta debe estar entre 50 y 2000 XP.'
+  if (message.includes('invalid_target') || message.includes('invalid_days')) return 'Ese reto no es válido.'
   if (message.includes('challenge_not_found')) return 'Ese reto ya no existe.'
+  if (/create_flash_challenge|schema cache/i.test(message)) return 'Falta ejecutar la migración 0018_flash_challenges.sql en Supabase.'
   return 'No se pudo completar. Revisa la conexión e inténtalo otra vez.'
+}
+
+/** Amigos sin reto activo contigo (solo puede haber uno activo por pareja). */
+export function availablePartners<T extends { user_id: string }>(friends: T[], list: Challenge[]): T[] {
+  const busy = new Set(list.filter((c) => c.isCurrent).map((c) => c.partnerId))
+  return friends.filter((friend) => !busy.has(friend.user_id))
+}
+
+/** Fecha local de hoy en formato YYYY-MM-DD (solo para mostrar los días que quedan). */
+export function localToday(now = new Date()): string {
+  const pad = (n: number) => String(n).padStart(2, '0')
+  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`
 }

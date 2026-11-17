@@ -25,3 +25,4 @@ En la Fase 0 solo creas el proyecto en supabase.com y copias su URL y su clave p
 - `0015_morning_ping.sql`: aviso "☀️ Nuevo día para empezar" a las 9:00 si hoy tienes hábitos sin empezar.
 - `0016_rewards_profiles.sql`: recompensas cosméticas calculadas en el servidor, equipar con validación, privacidad y perfil de amigo. Ver docs/RECOMPENSAS.md.
 - `0017_home_week.sql`: solo lectura. XP de hoy y días sin entrar (Inicio) y resumen de la última semana completa.
+- `0018_flash_challenges.sql`: retos relámpago (tipos xp, hábitos, categoría, días; 3 o 7 días). Amplía `challenges` y recrea `get_my_challenges`. Ver docs/RETOS.md.

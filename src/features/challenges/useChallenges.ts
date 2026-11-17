@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useAuth } from '@/features/auth/AuthProvider'
 import { supabase } from '@/lib/supabase'
 import { buildChallenges } from './challengeRules'
-import type { Challenge } from './challengeRules'
+import type { Challenge, Preset } from './challengeRules'
 
 export function useChallenges(enabled: boolean) {
   const { user } = useAuth()
@@ -26,8 +26,14 @@ function useRefreshChallenges() {
 export function useCreateChallenge() {
   const refresh = useRefreshChallenges()
   return useMutation({
-    mutationFn: async ({ friendId, target }: { friendId: string; target: number }) => {
-      const { error } = await supabase.rpc('create_challenge', { p_friend: friendId, p_target: target })
+    mutationFn: async ({ friendId, preset }: { friendId: string; preset: Preset }) => {
+      const { error } = await supabase.rpc('create_flash_challenge', {
+        p_friend: friendId,
+        p_kind: preset.kind,
+        p_target: preset.target,
+        p_days: preset.days,
+        p_category: preset.category,
+      })
       if (error) throw error
     },
     onSettled: refresh,

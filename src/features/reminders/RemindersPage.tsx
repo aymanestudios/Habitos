@@ -273,7 +273,7 @@ export function RemindersPage() {
 
       {reminders.data.length === 0 && !editing ? (
         <Card className="flex flex-col items-center text-center">
-          <Mascot className="mb-2 h-32" />
+          <Mascot pose="sleep" className="mb-3 h-24" />
           <h2 className="text-lg font-bold">Nada pendiente</h2>
           <p className="mt-1 text-muted">Apunta aquí lo que no quieres olvidar: una entrega, beber agua, una tarea...</p>
           <button type="button" onClick={openNew} className="btn-primary mt-4 inline-flex items-center gap-2 px-5 py-3">

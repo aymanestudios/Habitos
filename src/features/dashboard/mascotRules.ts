@@ -57,3 +57,15 @@ export const MOOD_ANIMATION: Record<MascotMood, string> = {
   worried: 'animate-wiggle',
   rest: 'animate-breathe',
 }
+
+// Pose del panda para cada ánimo (imágenes en public/mascota)
+export const MOOD_POSE: Record<MascotMood, 'default' | 'sleep' | 'gym' | 'star' | 'cheer' | 'laptop'> = {
+  new: 'default',
+  sleepy: 'sleep',
+  hello: 'default',
+  cheer: 'gym',
+  proud: 'gym',
+  party: 'cheer',
+  worried: 'default',
+  rest: 'sleep',
+}

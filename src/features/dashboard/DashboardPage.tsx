@@ -6,7 +6,7 @@ import { HabitRow } from '@/components/HabitRow'
 import { Icon } from '@/components/Icon'
 import { LevelBar } from '@/components/LevelBar'
 import { Mascot } from '@/components/Mascot'
-import { MOOD_ANIMATION, mascotMood } from './mascotRules'
+import { MOOD_ANIMATION, MOOD_POSE, mascotMood } from './mascotRules'
 import { completesHabit } from '@/features/posts/postRules'
 import { SharePostSheet } from '@/features/posts/SharePostSheet'
 import { useMyRecentPosts } from '@/features/posts/usePosts'
@@ -84,6 +84,7 @@ export function DashboardPage() {
   // Celebración: confeti y baile de la mascota al pasar de "día incompleto" a "día completo".
   // Al abrir la app o cambiar entre Hoy/Ayer no se dispara (solo cuando TÚ completas el día).
   const [celebrating, setCelebrating] = useState(false)
+  const [levelUp, setLevelUp] = useState<number | null>(null) // tarjeta "¡Nivel N!" con el panda de la estrella
 
   // Fotos de logros: aviso "¿Quieres compartir tu progreso?" y panel para publicar
   type ShareTarget = { habitId: string; title: string; dayOffset: 0 | -1 }
@@ -116,6 +117,7 @@ export function DashboardPage() {
 
   // Subida de nivel: solo cuando el nivel SUBE mientras estás en la pantalla (no al abrir la app)
   const lastLevel = useRef<number | null>(null)
+  const levelTimer = useRef<number | undefined>(undefined)
   const level = progress.data?.level
   useEffect(() => {
     if (level === undefined) return
@@ -126,9 +128,9 @@ export function DashboardPage() {
       setCelebrating(true)
       window.clearTimeout(celebrationTimer.current)
       celebrationTimer.current = window.setTimeout(() => setCelebrating(false), 1200)
-      window.clearTimeout(toastTimer.current)
-      setToast({ id: Date.now(), text: `¡Nivel ${level}!`, gain: true })
-      toastTimer.current = window.setTimeout(() => setToast(null), 2600)
+      window.clearTimeout(levelTimer.current)
+      setLevelUp(level)
+      levelTimer.current = window.setTimeout(() => setLevelUp(null), 3200)
     }
   }, [level])
 
@@ -136,6 +138,7 @@ export function DashboardPage() {
     () => () => {
       window.clearTimeout(celebrationTimer.current)
       window.clearTimeout(toastTimer.current)
+      window.clearTimeout(levelTimer.current)
     },
     [],
   )
@@ -288,6 +291,19 @@ export function DashboardPage() {
         </div>
       )}
 
+      {levelUp !== null && (
+        <div
+          role="status"
+          className="animate-published pointer-events-none fixed inset-x-0 top-20 z-50 mx-auto flex w-fit items-center gap-3 rounded-3xl border-2 border-accent bg-surface py-2 pl-2 pr-6 shadow-2xl"
+        >
+          <Mascot pose="star" className="h-16" />
+          <span>
+            <span className="block text-xl font-extrabold">¡Nivel {levelUp}!</span>
+            <span className="block text-sm text-muted">Sigue así, vas imparable.</span>
+          </span>
+        </div>
+      )}
+
       <div className="stagger space-y-6">
         <header className="flex items-start justify-between gap-4">
           <div className="min-w-0">
@@ -304,7 +320,10 @@ export function DashboardPage() {
         {/* La mascota reacciona a cómo va el día (mascotRules.ts); al completarlo baila */}
         <div className="flex items-end gap-3">
           <div key={mascot.mood} className={`shrink-0 origin-bottom ${MOOD_ANIMATION[mascot.mood]}`}>
-            <Mascot className={`h-20 origin-bottom ${celebrating ? 'animate-tada' : ''}`} />
+            <Mascot
+              pose={levelUp ? 'star' : MOOD_POSE[mascot.mood]}
+              className={`h-24 max-w-[132px] object-contain origin-bottom ${celebrating ? 'animate-tada' : ''}`}
+            />
           </div>
           <p
             key={mascot.text}
@@ -316,7 +335,7 @@ export function DashboardPage() {
 
         {!hasHabits ? (
           <Card className="flex flex-col items-center text-center">
-            <Mascot className="mb-2 h-32" />
+            <Mascot pose="gym" className="mb-2 h-32" />
             <h2 className="text-lg font-bold">Aún no tienes hábitos</h2>
             <p className="mt-1 text-muted">Crea el primero y empieza tu racha.</p>
             <Link

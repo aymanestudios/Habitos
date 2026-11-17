@@ -83,7 +83,7 @@ export function StatsPage() {
 
       {!hasData ? (
         <Card className="flex flex-col items-center text-center">
-          <Mascot className="mb-2 h-32" />
+          <Mascot pose="star" className="mb-2 h-32" />
           <h2 className="text-lg font-bold">Aún no hay nada que medir</h2>
           <p className="mt-1 text-muted">Crea un hábito diario y márcalo unos días: aquí verás cómo avanzas.</p>
           <Link to="/habitos/nuevo" className="btn-primary mt-4 inline-flex items-center gap-2 px-5 py-3">

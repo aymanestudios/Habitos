@@ -94,7 +94,7 @@ export function HabitsPage() {
 
       {habits.isSuccess && active.length === 0 && (
         <Card className="flex flex-col items-center text-center">
-          <Mascot className="mb-2 h-32" />
+          <Mascot pose="gym" className="mb-2 h-32" />
           <h2 className="text-lg font-bold">Aún no tienes hábitos</h2>
           <p className="mt-1 text-muted">Crea el primero y empieza tu racha.</p>
           <Link

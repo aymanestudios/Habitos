@@ -195,7 +195,7 @@ export function FriendsPage() {
 
       {overview.friendCount === 0 ? (
         <Card className="flex flex-col items-center text-center">
-          <Mascot className="mb-2 h-28" />
+          <Mascot pose="laptop" className="mb-2 h-32" />
           <h2 className="text-lg font-bold">Mejor acompañado</h2>
           <p className="mt-1 text-muted">
             Cuando tengas amigos, aquí veréis quién suma más XP cada semana. Solo comparten nivel, XP y racha: tus

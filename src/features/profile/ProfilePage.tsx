@@ -5,6 +5,7 @@ import { Card } from '@/components/Card'
 import { ChoiceChips } from '@/components/ChoiceChips'
 import { Icon } from '@/components/Icon'
 import { LevelBar } from '@/components/LevelBar'
+import { Mascot } from '@/components/Mascot'
 import { PageHeader } from '@/components/PageHeader'
 import { useTheme } from '@/lib/theme'
 import type { ThemeChoice } from '@/lib/theme'
@@ -113,9 +114,12 @@ export function ProfilePage() {
           const achievements = buildAchievements(progress.data)
           return (
             <Card>
-              <div className="flex items-baseline justify-between gap-3">
-                <h2 className="text-lg font-bold">Logros</h2>
-                <span className="text-sm font-semibold text-muted">{achievementsSummary(achievements)}</span>
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <h2 className="text-lg font-bold">Logros</h2>
+                  <span className="text-sm font-semibold text-muted">{achievementsSummary(achievements)}</span>
+                </div>
+                <Mascot pose="star" className="h-20 shrink-0" />
               </div>
               <ul className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
                 {achievements.map((item) => (

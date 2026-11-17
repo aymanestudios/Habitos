@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { Link } from 'react-router'
 import type { FormEvent } from 'react'
 import { Avatar } from '@/components/Avatar'
@@ -10,6 +10,7 @@ import { useSignedUrls } from '@/lib/storage'
 import { Icon } from '@/components/Icon'
 import { Mascot } from '@/components/Mascot'
 import { PageHeader } from '@/components/PageHeader'
+import { Sheet } from '@/components/Sheet'
 import { PageSkeleton } from '@/components/Skeleton'
 import { errorMessage } from '@/features/habits/habitRules'
 import {
@@ -55,6 +56,8 @@ export function FriendsPage() {
   const [notice, setNotice] = useState<{ text: string; ok: boolean } | null>(null)
   const [copied, setCopied] = useState(false)
   const [confirming, setConfirming] = useState<string | null>(null) // amistad que se está a punto de quitar
+  const [adding, setAdding] = useState(false) // panel "Añadir amigos" (códigos y solicitudes enviadas)
+  const closeAdding = useCallback(() => setAdding(false), [])
 
   if (friends.isError) {
     return (
@@ -102,61 +105,93 @@ export function FriendsPage() {
 
   return (
     <div className="stagger space-y-6">
-      <PageHeader title="Amigos" subtitle="Constancia en equipo" />
+      <PageHeader
+        title="Amigos"
+        subtitle="Constancia en equipo"
+        action={
+          <button type="button" onClick={() => setAdding(true)} className="btn-primary flex shrink-0 items-center gap-1.5 px-4 py-2.5 text-sm">
+            <Icon name="plus" className="h-4 w-4" />
+            Añadir amigos
+          </button>
+        }
+      />
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Card>
-          <h2 className="text-lg font-bold">Tu código</h2>
-          <p className="mt-1 text-sm text-muted">Pásaselo a un amigo para que te añada.</p>
-          <p className="mt-3 select-all rounded-2xl bg-brand-soft py-4 text-center text-2xl font-extrabold tracking-[0.2em] text-brand-ink">
-            {prettyCode(overview.myCode)}
-          </p>
-          <div className="mt-3 flex gap-3">
-            <button type="button" onClick={copyCode} className="btn-primary flex-1 px-4 py-3">
-              {copied ? '¡Copiado!' : 'Copiar'}
-            </button>
-            {typeof navigator.share === 'function' && (
-              <button
-                type="button"
-                onClick={shareCode}
-                className="flex-1 rounded-2xl border-2 border-line px-4 py-2.5 font-bold text-muted transition-colors hover:text-ink"
-              >
-                Compartir
+      <Sheet open={adding} title="Añadir amigos" onClose={closeAdding}>
+        <div className="space-y-6">
+          <section>
+            <h3 className="font-bold">Con su código</h3>
+            <p className="mt-1 text-sm text-muted">Escribe su código de 8 letras y números.</p>
+            <form onSubmit={submit} className="mt-3 space-y-3">
+              <input
+                value={prettyCode(cleanCode(code))}
+                onChange={(event) => setCode(cleanCode(event.target.value))}
+                aria-label="Código de tu amigo"
+                placeholder="ABCD-2345"
+                autoCapitalize="characters"
+                autoComplete="off"
+                spellCheck={false}
+                className="w-full rounded-2xl border-2 border-line bg-surface px-4 py-3 text-center text-xl font-bold tracking-[0.2em] outline-none transition-colors placeholder:font-semibold placeholder:text-muted/60 focus:border-brand"
+              />
+              <button type="submit" disabled={!isCompleteCode(code) || send.isPending} className="btn-primary w-full px-4 py-3">
+                {send.isPending ? 'Enviando...' : 'Enviar solicitud'}
               </button>
+            </form>
+            {notice && (
+              <p
+                role="status"
+                className={`animate-pop-in mt-3 rounded-2xl px-4 py-3 text-sm ${
+                  notice.ok ? 'bg-good-soft text-good-ink' : 'bg-danger-soft text-danger'
+                }`}
+              >
+                {notice.text}
+              </p>
             )}
-          </div>
-        </Card>
-
-        <Card>
-          <h2 className="text-lg font-bold">Añadir un amigo</h2>
-          <p className="mt-1 text-sm text-muted">Escribe su código de 8 letras y números.</p>
-          <form onSubmit={submit} className="mt-3 space-y-3">
-            <input
-              value={prettyCode(cleanCode(code))}
-              onChange={(event) => setCode(cleanCode(event.target.value))}
-              aria-label="Código de tu amigo"
-              placeholder="ABCD-2345"
-              autoCapitalize="characters"
-              autoComplete="off"
-              spellCheck={false}
-              className="w-full rounded-2xl border-2 border-line bg-surface px-4 py-3 text-center text-xl font-bold tracking-[0.2em] outline-none transition-colors placeholder:font-semibold placeholder:text-muted/60 focus:border-brand"
-            />
-            <button type="submit" disabled={!isCompleteCode(code) || send.isPending} className="btn-primary w-full px-4 py-3">
-              {send.isPending ? 'Enviando...' : 'Enviar solicitud'}
-            </button>
-          </form>
-          {notice && (
-            <p
-              role="status"
-              className={`animate-pop-in mt-3 rounded-2xl px-4 py-3 text-sm ${
-                notice.ok ? 'bg-good-soft text-good-ink' : 'bg-danger-soft text-danger'
-              }`}
-            >
-              {notice.text}
+          </section>
+          <section>
+            <h3 className="font-bold">Tu código</h3>
+            <p className="mt-1 text-sm text-muted">Pásaselo a un amigo para que te añada.</p>
+            <p className="mt-3 select-all rounded-2xl bg-brand-soft py-4 text-center text-2xl font-extrabold tracking-[0.2em] text-brand-ink">
+              {prettyCode(overview.myCode)}
             </p>
+            <div className="mt-3 flex gap-3">
+              <button type="button" onClick={copyCode} className="btn-primary flex-1 px-4 py-3">
+                {copied ? '¡Copiado!' : 'Copiar'}
+              </button>
+              {typeof navigator.share === 'function' && (
+                <button
+                  type="button"
+                  onClick={shareCode}
+                  className="flex-1 rounded-2xl border-2 border-line px-4 py-2.5 font-bold text-muted transition-colors hover:text-ink"
+                >
+                  Compartir
+                </button>
+              )}
+            </div>
+          </section>
+          {overview.outgoing.length > 0 && (
+            <section>
+              <h3 className="font-bold">Esperando respuesta</h3>
+            <ul className="divide-y divide-line">
+              {overview.outgoing.map((row) => (
+                <li key={row.user_id} className="flex items-center gap-3 py-3">
+                  <Avatar name={row.display_name} tone="accent" color={row.avatar_color} photo={row.avatar_path} />
+                  <p className="min-w-0 flex-1 truncate font-semibold">{row.display_name}</p>
+                  <button
+                    type="button"
+                    onClick={() => row.friendship_id && remove.mutate(row.friendship_id)}
+                    className="rounded-2xl px-3 py-2 text-sm font-bold text-muted transition-colors hover:bg-surface-2 hover:text-ink"
+                  >
+                    Cancelar
+                  </button>
+                </li>
+              ))}
+            </ul>
+            </section>
           )}
-        </Card>
-      </div>
+
+        </div>
+      </Sheet>
+
 
       {overview.incoming.length > 0 && (
         <Card>
@@ -202,6 +237,10 @@ export function FriendsPage() {
             Cuando tengas amigos, aquí veréis quién suma más XP cada semana. Solo comparten nivel, XP y racha: tus
             hábitos siguen siendo privados.
           </p>
+          <button type="button" onClick={() => setAdding(true)} className="btn-primary mt-4 flex items-center gap-2 px-5 py-3">
+            <Icon name="plus" className="h-5 w-5" />
+            Añadir amigos
+          </button>
         </Card>
       ) : (
         <Card>
@@ -363,27 +402,6 @@ export function FriendsPage() {
               {friendlyReactError(errorMessage(react.error))}
             </p>
           )}
-        </Card>
-      )}
-
-      {overview.outgoing.length > 0 && (
-        <Card>
-          <h2 className="text-lg font-bold">Esperando respuesta</h2>
-          <ul className="divide-y divide-line">
-            {overview.outgoing.map((row) => (
-              <li key={row.user_id} className="flex items-center gap-3 py-3">
-                <Avatar name={row.display_name} tone="accent" color={row.avatar_color} photo={row.avatar_path} />
-                <p className="min-w-0 flex-1 truncate font-semibold">{row.display_name}</p>
-                <button
-                  type="button"
-                  onClick={() => row.friendship_id && remove.mutate(row.friendship_id)}
-                  className="rounded-2xl px-3 py-2 text-sm font-bold text-muted transition-colors hover:bg-surface-2 hover:text-ink"
-                >
-                  Cancelar
-                </button>
-              </li>
-            ))}
-          </ul>
         </Card>
       )}
 

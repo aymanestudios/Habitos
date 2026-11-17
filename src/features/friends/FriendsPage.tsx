@@ -4,6 +4,7 @@ import { Avatar } from '@/components/Avatar'
 import { Card } from '@/components/Card'
 import { ChallengesCard } from '@/features/challenges/ChallengesCard'
 import { PostImage } from '@/features/posts/PostImage'
+import { SharedStreaksCard } from '@/features/streaks/SharedStreaksCard'
 import { useSignedUrls } from '@/lib/storage'
 import { Icon } from '@/components/Icon'
 import { Mascot } from '@/components/Mascot'
@@ -269,6 +270,8 @@ export function FriendsPage() {
           </ol>
         </Card>
       )}
+
+      <SharedStreaksCard friends={overview.ranking.filter((row) => row.kind === 'friend')} />
 
       <ChallengesCard friends={overview.ranking.filter((row) => row.kind === 'friend')} />
 

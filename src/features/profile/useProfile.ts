@@ -11,6 +11,9 @@ export type Profile = {
   avatar_color: string
   bio: string | null
   avatar_path: string | null
+  share_streak: boolean
+  share_stats: boolean
+  share_achievements: boolean
 }
 
 // Pide a Supabase el perfil de quien ha entrado. TanStack Query lo guarda en memoria.
@@ -24,7 +27,7 @@ export function useProfile() {
     queryFn: async (): Promise<Profile> => {
       const { data, error } = await supabase
         .from('profiles')
-        .select('id, username, display_name, timezone, avatar_emoji, avatar_color, bio, avatar_path')
+        .select('id, username, display_name, timezone, avatar_emoji, avatar_color, bio, avatar_path, share_streak, share_stats, share_achievements')
         .eq('id', user!.id)
         .single()
       if (error) throw error
@@ -52,5 +55,20 @@ export function useUpdateProfileStyle() {
       void queryClient.invalidateQueries({ queryKey: ['profile', user?.id] })
       void queryClient.invalidateQueries({ queryKey: ['friends', user?.id] })
     },
+  })
+}
+
+export type Privacy = Pick<Profile, 'share_streak' | 'share_stats' | 'share_achievements'>
+
+// Qué ven tus amigos de ti (0016). El servidor respeta estos interruptores en get_friend_profile.
+export function useUpdatePrivacy() {
+  const { user } = useAuth()
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (privacy: Privacy) => {
+      const { error } = await supabase.from('profiles').update(privacy).eq('id', user!.id)
+      if (error) throw error
+    },
+    onSettled: () => void queryClient.invalidateQueries({ queryKey: ['profile', user?.id] }),
   })
 }

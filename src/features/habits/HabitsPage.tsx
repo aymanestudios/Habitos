@@ -6,6 +6,7 @@ import { ChoiceChips } from '@/components/ChoiceChips'
 import { Icon } from '@/components/Icon'
 import { Mascot } from '@/components/Mascot'
 import { PageHeader } from '@/components/PageHeader'
+import { HABITS_TABS, SectionTabs } from '@/components/SectionTabs'
 import { CATEGORY_LABEL, CATEGORY_OPTIONS, DIFFICULTY_LABEL, habitMeta } from './habitRules'
 import type { Category, Habit } from './habitRules'
 import { useHabits } from './useHabits'
@@ -74,13 +75,15 @@ export function HabitsPage() {
         action={
           <Link
             to="/habitos/nuevo"
-            className="hidden items-center gap-2 btn-primary px-4 py-2.5 md:flex"
+            className="flex items-center gap-2 btn-primary px-4 py-2.5"
           >
             <Icon name="plus" className="h-5 w-5" />
             Nuevo
           </Link>
         }
       />
+
+      <SectionTabs label="Hábitos" tabs={HABITS_TABS} />
 
       {habits.isPending && <PageSkeleton />}
 

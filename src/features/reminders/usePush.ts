@@ -119,7 +119,7 @@ export function usePush() {
     await registration.showNotification('Progress&Go', {
       body: '¡Así te llegarán los recordatorios!',
       icon: '/icon-192.png',
-      data: { url: '/recordatorios' },
+      data: { url: '/habitos/recordatorios' },
     })
   }
 

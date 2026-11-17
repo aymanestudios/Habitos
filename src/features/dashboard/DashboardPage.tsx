@@ -11,6 +11,10 @@ import { completesHabit } from '@/features/posts/postRules'
 import { SharePostSheet } from '@/features/posts/SharePostSheet'
 import { useMyRecentPosts } from '@/features/posts/usePosts'
 import { HomeStreaks } from '@/features/streaks/HomeStreaks'
+import { KindPreview } from '@/features/rewards/RewardArt'
+import { RARITY, takeNewUnlocks } from '@/features/rewards/rewardRules'
+import type { Reward } from '@/features/rewards/rewardRules'
+import { useMyRewards } from '@/features/rewards/useRewards'
 import { PageSkeleton } from '@/components/Skeleton'
 import { ProgressRing } from '@/components/ProgressRing'
 // Hoy es la pantalla que junta cosas de otras partes, por eso (y solo por eso) importa de habits y profile.
@@ -85,6 +89,20 @@ export function DashboardPage() {
   // Al abrir la app o cambiar entre Hoy/Ayer no se dispara (solo cuando TÚ completas el día).
   const [celebrating, setCelebrating] = useState(false)
   const [levelUp, setLevelUp] = useState<number | null>(null) // tarjeta "¡Nivel N!" con el panda de la estrella
+
+  // ¡Nueva recompensa! (lo desbloqueado lo calcula el servidor; aquí solo se celebra una vez)
+  const rewards = useMyRewards()
+  const [newReward, setNewReward] = useState<Reward | null>(null)
+  useEffect(() => {
+    if (!rewards.data) return
+    const fresh = takeNewUnlocks(rewards.data)
+    if (fresh.length > 0) setNewReward(fresh[fresh.length - 1])
+  }, [rewards.data])
+  useEffect(() => {
+    if (!newReward) return
+    const timer = window.setTimeout(() => setNewReward(null), 6000)
+    return () => window.clearTimeout(timer)
+  }, [newReward])
 
   // Fotos de logros: aviso "¿Quieres compartir tu progreso?" y panel para publicar
   type ShareTarget = { habitId: string; title: string; dayOffset: 0 | -1 }
@@ -194,7 +212,7 @@ export function DashboardPage() {
           <Icon name="bell" className="h-5 w-5 text-brand-ink" />
           Recordatorios
         </h2>
-        <Link to="/recordatorios" className="text-sm font-bold text-brand-ink">
+        <Link to="/habitos/recordatorios" className="text-sm font-bold text-brand-ink">
           {reminders.data.length === 0 ? 'Añadir' : 'Ver todos'}
         </Link>
       </div>
@@ -289,6 +307,23 @@ export function DashboardPage() {
         >
           {toast.text}
         </div>
+      )}
+
+      {newReward && levelUp === null && (
+        <Link
+          to="/logros"
+          role="status"
+          onClick={() => setNewReward(null)}
+          className="animate-published fixed inset-x-3 top-20 z-50 mx-auto flex max-w-sm items-center gap-3 rounded-3xl border-2 border-accent bg-surface p-3 pr-5 shadow-2xl"
+        >
+          <Mascot pose="star" className="h-14" />
+          <span className="min-w-0 flex-1">
+            <span className="block text-xs font-bold uppercase tracking-wide text-muted">¡Nueva recompensa!</span>
+            <span className="block truncate font-extrabold">{newReward.title}</span>
+            <span className={`block text-xs font-bold ${RARITY[newReward.rarity].text}`}>{RARITY[newReward.rarity].label} · Toca para verla</span>
+          </span>
+          <KindPreview kind={newReward.kind} id={newReward.id} rarity={newReward.rarity} metric={newReward.metric} locked={false} size={44} />
+        </Link>
       )}
 
       {levelUp !== null && (

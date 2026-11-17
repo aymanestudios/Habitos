@@ -385,6 +385,22 @@
   .flame-evolve { transform-origin: 50% 96%; animation: flame-evolve 1.6s cubic-bezier(0.22, 1, 0.36, 1); }
 }
 
+/* RECOMPENSAS (features/rewards/RewardArt.tsx) */
+@keyframes reward-spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes reward-twinkle {
+  0%, 100% { opacity: 0.2; transform: scale(0.6); }
+  50% { opacity: 1; transform: scale(1); }
+}
+@keyframes reward-aura {
+  0%, 100% { opacity: 0.55; transform: scale(0.96); }
+  50% { opacity: 0.9; transform: scale(1.04); }
+}
+.reward-spin { animation: reward-spin 6s linear infinite; }
+.reward-twinkle { transform-box: fill-box; transform-origin: center; animation: reward-twinkle 2.2s ease-in-out infinite; }
+.reward-aura { animation: reward-aura 3s ease-in-out infinite; }
+
 /* En modo oscuro el tinte del fuego en las tarjetas brilla un poco más */
 [data-theme='dark'] .dark-nudge {
   background: rgb(251 146 60 / 0.12);

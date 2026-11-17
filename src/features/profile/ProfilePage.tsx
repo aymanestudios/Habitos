@@ -1,17 +1,19 @@
 import { useState } from 'react'
 import { Link } from 'react-router'
-import { Avatar } from '@/components/Avatar'
 import { Card } from '@/components/Card'
 import { ChoiceChips } from '@/components/ChoiceChips'
 import { Icon } from '@/components/Icon'
 import { LevelBar } from '@/components/LevelBar'
-import { Mascot } from '@/components/Mascot'
 import { PageHeader } from '@/components/PageHeader'
+import { ProfileAvatar } from '@/components/ProfileAvatar'
+import { BadgeArt } from '@/features/rewards/RewardArt'
+import { currentEquipment } from '@/features/rewards/rewardRules'
+import { useMyRewards } from '@/features/rewards/useRewards'
 import { useTheme } from '@/lib/theme'
 import type { ThemeChoice } from '@/lib/theme'
-import { achievementsSummary, buildAchievements } from './achievements'
 import { AccountCard } from './AccountCard'
 import { AvatarEditor } from './AvatarEditor'
+import { PrivacyCard } from './PrivacyCard'
 import { StyleCard } from './StyleCard'
 import { freezesText, xpToNext } from './progressRules'
 import { useProfile } from './useProfile'
@@ -28,6 +30,9 @@ export function ProfilePage() {
   const profile = useProfile()
   const progress = useProgress()
   const [editingPhoto, setEditingPhoto] = useState(false)
+  const rewards = useMyRewards()
+  const equipment = rewards.data ? currentEquipment(rewards.data) : null
+  const showcase = (rewards.data ?? []).filter((reward) => reward.kind === 'badge' && reward.showcased)
 
   const stats = progress.data
     ? [
@@ -50,12 +55,14 @@ export function ProfilePage() {
             aria-label="Cambiar foto de perfil"
             className="group relative shrink-0 rounded-full transition-transform active:scale-95"
           >
-            <Avatar
+            <ProfileAvatar
               name={profile.data.display_name}
-              emoji={profile.data.avatar_emoji}
-              color={profile.data.avatar_color}
               photo={profile.data.avatar_path}
-              className="h-20 w-20 text-4xl"
+              color={profile.data.avatar_color}
+              frame={equipment?.frame}
+              accessory={equipment?.accessory}
+              effect={equipment?.effect}
+              size={88}
             />
             <span className="absolute -bottom-1 -right-1 flex h-8 w-8 items-center justify-center rounded-full border-2 border-surface bg-brand text-on-brand shadow-card transition-transform group-hover:scale-110">
               <Icon name="camera" className="h-4 w-4" />
@@ -74,6 +81,17 @@ export function ProfilePage() {
                 xpLevelSize={progress.data.xp_level_size}
               />
             )}
+            {/* Insignias destacadas (se eligen en Logros) */}
+            <div className="mt-3 flex items-center gap-2">
+              {showcase.map((badge) => (
+                <span key={badge.id} title={badge.title}>
+                  <BadgeArt metric={badge.metric} rarity={badge.rarity} size={34} />
+                </span>
+              ))}
+              <Link to="/logros" className="text-xs font-bold text-brand-ink">
+                {showcase.length > 0 ? 'Cambiar' : 'Personalizar con tus logros →'}
+              </Link>
+            </div>
           </div>
         </Card>
       )}
@@ -109,44 +127,9 @@ export function ProfilePage() {
         </>
       )}
 
-      {progress.data &&
-        (() => {
-          const achievements = buildAchievements(progress.data)
-          return (
-            <Card>
-              <div className="flex items-center justify-between gap-3">
-                <div>
-                  <h2 className="text-lg font-bold">Logros</h2>
-                  <span className="text-sm font-semibold text-muted">{achievementsSummary(achievements)}</span>
-                </div>
-                <Mascot pose="star" className="h-20 shrink-0" />
-              </div>
-              <ul className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-                {achievements.map((item) => (
-                  <li
-                    key={item.id}
-                    className={`rounded-2xl border-2 p-3 text-center ${
-                      item.unlocked ? 'border-accent bg-accent-soft' : 'border-dashed border-line opacity-60'
-                    }`}
-                  >
-                    <span
-                      className={`mx-auto flex h-10 w-10 items-center justify-center rounded-full ${
-                        item.unlocked ? 'bg-accent text-on-brand' : 'bg-surface-2 text-muted'
-                      }`}
-                    >
-                      <Icon name={item.unlocked ? 'check' : 'shield'} className="h-5 w-5" />
-                    </span>
-                    <span className="mt-2 block text-sm font-bold">{item.title}</span>
-                    <span className="block text-xs text-muted">{item.text}</span>
-                  </li>
-                ))}
-              </ul>
-            </Card>
-          )
-        })()}
 
       <Link
-        to="/estadisticas"
+        to="/perfil/estadisticas"
         className="flex items-center gap-4 rounded-3xl border-2 border-line bg-surface p-5 shadow-card transition-transform active:scale-[0.98]"
       >
         <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-brand-soft text-brand-ink">
@@ -160,6 +143,8 @@ export function ProfilePage() {
       </Link>
 
       {profile.data && <StyleCard key={profile.data.id} profile={profile.data} />}
+
+      {profile.data && <PrivacyCard profile={profile.data} />}
 
       <Card>
         <h2 className="text-lg font-bold">Apariencia</h2>

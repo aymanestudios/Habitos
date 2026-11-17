@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { avatarColorClass, isAvatarEmoji } from '@/lib/avatarStyle'
+import type { CSSProperties } from 'react'
+import { avatarColorClass } from '@/lib/avatarStyle'
 import { avatarUrl } from '@/lib/storage'
 
 type Tone = 'brand' | 'accent' | 'good'
@@ -13,16 +14,16 @@ const tones: Record<Tone, string> = {
 type Props = {
   name: string
   tone?: Tone
-  emoji?: string | null // si la persona eligió uno (perfil), se ve en vez de la inicial
+  emoji?: string | null // ya no se muestra (se quitaron los emojis del perfil); se acepta para no romper llamadas
   color?: string | null // color elegido en el perfil; si no hay, se usa el "tone"
   photo?: string | null // ruta de la foto de perfil (Storage); si hay, se ve la foto
   className?: string
+  style?: CSSProperties
 }
 
-// Avatar: foto de perfil; si no hay, emoji elegido o inicial del nombre sobre su color.
-export function Avatar({ name, tone = 'brand', emoji, color, photo, className = 'h-11 w-11 text-base' }: Props) {
+// Avatar: foto de perfil; si no hay, la inicial del nombre sobre su color.
+export function Avatar({ name, tone = 'brand', color, photo, className = 'h-11 w-11 text-base', style }: Props) {
   const colorClass = avatarColorClass(color) ?? tones[tone]
-  const showEmoji = isAvatarEmoji(emoji)
   const url = avatarUrl(photo)
   const [failed, setFailed] = useState<string | null>(null)
 
@@ -37,6 +38,7 @@ export function Avatar({ name, tone = 'brand', emoji, color, photo, className = 
         decoding="async"
         onError={() => setFailed(url)}
         className={`animate-fade shrink-0 rounded-full bg-surface-2 object-cover ${className}`}
+        style={style}
       />
     )
   }
@@ -44,9 +46,10 @@ export function Avatar({ name, tone = 'brand', emoji, color, photo, className = 
   return (
     <span
       className={`flex shrink-0 items-center justify-center rounded-full font-bold ${colorClass} ${className}`}
+      style={style}
       aria-hidden="true"
     >
-      {showEmoji ? <span className="leading-none">{emoji}</span> : name.charAt(0).toUpperCase()}
+      {name.charAt(0).toUpperCase()}
     </span>
   )
 }

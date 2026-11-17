@@ -5,7 +5,7 @@ import { navItems } from './navigation'
 import type { NavItem } from './navigation'
 
 // Marco común de todas las pantallas:
-// - móvil: barra de pestañas abajo, con el botón "+" en el centro
+// - móvil: barra de 5 pestañas abajo (crear hábito está en Hábitos e Inicio)
 // - escritorio (md en adelante): barra lateral a la izquierda
 // <Outlet /> es el hueco donde React Router pinta la pantalla de cada ruta.
 
@@ -44,9 +44,6 @@ function SidebarLink({ item }: { item: NavItem }) {
 }
 
 export function AppLayout() {
-  const firstTabs = navItems.slice(0, 2)
-  const lastTabs = navItems.slice(2)
-
   return (
     <div className="pt-safe">
       {/* Barra lateral: solo escritorio */}
@@ -67,9 +64,6 @@ export function AppLayout() {
           {navItems.map((item) => (
             <SidebarLink key={item.to} item={item} />
           ))}
-          {/* Solo en la barra lateral: en el móvil se entra desde Hoy y Perfil (abajo solo caben 4 pestañas) */}
-          <SidebarLink item={{ to: '/recordatorios', label: 'Recordatorios', icon: 'bell' }} />
-          <SidebarLink item={{ to: '/estadisticas', label: 'Estadísticas', icon: 'chart' }} />
         </nav>
 
         <Link
@@ -80,12 +74,6 @@ export function AppLayout() {
           Nuevo hábito
         </Link>
 
-        <Link
-          to="/estado"
-          className="mt-auto px-4 py-2 text-sm text-muted transition-colors hover:text-ink"
-        >
-          Estado del proyecto
-        </Link>
       </aside>
 
       {/* Contenido de la pantalla actual */}
@@ -101,17 +89,7 @@ export function AppLayout() {
         aria-label="Principal"
       >
         <div className="mx-auto grid max-w-md grid-cols-5 items-center">
-          {firstTabs.map((item) => (
-            <MobileTab key={item.to} item={item} />
-          ))}
-          <Link
-            to="/habitos/nuevo"
-            aria-label="Crear hábito"
-            className="-mt-7 justify-self-center btn-fab"
-          >
-            <Icon name="plus" className="h-7 w-7" />
-          </Link>
-          {lastTabs.map((item) => (
+          {navItems.map((item) => (
             <MobileTab key={item.to} item={item} />
           ))}
         </div>

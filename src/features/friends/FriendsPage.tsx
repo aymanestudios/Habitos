@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router'
 import type { FormEvent } from 'react'
 import { Avatar } from '@/components/Avatar'
 import { Card } from '@/components/Card'
@@ -165,7 +166,7 @@ export function FriendsPage() {
           <ul className="divide-y divide-line">
             {overview.incoming.map((row) => (
               <li key={row.user_id} className="flex items-center gap-3 py-3">
-                <Avatar name={row.display_name} tone="accent" emoji={row.avatar_emoji} color={row.avatar_color} photo={row.avatar_path} />
+                <Avatar name={row.display_name} tone="accent" color={row.avatar_color} photo={row.avatar_path} />
                 <div className="min-w-0 flex-1">
                   <p className="truncate font-semibold">{row.display_name}</p>
                   <p className="truncate text-sm text-muted">@{row.username}</p>
@@ -222,14 +223,20 @@ export function FriendsPage() {
                     >
                       {row.position}
                     </span>
-                    <Avatar name={row.display_name} tone={isMe ? 'brand' : 'good'} emoji={row.avatar_emoji} color={row.avatar_color} photo={row.avatar_path} />
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate font-semibold">{isMe ? `${row.display_name} (tú)` : row.display_name}</p>
-                      <p className="flex items-center gap-1 truncate text-sm text-muted">
-                        Nivel {row.level ?? 1} · <Icon name="flame" className="h-4 w-4" />
-                        {row.current_streak ?? 0}
-                      </p>
-                    </div>
+                    <Link
+                      to={isMe ? '/perfil' : `/amigos/${row.user_id}`}
+                      className="flex min-w-0 flex-1 items-center gap-3 rounded-2xl transition-opacity hover:opacity-80"
+                      aria-label={isMe ? 'Tu perfil' : `Ver el perfil de ${row.display_name}`}
+                    >
+                      <Avatar name={row.display_name} tone={isMe ? 'brand' : 'good'} color={row.avatar_color} photo={row.avatar_path} />
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate font-semibold">{isMe ? `${row.display_name} (tú)` : row.display_name}</p>
+                        <p className="flex items-center gap-1 truncate text-sm text-muted">
+                          Nivel {row.level ?? 1} · <Icon name="flame" className="h-4 w-4" />
+                          {row.current_streak ?? 0}
+                        </p>
+                      </div>
+                    </Link>
                     <span className="shrink-0 font-extrabold">{row.week_xp ?? 0} XP</span>
                     {!isMe && (
                       <button
@@ -296,13 +303,15 @@ export function FriendsPage() {
               {activityItems.map((item) => (
                 <li key={`${item.itemType}-${item.itemId}`} className="py-3">
                   <div className="flex items-start gap-3">
-                    <Avatar
-                      name={item.name}
-                      tone={item.kind === 'day_bonus' ? 'good' : 'brand'}
-                      emoji={item.avatarEmoji}
-                      color={item.avatarColor}
-                      photo={item.avatarPath}
-                    />
+                    <Link to={`/amigos/${item.userId}`} aria-label={`Ver el perfil de ${item.name}`} className="shrink-0">
+                      <Avatar
+                        name={item.name}
+                        tone={item.kind === 'day_bonus' ? 'good' : 'brand'}
+                        emoji={item.avatarEmoji}
+                        color={item.avatarColor}
+                        photo={item.avatarPath}
+                      />
+                    </Link>
                     <div className="min-w-0 flex-1">
                       <p className="font-semibold">{activityText(item)}</p>
                       <p className="text-sm text-muted">
@@ -363,7 +372,7 @@ export function FriendsPage() {
           <ul className="divide-y divide-line">
             {overview.outgoing.map((row) => (
               <li key={row.user_id} className="flex items-center gap-3 py-3">
-                <Avatar name={row.display_name} tone="accent" emoji={row.avatar_emoji} color={row.avatar_color} photo={row.avatar_path} />
+                <Avatar name={row.display_name} tone="accent" color={row.avatar_color} photo={row.avatar_path} />
                 <p className="min-w-0 flex-1 truncate font-semibold">{row.display_name}</p>
                 <button
                   type="button"

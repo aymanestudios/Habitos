@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router'
 import { Avatar } from '@/components/Avatar'
 import { Card } from '@/components/Card'
 import { Icon } from '@/components/Icon'
@@ -191,7 +192,12 @@ function StreakCard({ streak }: { streak: SharedStreak }) {
                 className="h-8 w-8 text-sm ring-2 ring-surface"
               />
             </div>
-            <p className="min-w-0 truncate text-sm font-semibold">Tú y {streak.partnerName}</p>
+            <p className="min-w-0 truncate text-sm font-semibold">
+              Tú y{' '}
+              <Link to={`/amigos/${streak.partnerId}`} className="text-brand-ink hover:underline">
+                {streak.partnerName}
+              </Link>
+            </p>
           </div>
 
           <p className="mt-2 flex items-baseline gap-1.5">

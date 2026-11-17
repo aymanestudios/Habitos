@@ -5,6 +5,7 @@ import { ChoiceChips } from '@/components/ChoiceChips'
 import { Icon } from '@/components/Icon'
 import { Mascot } from '@/components/Mascot'
 import { PageHeader } from '@/components/PageHeader'
+import { HABITS_TABS, SectionTabs } from '@/components/SectionTabs'
 import { PageSkeleton } from '@/components/Skeleton'
 import { TextField } from '@/components/TextField'
 import { useNow } from '@/lib/useNow'
@@ -193,6 +194,8 @@ export function RemindersPage() {
           )
         }
       />
+
+      <SectionTabs label="Hábitos" tabs={HABITS_TABS} />
 
       <PushCard />
 

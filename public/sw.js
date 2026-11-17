@@ -2,7 +2,7 @@
 // Regla de oro: NUNCA toca las llamadas a Supabase (otro dominio) ni nada que no sea GET.
 // Así los datos (hábitos, XP, sesión) siempre vienen del servidor y no se quedan "viejos".
 // Si cambias este archivo, sube el número de VERSION para limpiar la caché antigua.
-const VERSION = 'v3'
+const VERSION = 'v4'
 const SHELL = `pg-shell-${VERSION}`
 const STATIC = `pg-static-${VERSION}`
 

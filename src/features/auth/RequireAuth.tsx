@@ -1,4 +1,5 @@
 import { Navigate, Outlet, useLocation } from 'react-router'
+import { OnboardingGate } from '@/features/onboarding/OnboardingGate'
 import { useAuth } from './AuthProvider'
 
 // Guardia de entrada: si no has iniciado sesión, te manda a /login.
@@ -16,5 +17,11 @@ export function RequireAuth() {
     return <Navigate to="/login" replace state={{ from: location.pathname }} />
   }
 
-  return <Outlet />
+  return (
+    <>
+      <Outlet />
+      {/* Tutorial de bienvenida: solo la primera vez (o si lo pides desde Perfil) */}
+      <OnboardingGate />
+    </>
+  )
 }

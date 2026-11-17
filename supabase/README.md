@@ -31,3 +31,4 @@ En la Fase 0 solo creas el proyecto en supabase.com y copias su URL y su clave p
 - `0021_polish.sql`: repaso. Cierra las funciones de los triggers y suaviza dos textos de avisos (toque y racha compartida).
 - `0022_skins_gacha.sql`: skins del panda (tickets, cápsula misteriosa, colección). Ver docs/SKINS.md. Incluye el MODO PRUEBA (tickets infinitos).
 - `0023_skin_silhouettes.sql`: siluetas de las skins para la apertura especial (la cápsula devuelve las sombras y cuál es la tuya).
+- `0024_onboarding.sql`: tutorial de bienvenida. `profiles.onboarded_at` + `finish_onboarding()`; las cuentas que ya existían se marcan como vistas.

@@ -16,6 +16,7 @@ import { AccountCard } from './AccountCard'
 import { AvatarEditor } from './AvatarEditor'
 import { Mascot } from '@/components/Mascot'
 import { useEquippedSkin } from '@/features/skins/useSkins'
+import { openOnboarding } from '@/features/onboarding/useOnboarding'
 import { PrivacyCard } from './PrivacyCard'
 import { StyleCard } from './StyleCard'
 import { freezesText, xpToNext } from './progressRules'
@@ -169,6 +170,16 @@ export function ProfilePage() {
       </Card>
 
       <AccountCard />
+
+      {/* Discreto: volver a ver la introducción del panda */}
+      <button
+        type="button"
+        onClick={openOnboarding}
+        className="mx-auto flex items-center gap-2 rounded-full px-4 py-2 text-sm font-bold text-muted transition-colors hover:bg-surface-2 hover:text-ink"
+      >
+        <img src="/favicon.svg" alt="" aria-hidden="true" width={18} height={18} className="h-[18px] w-[18px]" />
+        Ver tutorial de bienvenida
+      </button>
     </div>
   )
 }

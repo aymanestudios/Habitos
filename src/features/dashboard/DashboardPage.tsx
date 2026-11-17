@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { LoadError } from '@/components/LoadError'
-import { Link } from 'react-router'
+import { Link, useLocation } from 'react-router'
 import { Card } from '@/components/Card'
 import { HabitRow } from '@/components/HabitRow'
 import { Icon } from '@/components/Icon'
@@ -46,6 +46,8 @@ import { useToday } from '@/lib/useToday'
 type View = 'today' | 'yesterday'
 
 export function DashboardPage() {
+  // Recién terminado el tutorial: señalamos "Crear mi primer hábito"
+  const fromTour = Boolean((useLocation().state as { firstHabit?: boolean } | null)?.firstHabit)
   const profile = useProfile()
   const habits = useHabits()
   // Siempre la zona horaria del PERFIL (la misma que usa el servidor), no la del dispositivo
@@ -447,7 +449,10 @@ export function DashboardPage() {
             <Mascot pose="gym" className="mb-2 h-32" />
             <h2 className="text-lg font-bold">Aún no tienes hábitos</h2>
             <p className="mt-1 text-muted">Crea el primero y empieza tu racha.</p>
-            <Link to="/habitos/nuevo" className="mt-4 inline-flex items-center gap-2 btn-primary px-5 py-3">
+            <Link
+              to="/habitos/nuevo"
+              className={`mt-4 inline-flex items-center gap-2 btn-primary px-5 py-3 ${fromTour ? 'ob-spotlight' : ''}`}
+            >
               <Icon name="plus" className="h-5 w-5" />
               Crear mi primer hábito
             </Link>

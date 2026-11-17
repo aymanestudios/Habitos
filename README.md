@@ -86,6 +86,7 @@ Con el botón de control de código fuente de VS Code (Commit y Sync). `.env.loc
 ## Documentación
 
 - [docs/AJUSTES.md](docs/AJUSTES.md): decisiones sobre XP, hábitos numéricos, frecuencias, RLS y zonas horarias.
+- [docs/BIENVENIDA.md](docs/BIENVENIDA.md): tutorial de bienvenida con el panda (una sola vez) e icono de la app.
 - [docs/DISENO.md](docs/DISENO.md): identidad visual y navegación.
 - [docs/COPIAS-SEGURIDAD.md](docs/COPIAS-SEGURIDAD.md): estrategia de copias.
 

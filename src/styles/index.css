@@ -538,3 +538,95 @@
 @media (prefers-reduced-motion: reduce) {
   [class*='skin-anim-'], .capsule-rays, .capsule-glow, .sil-chosen, .ticket-shine { animation: none !important; }
 }
+
+/* ===== Tutorial de bienvenida (features/onboarding) ===== */
+/* Fondo con profundidad: manchas de color difuminadas que se desplazan al cambiar de paso */
+.ob-blob { position: absolute; border-radius: 9999px; filter: blur(48px); opacity: 0.55; transition: transform 1.1s cubic-bezier(0.22, 1, 0.36, 1); will-change: transform; }
+[data-theme='dark'] .ob-blob { opacity: 0.32; }
+.ob-dots {
+  background-image: radial-gradient(var(--line) 1.2px, transparent 1.2px);
+  background-size: 22px 22px;
+  -webkit-mask-image: radial-gradient(ellipse at center, #000 20%, transparent 75%);
+  mask-image: radial-gradient(ellipse at center, #000 20%, transparent 75%);
+}
+@keyframes ob-drift { 0%, 100% { translate: 0 0; } 50% { translate: 18px -14px; } }
+.ob-drift { animation: ob-drift 9s ease-in-out infinite; }
+
+/* Entrada del panda en la bienvenida: cae, rebota y se queda flotando */
+@keyframes ob-drop {
+  0% { opacity: 0; transform: translateY(-60px) scale(0.6) rotate(-8deg); }
+  55% { opacity: 1; transform: translateY(8px) scale(1.06, 0.94) rotate(2deg); }
+  75% { transform: translateY(-4px) scale(0.98, 1.03) rotate(-1deg); }
+  100% { opacity: 1; transform: translateY(0) scale(1) rotate(0); }
+}
+.ob-drop { animation: ob-drop 0.9s cubic-bezier(0.34, 1.4, 0.64, 1) backwards; }
+
+/* El panda "habla": se balancea mientras aparecen las palabras del bocadillo */
+@keyframes ob-talk {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  30% { transform: translateY(-3px) rotate(-2.5deg); }
+  70% { transform: translateY(-1px) rotate(2deg); }
+}
+.ob-talk { animation-name: ob-talk; animation-duration: 0.42s; animation-timing-function: ease-in-out; transform-origin: 50% 90%; }
+@keyframes ob-idle { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+.ob-idle { animation: ob-idle 3.2s ease-in-out infinite; }
+
+/* Palabras del bocadillo, una tras otra */
+@keyframes ob-word { from { opacity: 0; transform: translateY(5px); filter: blur(3px); } to { opacity: 1; transform: translateY(0); filter: blur(0); } }
+.ob-word { display: inline-block; animation: ob-word 0.32s ease-out backwards; }
+
+@keyframes ob-bubble { from { opacity: 0; transform: scale(0.85) translateY(8px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+.ob-bubble { animation: ob-bubble 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) backwards; }
+
+/* Cambio de pantalla según la dirección (adelante / atrás) */
+@keyframes ob-in-next { from { opacity: 0; transform: translateX(48px) scale(0.98); } to { opacity: 1; transform: none; } }
+@keyframes ob-in-prev { from { opacity: 0; transform: translateX(-48px) scale(0.98); } to { opacity: 1; transform: none; } }
+.ob-in-next { animation: ob-in-next 0.5s cubic-bezier(0.22, 1, 0.36, 1) backwards; }
+.ob-in-prev { animation: ob-in-prev 0.5s cubic-bezier(0.22, 1, 0.36, 1) backwards; }
+
+/* Elementos que aparecen poco a poco (usa --d para el retraso) */
+@keyframes ob-up { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+.ob-up { animation: ob-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) backwards; animation-delay: var(--d, 0ms); }
+@keyframes ob-pop { 0% { opacity: 0; transform: scale(0.3); } 70% { opacity: 1; transform: scale(1.12); } 100% { opacity: 1; transform: scale(1); } }
+.ob-pop { animation: ob-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) backwards; animation-delay: var(--d, 0ms); }
+
+/* Escenas de cada paso */
+@keyframes ob-fill { from { width: var(--from, 0%); } to { width: var(--to, 100%); } }
+.ob-fill { animation: ob-fill 1.4s cubic-bezier(0.22, 1, 0.36, 1) backwards; animation-delay: var(--d, 0ms); }
+@keyframes ob-float-xp { 0% { opacity: 0; transform: translateY(10px) scale(0.8); } 15% { opacity: 1; transform: translateY(0) scale(1.05); } 70% { opacity: 1; } 100% { opacity: 0; transform: translateY(-34px); } }
+.ob-float-xp { animation: ob-float-xp 2.4s ease-out infinite; animation-delay: var(--d, 0ms); }
+@keyframes ob-light { 0%, 8% { background: var(--surface-2); color: var(--muted); transform: scale(1); } 14% { transform: scale(1.18); } 20%, 100% { background: var(--good); color: #fff; transform: scale(1); } }
+.ob-light { animation: ob-light 4.2s ease-out infinite; animation-delay: var(--d, 0ms); }
+@keyframes ob-check { 0%, 30% { opacity: 0; transform: scale(0.2); } 40% { opacity: 1; transform: scale(1.25); } 48%, 100% { opacity: 1; transform: scale(1); } }
+.ob-check { animation: ob-check 3.6s ease-out infinite; }
+@keyframes ob-race { 0% { width: 8%; } 60%, 100% { width: var(--to, 80%); } }
+.ob-race { animation: ob-race 3.4s cubic-bezier(0.22, 1, 0.36, 1) infinite alternate; animation-delay: var(--d, 0ms); }
+@keyframes ob-dash { to { stroke-dashoffset: -24; } }
+.ob-dash { animation: ob-dash 1.2s linear infinite; }
+@keyframes ob-spark { 0%, 100% { opacity: 0; transform: scale(0.4) rotate(0); } 50% { opacity: 1; transform: scale(1) rotate(45deg); } }
+.ob-spark { animation: ob-spark 2.2s ease-in-out infinite; animation-delay: var(--d, 0ms); }
+@keyframes ob-ring { 0% { opacity: 0.55; transform: scale(0.7); } 100% { opacity: 0; transform: scale(1.6); } }
+.ob-ring { animation: ob-ring 2.6s ease-out infinite; animation-delay: var(--d, 0ms); }
+@keyframes ob-glow-badge { 0%, 100% { filter: drop-shadow(0 0 0 transparent); transform: translateY(0); } 50% { filter: drop-shadow(0 0 12px rgb(245 158 11 / 0.7)); transform: translateY(-4px); } }
+.ob-glow-badge { animation: ob-glow-badge 2.4s ease-in-out infinite; }
+
+/* Barra de progreso del tutorial */
+.ob-seg { transition: background-color 0.4s, flex-grow 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
+
+/* Botones con microinteracción */
+.ob-next { transition: transform 0.08s, border-bottom-width 0.08s, filter 0.15s, box-shadow 0.25s; }
+.ob-next:hover { box-shadow: 0 10px 28px -12px var(--brand-edge); }
+.ob-next:hover .ob-arrow { transform: translateX(4px); }
+.ob-arrow { transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.ob-back { transition: transform 0.15s, background-color 0.15s; }
+.ob-back:hover { transform: translateX(-2px); }
+.ob-back:active { transform: scale(0.92); }
+
+/* "Crear mi primer hábito" señalado tras el tutorial */
+@keyframes ob-spotlight { 0%, 100% { box-shadow: 0 0 0 0 rgb(138 219 208 / 0.7); } 50% { box-shadow: 0 0 0 12px rgb(138 219 208 / 0); } }
+.ob-spotlight { animation: ob-spotlight 1.6s ease-out 4; border-radius: 1rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ob-blob { transition: none; }
+  .ob-drift, .ob-idle, .ob-talk, .ob-float-xp, .ob-light, .ob-check, .ob-race, .ob-dash, .ob-spark, .ob-ring, .ob-glow-badge, .ob-spotlight { animation: none !important; }
+}

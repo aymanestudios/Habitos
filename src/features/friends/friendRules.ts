@@ -15,6 +15,7 @@ export type FriendRow = {
   friend_code: string | null // solo el tuyo
   avatar_emoji: string | null
   avatar_color: string | null
+  avatar_path: string | null
 }
 
 export type RankedFriend = FriendRow & { position: number }
@@ -45,6 +46,7 @@ export function buildOverview(raw: unknown): FriendsOverview {
       friend_code: row.friend_code ?? null,
       avatar_emoji: row.avatar_emoji ?? null,
       avatar_color: row.avatar_color ?? null,
+      avatar_path: row.avatar_path ?? null,
     }))
 
   const sorted = rows
@@ -122,13 +124,19 @@ export const REACTIONS = ['🔥', '👏', '💪', '🎉'] as const
 export type Reaction = (typeof REACTIONS)[number]
 
 export type ActivityItem = {
-  eventId: string
+  itemId: string
+  itemType: 'event' | 'post' // post = publicación con foto (0012_photos.sql)
   userId: string
   name: string
+  avatarPath: string | null
+  avatarEmoji: string | null
+  avatarColor: string | null
   kind: 'habit' | 'weekly_total' | 'day_bonus'
-  habitTitle: string | null // solo si el hábito es visible para amigos
+  habitTitle: string | null // en eventos, solo si el hábito es visible para amigos
   amount: number
   createdAt: string
+  photoPath: string | null
+  caption: string | null
   reactions: Partial<Record<Reaction, number>>
   myReaction: Reaction | null
   reactionCount: number
@@ -139,20 +147,26 @@ const isReaction = (value: unknown): value is Reaction => REACTIONS.includes(val
 
 export function buildActivity(raw: unknown): ActivityItem[] {
   return (Array.isArray(raw) ? raw : [])
-    .filter((row) => row && ACTIVITY_KINDS.includes(row.kind))
+    .filter((row) => row && ACTIVITY_KINDS.includes(row.kind) && (row.item_id || row.event_id))
     .map((row) => {
       const reactions: Partial<Record<Reaction, number>> = {}
       for (const [emoji, count] of Object.entries(row.reactions ?? {})) {
         if (isReaction(emoji)) reactions[emoji] = Number(count)
       }
       return {
-        eventId: String(row.event_id),
+        itemId: String(row.item_id ?? row.event_id),
+        itemType: row.item_type === 'post' ? 'post' : 'event',
         userId: String(row.user_id),
         name: String(row.display_name ?? ''),
+        avatarPath: row.avatar_path ?? null,
+        avatarEmoji: row.avatar_emoji ?? null,
+        avatarColor: row.avatar_color ?? null,
         kind: row.kind as ActivityItem['kind'],
         habitTitle: row.habit_title ?? null,
         amount: Number(row.amount ?? 0),
         createdAt: String(row.created_at),
+        photoPath: row.photo_path ?? null,
+        caption: row.caption ?? null,
         reactions,
         myReaction: isReaction(row.my_reaction) ? row.my_reaction : null,
         reactionCount: Number(row.reaction_count ?? 0),
@@ -168,6 +182,7 @@ export function activityText(item: ActivityItem): string {
       ? `${item.name} cumplió su meta semanal de «${item.habitTitle}»`
       : `${item.name} cumplió una meta semanal`
   }
+  if (item.itemType === 'post') return `${item.name} ha completado «${item.habitTitle ?? 'un hábito'}»`
   return item.habitTitle ? `${item.name} completó «${item.habitTitle}»` : `${item.name} completó un hábito`
 }
 

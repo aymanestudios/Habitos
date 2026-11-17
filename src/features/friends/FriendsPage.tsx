@@ -3,6 +3,8 @@ import type { FormEvent } from 'react'
 import { Avatar } from '@/components/Avatar'
 import { Card } from '@/components/Card'
 import { ChallengesCard } from '@/features/challenges/ChallengesCard'
+import { PostImage } from '@/features/posts/PostImage'
+import { useSignedUrls } from '@/lib/storage'
 import { Icon } from '@/components/Icon'
 import { Mascot } from '@/components/Mascot'
 import { PageHeader } from '@/components/PageHeader'
@@ -44,6 +46,8 @@ export function FriendsPage() {
   const react = useReact()
   const activity = useFriendActivity((friends.data?.friendCount ?? 0) > 0)
   const activityItems = activity.data ?? []
+  // Fotos de las publicaciones: enlaces temporales (1 h); Storage comprueba que puedes verlas
+  const photoUrls = useSignedUrls(activityItems.map((item) => item.photoPath))
 
   const [code, setCode] = useState('')
   const [notice, setNotice] = useState<{ text: string; ok: boolean } | null>(null)
@@ -160,7 +164,7 @@ export function FriendsPage() {
           <ul className="divide-y divide-line">
             {overview.incoming.map((row) => (
               <li key={row.user_id} className="flex items-center gap-3 py-3">
-                <Avatar name={row.display_name} tone="accent" emoji={row.avatar_emoji} color={row.avatar_color} />
+                <Avatar name={row.display_name} tone="accent" emoji={row.avatar_emoji} color={row.avatar_color} photo={row.avatar_path} />
                 <div className="min-w-0 flex-1">
                   <p className="truncate font-semibold">{row.display_name}</p>
                   <p className="truncate text-sm text-muted">@{row.username}</p>
@@ -217,7 +221,7 @@ export function FriendsPage() {
                     >
                       {row.position}
                     </span>
-                    <Avatar name={row.display_name} tone={isMe ? 'brand' : 'good'} emoji={row.avatar_emoji} color={row.avatar_color} />
+                    <Avatar name={row.display_name} tone={isMe ? 'brand' : 'good'} emoji={row.avatar_emoji} color={row.avatar_color} photo={row.avatar_path} />
                     <div className="min-w-0 flex-1">
                       <p className="truncate font-semibold">{isMe ? `${row.display_name} (tú)` : row.display_name}</p>
                       <p className="flex items-center gap-1 truncate text-sm text-muted">
@@ -276,7 +280,7 @@ export function FriendsPage() {
           </h2>
           {activity.isError && (
             <p className="mt-2 text-sm text-danger">
-              No se pudo cargar la actividad. ¿Has ejecutado la migración 0007_activity_categories.sql en Supabase?
+              No se pudo cargar la actividad. ¿Has ejecutado las migraciones 0007 y 0012 en Supabase?
             </p>
           )}
           {activity.isSuccess && activityItems.length === 0 && (
@@ -287,14 +291,32 @@ export function FriendsPage() {
           {activity.isSuccess && activityItems.length > 0 && (
             <ul className="mt-2 divide-y divide-line">
               {activityItems.map((item) => (
-                <li key={item.eventId} className="py-3">
+                <li key={`${item.itemType}-${item.itemId}`} className="py-3">
                   <div className="flex items-start gap-3">
-                    <Avatar name={item.name} tone={item.kind === 'day_bonus' ? 'good' : 'brand'} />
+                    <Avatar
+                      name={item.name}
+                      tone={item.kind === 'day_bonus' ? 'good' : 'brand'}
+                      emoji={item.avatarEmoji}
+                      color={item.avatarColor}
+                      photo={item.avatarPath}
+                    />
                     <div className="min-w-0 flex-1">
                       <p className="font-semibold">{activityText(item)}</p>
                       <p className="text-sm text-muted">
-                        {timeAgo(item.createdAt)} · +{item.amount} XP
+                        {timeAgo(item.createdAt)}
+                        {item.amount > 0 && ` · +${item.amount} XP`}
                       </p>
+                      {item.photoPath && (
+                        <figure className="mt-3">
+                          <PostImage
+                            url={photoUrls.data?.[item.photoPath]}
+                            loading={photoUrls.isPending}
+                            alt={item.caption ?? `Foto de ${item.name}: ${item.habitTitle ?? 'hábito'}`}
+                            className="aspect-[4/5] max-h-[440px] w-full sm:aspect-[4/3]"
+                          />
+                          {item.caption && <figcaption className="mt-2 text-[15px]">{item.caption}</figcaption>}
+                        </figure>
+                      )}
                       <div className="mt-2 flex flex-wrap gap-2" role="group" aria-label="Reacciones">
                         {REACTIONS.map((emoji) => {
                           const mine = item.myReaction === emoji
@@ -305,7 +327,7 @@ export function FriendsPage() {
                               type="button"
                               aria-pressed={mine}
                               aria-label={`Reaccionar con ${emoji}`}
-                              onClick={() => react.mutate({ eventId: item.eventId, emoji })}
+                              onClick={() => react.mutate({ item, emoji })}
                               className={`flex h-9 min-w-9 items-center justify-center gap-1 rounded-full border-2 px-3 text-sm font-bold transition-all active:scale-90 ${
                                 mine
                                   ? 'border-brand bg-brand-soft text-brand-ink'
@@ -338,7 +360,7 @@ export function FriendsPage() {
           <ul className="divide-y divide-line">
             {overview.outgoing.map((row) => (
               <li key={row.user_id} className="flex items-center gap-3 py-3">
-                <Avatar name={row.display_name} tone="accent" emoji={row.avatar_emoji} color={row.avatar_color} />
+                <Avatar name={row.display_name} tone="accent" emoji={row.avatar_emoji} color={row.avatar_color} photo={row.avatar_path} />
                 <p className="min-w-0 flex-1 truncate font-semibold">{row.display_name}</p>
                 <button
                   type="button"

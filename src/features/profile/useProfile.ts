@@ -10,6 +10,7 @@ export type Profile = {
   avatar_emoji: string | null
   avatar_color: string
   bio: string | null
+  avatar_path: string | null
 }
 
 // Pide a Supabase el perfil de quien ha entrado. TanStack Query lo guarda en memoria.
@@ -23,7 +24,7 @@ export function useProfile() {
     queryFn: async (): Promise<Profile> => {
       const { data, error } = await supabase
         .from('profiles')
-        .select('id, username, display_name, timezone, avatar_emoji, avatar_color, bio')
+        .select('id, username, display_name, timezone, avatar_emoji, avatar_color, bio, avatar_path')
         .eq('id', user!.id)
         .single()
       if (error) throw error

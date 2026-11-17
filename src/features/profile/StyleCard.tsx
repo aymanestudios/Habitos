@@ -33,7 +33,11 @@ export function StyleCard({ profile }: { profile: Profile }) {
         <Avatar name={profile.display_name} emoji={emoji} color={color} className="h-16 w-16 text-3xl" />
         <div className="min-w-0">
           <h2 className="text-lg font-bold">Personaliza tu perfil</h2>
-          <p className="text-sm text-muted">Tus amigos ven tu emoji y tu color en el ranking.</p>
+          <p className="text-sm text-muted">
+            {profile.avatar_path
+              ? 'Tienes foto de perfil: el emoji y el color se usan si la quitas.'
+              : 'Tus amigos ven tu emoji y tu color en el ranking.'}
+          </p>
         </div>
       </div>
 

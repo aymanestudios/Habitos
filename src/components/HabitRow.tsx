@@ -17,11 +17,12 @@ type Props = {
   progress?: number // 0-100, solo para hábitos con objetivo numérico
   onToggle?: () => void // hábito de sí/no: tocar la fila lo marca o desmarca
   counter?: Counter // hábito numérico: botones − y +
+  share?: { onShare: () => void; shared: boolean } // botón de cámara cuando está hecho
 }
 
 // Fila de hábito de la pantalla "Hoy".
 // Al completarse, el círculo hace un "rebote" y suelta un chispazo de confeti.
-export function HabitRow({ title, meta, done, progress, onToggle, counter }: Props) {
+export function HabitRow({ title, meta, done, progress, onToggle, counter, share }: Props) {
   const badge = useRef<HTMLSpanElement>(null)
   const pulse = usePulse(done)
 
@@ -48,18 +49,35 @@ export function HabitRow({ title, meta, done, progress, onToggle, counter }: Pro
     </div>
   )
 
+  // Cámara: compartir una foto del logro (solo cuando el hábito está hecho)
+  const shareButton = share && done && (
+    <button
+      type="button"
+      onClick={share.onShare}
+      aria-label={share.shared ? `Cambiar la foto de ${title}` : `Compartir una foto de ${title}`}
+      className={`animate-pop-in flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-transform active:scale-90 ${
+        share.shared ? 'bg-brand text-on-brand' : 'bg-surface-2 text-brand-ink'
+      }`}
+    >
+      <Icon name="camera" className="h-5 w-5" />
+    </button>
+  )
+
   if (onToggle) {
     return (
-      <button
-        type="button"
-        role="checkbox"
-        aria-checked={done}
-        onClick={onToggle}
-        className="flex w-full items-center gap-4 py-3 text-left transition-transform active:scale-[0.99]"
-      >
-        {circle}
-        {text}
-      </button>
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          role="checkbox"
+          aria-checked={done}
+          onClick={onToggle}
+          className="flex min-w-0 flex-1 items-center gap-4 py-3 text-left transition-transform active:scale-[0.99]"
+        >
+          {circle}
+          {text}
+        </button>
+        {shareButton}
+      </div>
     )
   }
 
@@ -67,6 +85,7 @@ export function HabitRow({ title, meta, done, progress, onToggle, counter }: Pro
     <div className="flex items-center gap-4 py-3">
       {circle}
       {text}
+      {shareButton}
       {counter && (
         <div className="flex shrink-0 items-center gap-2">
           <button

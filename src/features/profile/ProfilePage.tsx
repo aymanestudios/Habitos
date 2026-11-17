@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link } from 'react-router'
 import { Avatar } from '@/components/Avatar'
 import { Card } from '@/components/Card'
@@ -9,6 +10,7 @@ import { useTheme } from '@/lib/theme'
 import type { ThemeChoice } from '@/lib/theme'
 import { achievementsSummary, buildAchievements } from './achievements'
 import { AccountCard } from './AccountCard'
+import { AvatarEditor } from './AvatarEditor'
 import { StyleCard } from './StyleCard'
 import { freezesText, xpToNext } from './progressRules'
 import { useProfile } from './useProfile'
@@ -24,6 +26,7 @@ export function ProfilePage() {
   const [theme, setTheme] = useTheme()
   const profile = useProfile()
   const progress = useProgress()
+  const [editingPhoto, setEditingPhoto] = useState(false)
 
   const stats = progress.data
     ? [
@@ -39,12 +42,25 @@ export function ProfilePage() {
 
       {profile.data && (
         <Card className="flex items-center gap-5">
-          <Avatar
-            name={profile.data.display_name}
-            emoji={profile.data.avatar_emoji}
-            color={profile.data.avatar_color}
-            className="h-20 w-20 text-4xl"
-          />
+          {/* Tocar la foto abre el editor (hacer foto, galería, quitar) */}
+          <button
+            type="button"
+            onClick={() => setEditingPhoto(true)}
+            aria-label="Cambiar foto de perfil"
+            className="group relative shrink-0 rounded-full transition-transform active:scale-95"
+          >
+            <Avatar
+              name={profile.data.display_name}
+              emoji={profile.data.avatar_emoji}
+              color={profile.data.avatar_color}
+              photo={profile.data.avatar_path}
+              className="h-20 w-20 text-4xl"
+            />
+            <span className="absolute -bottom-1 -right-1 flex h-8 w-8 items-center justify-center rounded-full border-2 border-surface bg-brand text-on-brand shadow-card transition-transform group-hover:scale-110">
+              <Icon name="camera" className="h-4 w-4" />
+            </span>
+          </button>
+          <AvatarEditor profile={profile.data} open={editingPhoto} onClose={() => setEditingPhoto(false)} />
           <div className="min-w-0 flex-1">
             <h2 className="truncate text-xl font-bold">{profile.data.display_name}</h2>
             <p className="truncate text-muted">@{profile.data.username}</p>

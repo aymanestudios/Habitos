@@ -19,3 +19,4 @@ En la Fase 0 solo creas el proyecto en supabase.com y copias su URL y su clave p
 - `0009_push.sql`: avisos al móvil (suscripciones, cron cada minuto y secreto en Vault). Necesita la Edge Function `functions/send-reminders` y las claves VAPID: ver docs/AVISOS.md.
 - `0010_vapid_vault.sql`: las claves de los avisos se generan solas y se guardan cifradas en Vault. La app solo lee la pública.
 - `0011_profile_style.sql`: emoji, color y frase del perfil. Los amigos ven emoji y color en el ranking.
+- `0012_photos.sql`: fotos de perfil (bucket público `avatars`) y fotos de hábitos (bucket privado `evidence`, tabla `habit_posts`, reacciones a publicaciones). Ver docs/FOTOS.md.

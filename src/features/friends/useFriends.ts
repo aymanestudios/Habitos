@@ -75,13 +75,16 @@ export function useFriendActivity(enabled: boolean) {
   })
 }
 
-// Pone, cambia o quita (mismo emoji otra vez) tu reacción a un evento de un amigo.
+// Pone, cambia o quita (mismo emoji otra vez) tu reacción a un evento o a una publicación con foto.
 export function useReact() {
   const queryClient = useQueryClient()
   const { user } = useAuth()
   return useMutation({
-    mutationFn: async ({ eventId, emoji }: { eventId: string; emoji: Reaction }) => {
-      const { error } = await supabase.rpc('react_to_activity', { p_event: eventId, p_emoji: emoji })
+    mutationFn: async ({ item, emoji }: { item: Pick<ActivityItem, 'itemId' | 'itemType'>; emoji: Reaction }) => {
+      const { error } =
+        item.itemType === 'post'
+          ? await supabase.rpc('react_to_post', { p_post: item.itemId, p_emoji: emoji })
+          : await supabase.rpc('react_to_activity', { p_event: item.itemId, p_emoji: emoji })
       if (error) throw error
     },
     onSettled: () => queryClient.invalidateQueries({ queryKey: ['friend-activity', user?.id] }),

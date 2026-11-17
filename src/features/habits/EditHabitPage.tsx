@@ -5,6 +5,7 @@ import { Card } from '@/components/Card'
 import { PageHeader } from '@/components/PageHeader'
 import { HabitForm } from './HabitForm'
 import { HabitHistoryCard } from './HabitHistoryCard'
+import { HabitPostsCard } from '@/features/posts/HabitPostsCard'
 import { errorMessage, formToPayload, friendlyHabitError, habitToForm } from './habitRules'
 import { useHabits, useUpdateHabit } from './useHabits'
 
@@ -71,6 +72,8 @@ export function EditHabitPage() {
       )}
 
       <HabitHistoryCard habit={habit} />
+
+      <HabitPostsCard habitId={habit.id} />
 
       <Card>
         <HabitForm

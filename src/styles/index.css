@@ -245,6 +245,35 @@
   50% { transform: scale(1.04, 0.97); }
 }
 
+@keyframes sheet-up {
+  from { transform: translateY(24px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes published {
+  0% { transform: scale(0.6); opacity: 0; }
+  60% { transform: scale(1.12); opacity: 1; }
+  100% { transform: scale(1); }
+}
+
+/* Paneles (Sheet), fotos que aparecen y el "¡Publicado!" */
+@utility animate-sheet {
+  animation: sheet-up 0.28s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+@utility animate-fade {
+  animation: fade 0.3s ease-out backwards;
+}
+
+@utility animate-published {
+  animation: published 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+}
+
 /* Ánimos de la mascota (ver dashboard/mascotRules.ts) */
 @utility animate-wiggle {
   animation: wiggle 1.2s ease-in-out 2;

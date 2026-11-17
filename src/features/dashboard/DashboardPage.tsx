@@ -7,6 +7,9 @@ import { Icon } from '@/components/Icon'
 import { LevelBar } from '@/components/LevelBar'
 import { Mascot } from '@/components/Mascot'
 import { MOOD_ANIMATION, mascotMood } from './mascotRules'
+import { completesHabit } from '@/features/posts/postRules'
+import { SharePostSheet } from '@/features/posts/SharePostSheet'
+import { useMyRecentPosts } from '@/features/posts/usePosts'
 import { PageSkeleton } from '@/components/Skeleton'
 import { ProgressRing } from '@/components/ProgressRing'
 // Hoy es la pantalla que junta cosas de otras partes, por eso (y solo por eso) importa de habits y profile.
@@ -80,6 +83,21 @@ export function DashboardPage() {
   // Celebración: confeti y baile de la mascota al pasar de "día incompleto" a "día completo".
   // Al abrir la app o cambiar entre Hoy/Ayer no se dispara (solo cuando TÚ completas el día).
   const [celebrating, setCelebrating] = useState(false)
+
+  // Fotos de logros: aviso "¿Quieres compartir tu progreso?" y panel para publicar
+  type ShareTarget = { habitId: string; title: string; dayOffset: 0 | -1 }
+  const [sharePrompt, setSharePrompt] = useState<ShareTarget | null>(null)
+  const [shareTarget, setShareTarget] = useState<ShareTarget | null>(null)
+  const recentPosts = useMyRecentPosts(addDays(today, -1))
+  const postedKeys = useMemo(
+    () => new Set((recentPosts.data ?? []).map((post) => `${post.habit_id}|${post.local_date}`)),
+    [recentPosts.data],
+  )
+  useEffect(() => {
+    if (!sharePrompt) return
+    const timer = window.setTimeout(() => setSharePrompt(null), 9000) // se va solo si no lo usas
+    return () => window.clearTimeout(timer)
+  }, [sharePrompt])
   const lastDay = useRef<{ date: string; allDone: boolean } | null>(null)
   const celebrationTimer = useRef<number | undefined>(undefined)
 
@@ -212,6 +230,20 @@ export function DashboardPage() {
 
   function change(item: DayItem, delta: number) {
     addProgress.mutate({ habit: item.habit, date, dayOffset: isToday ? 0 : -1, delta })
+    // Al completarlo, ofrecemos (sin obligar) compartir una foto
+    if (completesHabit(item.value, delta, item.numeric ? item.habit.target_value : 1)) {
+      setSharePrompt({ habitId: item.habit.id, title: item.habit.title, dayOffset: isToday ? 0 : -1 })
+    }
+  }
+
+  function shareFor(item: DayItem) {
+    return {
+      shared: postedKeys.has(`${item.habit.id}|${date}`),
+      onShare: () => {
+        setSharePrompt(null)
+        setShareTarget({ habitId: item.habit.id, title: item.habit.title, dayOffset: isToday ? 0 : -1 })
+      },
+    }
   }
 
   function renderRow(item: DayItem) {
@@ -221,6 +253,7 @@ export function DashboardPage() {
         <HabitRow
           key={item.habit.id}
           {...common}
+          share={shareFor(item)}
           progress={item.progress}
           counter={{
             onMinus: () => change(item, -item.step),
@@ -230,7 +263,14 @@ export function DashboardPage() {
         />
       )
     }
-    return <HabitRow key={item.habit.id} {...common} onToggle={() => change(item, item.value >= 1 ? -1 : 1)} />
+    return (
+      <HabitRow
+        key={item.habit.id}
+        {...common}
+        share={shareFor(item)}
+        onToggle={() => change(item, item.value >= 1 ? -1 : 1)}
+      />
+    )
   }
 
   return (
@@ -345,6 +385,40 @@ export function DashboardPage() {
           </>
         )}
     </div>
+      {sharePrompt && !shareTarget && (
+        <div
+          key={sharePrompt.habitId}
+          role="status"
+          className="animate-sheet fixed inset-x-3 bottom-24 z-40 mx-auto flex max-w-md items-center gap-3 rounded-3xl border-2 border-line bg-surface p-3 pl-4 shadow-2xl lg:bottom-6"
+        >
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-soft text-brand-ink">
+            <Icon name="camera" className="h-5 w-5" />
+          </span>
+          <p className="min-w-0 flex-1 text-sm">
+            <span className="block font-bold">¿Quieres compartir tu progreso?</span>
+            <span className="block truncate text-muted">{sharePrompt.title}</span>
+          </p>
+          <button
+            type="button"
+            onClick={() => {
+              setShareTarget(sharePrompt)
+              setSharePrompt(null)
+            }}
+            className="btn-primary shrink-0 px-4 py-2 text-sm"
+          >
+            Compartir
+          </button>
+          <button
+            type="button"
+            onClick={() => setSharePrompt(null)}
+            aria-label="Ahora no"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-muted hover:text-ink"
+          >
+            <Icon name="close" className="h-4 w-4" />
+          </button>
+        </div>
+      )}
+      <SharePostSheet target={shareTarget} onClose={() => setShareTarget(null)} />
     </>
   )
 }

@@ -79,6 +79,7 @@ export function useAddProgress(from: string, to: string, onXp?: (xpDelta: number
         void queryClient.invalidateQueries({ queryKey: ['glance', user?.id] }) // XP de hoy en Inicio
         void queryClient.invalidateQueries({ queryKey: ['shared-streaks', user?.id] }) // el fuego se actualiza al momento
         void queryClient.invalidateQueries({ queryKey: ['rewards', user?.id] }) // por si desbloqueas algo
+        void queryClient.invalidateQueries({ queryKey: ['challenges', user?.id] }) // progreso de los retos
       }
     },
   })

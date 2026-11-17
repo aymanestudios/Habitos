@@ -27,3 +27,9 @@ abrirla desde el icono y activar los avisos dentro (iOS 16.4 o superior).
 - Avisa una vez por cada hora programada (si lo pospones, vuelve a avisar).
 - No avisa de recordatorios con más de 24 h de retraso.
 - En `npm run dev` no funciona (el service worker solo se activa en la web publicada).
+
+## Retos relámpago (0019)
+- ⚡ "X te propone un reto": al amigo invitado, una vez.
+- ⚡ "Último día del reto con X": de 18:00 a 21:59 del último día, solo si aún no está cumplido. Tono amable ("si os apetece, aún estáis a tiempo").
+- 🎉 "¡Reto cumplido con X!": a los dos, una vez.
+Una sola vez por persona, reto y tipo (`challenge_pings`, tabla interna).

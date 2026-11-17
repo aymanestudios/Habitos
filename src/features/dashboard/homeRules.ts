@@ -113,3 +113,12 @@ export function welcomeFor(name: string, daysAway: number | null, today: string)
     ? { title: `¡Cuánto tiempo, ${name}!`, text: 'Me alegra verte. Empieza por algo pequeño: un solo hábito ya cuenta.' }
     : { title: `¡Qué bien verte de nuevo, ${name}!`, text: 'Hoy es un buen día para retomar. Paso a paso.' }
 }
+
+const EASE: Record<string, number> = { easy: 0, medium: 1, hard: 2 }
+
+/** Plan fácil para retomar: el hábito pendiente más sencillo de hoy (o null si no hay ninguno). */
+export function easyStart<T extends { checked: boolean; habit: { difficulty: string } }>(items: T[]): T | null {
+  const pending = items.filter((item) => !item.checked)
+  if (pending.length === 0) return null
+  return pending.reduce((best, item) => ((EASE[item.habit.difficulty] ?? 1) < (EASE[best.habit.difficulty] ?? 1) ? item : best))
+}

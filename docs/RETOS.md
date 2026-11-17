@@ -18,3 +18,5 @@ Retos cortos y cooperativos entre dos amigos (Amigos → Retos relámpago). Cada
 - Los retos cumplidos cuentan para la insignia "Trabajo en equipo" (solo cosmética).
 
 RPC: `create_flash_challenge`, `get_my_challenges`, `cancel_challenge` (`create_challenge` antiguo sigue funcionando como reto de XP).
+
+En Inicio, "Tus retos" muestra los activos (máx. 2). Avisos push: ver docs/AVISOS.md.

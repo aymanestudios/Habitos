@@ -5,8 +5,9 @@ import { HabitRow } from '@/components/HabitRow'
 import { Icon } from '@/components/Icon'
 import { LevelBar } from '@/components/LevelBar'
 import { Mascot } from '@/components/Mascot'
-import { MOOD_ANIMATION, MOOD_POSE, mascotMood } from './mascotRules'
-import { takeRecap, welcomeFor } from './homeRules'
+import { MOOD_ANIMATION, MOOD_POSE, mascotMood, reactionFor } from './mascotRules'
+import { easyStart, takeRecap, welcomeFor } from './homeRules'
+import { HomeChallenges } from '@/features/challenges/HomeChallenges'
 import type { Welcome } from './homeRules'
 import { useTodayGlance, useWeekRecap } from './useHome'
 import { WeekRecapSheet } from './WeekRecapSheet'
@@ -171,8 +172,32 @@ export function DashboardPage() {
     }
   }, [level])
 
+  // El panda reacciona al momento cada vez que completas un hábito de hoy (unos segundos)
+  const todayDone = useMemo(
+    () => (habits.data ? summarizeDay(buildDayItems(habits.data, logs.data ?? [], today)) : null),
+    [habits.data, logs.data, today],
+  )
+  const [reaction, setReaction] = useState<{ id: number; text: string } | null>(null)
+  const reactionTimer = useRef<number | undefined>(undefined)
+  const lastDone = useRef<{ date: string; done: number } | null>(null)
+  useEffect(() => {
+    if (!ready || !todayDone) return
+    const last = lastDone.current
+    lastDone.current = { date: today, done: todayDone.done }
+    if (!last || last.date !== today || todayDone.done <= last.done) return
+    const text = reactionFor(todayDone.done, todayDone.total, today)
+    window.clearTimeout(reactionTimer.current)
+    if (!text) {
+      setReaction(null)
+      return
+    }
+    setReaction({ id: Date.now(), text })
+    reactionTimer.current = window.setTimeout(() => setReaction(null), 2800)
+  }, [ready, todayDone, today])
+
   useEffect(
     () => () => {
+      window.clearTimeout(reactionTimer.current)
       window.clearTimeout(celebrationTimer.current)
       window.clearTimeout(toastTimer.current)
       window.clearTimeout(levelTimer.current)
@@ -220,6 +245,8 @@ export function DashboardPage() {
     hour,
     date: today,
   })
+
+  const easy = isToday ? easyStart(dailyItems) : null // plan fácil al volver tras unos días
 
   const nearestReward = rewards.data ? (nextRewards(rewards.data, 1)[0] ?? null) : null
   const recentFriends = (friendActivity.data ?? []).slice(0, 2)
@@ -376,6 +403,19 @@ export function DashboardPage() {
             <div className="min-w-0 flex-1">
               <p className="font-bold">{welcome.title}</p>
               <p className="text-sm text-muted">{welcome.text}</p>
+              {easy && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    change(easy, easy.numeric ? easy.step : 1)
+                    setWelcome(null)
+                  }}
+                  className="mt-2 inline-flex max-w-full items-center gap-1.5 rounded-full bg-brand-soft px-3 py-1.5 text-sm font-bold text-brand-ink active:scale-95"
+                >
+                  <Icon name="check" className="h-4 w-4 shrink-0" />
+                  <span className="truncate">Empezar por: {easy.habit.title}</span>
+                </button>
+              )}
             </div>
             <button
               type="button"
@@ -390,6 +430,9 @@ export function DashboardPage() {
 
         {/* Rachas compartidas: lo primero que se ve al entrar */}
         <HomeStreaks />
+
+        {/* Retos relámpago activos (y la celebración del panda al cumplir uno) */}
+        <HomeChallenges />
 
         {!hasHabits ? (
           <Card className="flex flex-col items-center text-center">
@@ -412,13 +455,16 @@ export function DashboardPage() {
                 </ProgressRing>
                 <div className="min-w-0 flex-1">
                   <h2 className="text-lg font-bold leading-tight">{message.title}</h2>
-                  <p key={mascot.text} className="animate-pop-in mt-1 text-sm text-muted">
-                    {isToday ? mascot.text : message.text}
+                  <p key={reaction ? reaction.id : mascot.text} className="animate-pop-in mt-1 text-sm text-muted">
+                    {isToday ? (reaction?.text ?? mascot.text) : message.text}
                   </p>
                 </div>
-                <div key={mascot.mood} className={`hidden shrink-0 origin-bottom min-[400px]:block ${MOOD_ANIMATION[mascot.mood]}`}>
+                <div
+                  key={reaction ? reaction.id : mascot.mood}
+                  className={`hidden shrink-0 origin-bottom min-[400px]:block ${reaction ? 'animate-hop' : MOOD_ANIMATION[mascot.mood]}`}
+                >
                   <Mascot
-                    pose={levelUp ? 'star' : MOOD_POSE[mascot.mood]}
+                    pose={levelUp ? 'star' : reaction ? 'gym' : MOOD_POSE[mascot.mood]}
                     className={`h-20 max-w-[110px] object-contain origin-bottom ${celebrating ? 'animate-tada' : ''}`}
                   />
                 </div>

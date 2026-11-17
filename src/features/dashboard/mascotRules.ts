@@ -69,3 +69,17 @@ export const MOOD_POSE: Record<MascotMood, 'default' | 'sleep' | 'gym' | 'star' 
   worried: 'default',
   rest: 'sleep',
 }
+
+const REACTIONS = ['¡Uno menos!', '¡Eso es!', '¡Bien hecho!', '¡Sumando!', '¡Así se hace!', '¡Me encanta verte así!']
+
+/**
+ * Lo que dice el panda justo al completar un hábito (unos segundos).
+ * null si el día ya está completo (eso lo celebra el ánimo "party" con confeti).
+ */
+export function reactionFor(done: number, total: number, seed: string): string | null {
+  if (total <= 0 || done >= total) return null
+  const left = total - done
+  if (left === 1) return '¡Solo te queda uno! Ya casi.'
+  if (done === 1) return '¡Primero hecho! Lo más difícil ya está.'
+  return pick(REACTIONS, `${seed}-${done}`)
+}

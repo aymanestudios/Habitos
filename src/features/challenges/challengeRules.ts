@@ -141,3 +141,24 @@ export function localToday(now = new Date()): string {
   const pad = (n: number) => String(n).padStart(2, '0')
   return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`
 }
+
+/** Retos cumplidos que aún no has celebrado (seen = ids ya celebrados). */
+export function freshDone(list: Challenge[], seen: string[]): Challenge[] {
+  const known = new Set(seen)
+  return list.filter((c) => c.done && !known.has(c.id))
+}
+
+/** Progreso total de un reto en % (en los de días, el del que va más atrasado: es lo que falta). */
+export function overallPercent(c: Challenge): number {
+  if (c.kind === 'days') return Math.min(percent(c.myValue, c.target), percent(c.partnerValue, c.target))
+  return percent(c.myValue + c.partnerValue, c.target)
+}
+
+/** Línea corta para Inicio: "Tú 2/3 · Cris 1/3" o "7/10 entre los dos". */
+export function shortProgress(c: Challenge): string {
+  const unit = c.kind === 'xp' ? ' XP' : ''
+  if (c.kind === 'days') {
+    return `Tú ${Math.min(c.myValue, c.target)}/${c.target} · ${c.partnerName} ${Math.min(c.partnerValue, c.target)}/${c.target}`
+  }
+  return `${Math.min(c.myValue + c.partnerValue, c.target)}/${c.target}${unit} entre los dos`
+}

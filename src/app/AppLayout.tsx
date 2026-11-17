@@ -1,5 +1,5 @@
-import { Suspense } from 'react'
-import { Link, NavLink, Outlet } from 'react-router'
+import { Suspense, useLayoutEffect } from 'react'
+import { Link, NavLink, Outlet, useLocation } from 'react-router'
 import { PageSkeleton } from '@/components/Skeleton'
 import { Icon } from '@/components/Icon'
 import { APP_NAME } from '@/lib/constants'
@@ -48,6 +48,12 @@ function SidebarLink({ item }: { item: NavItem }) {
 
 export function AppLayout() {
   const swipe = useSwipeTabs()
+  const { pathname } = useLocation()
+
+  // Cada pantalla empieza arriba (antes heredaba el scroll de la anterior y "saltaba")
+  useLayoutEffect(() => {
+    window.scrollTo(0, 0)
+  }, [pathname])
 
   return (
     <div className="pt-safe">
@@ -87,11 +93,7 @@ export function AppLayout() {
         <div
           key={swipe.pageKey}
           className={`mx-auto w-full max-w-5xl px-5 pb-32 pt-6 md:px-10 md:pb-12 md:pt-10 ${swipe.enterClass}`}
-          style={
-            swipe.offset
-              ? { transform: `translateX(${swipe.offset}px)`, opacity: 1 - Math.min(Math.abs(swipe.offset) / 400, 0.25) }
-              : { transition: 'transform 0.25s ease, opacity 0.25s ease' }
-          }
+          ref={swipe.pageRef}
         >
           <Suspense fallback={<PageSkeleton />}>
             <Outlet />

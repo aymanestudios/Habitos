@@ -111,6 +111,7 @@ Con el botón de control de código fuente de VS Code (Commit y Sync). `.env.loc
 - [docs/DISENO.md](docs/DISENO.md): identidad visual y navegación.
 - [docs/COPIAS-SEGURIDAD.md](docs/COPIAS-SEGURIDAD.md): copias completas (base de datos, cuentas y fotos) y cómo restaurar.
 - [docs/BETA.md](docs/BETA.md): lista de comprobación antes de la beta privada.
+- [docs/EMAILS.md](docs/EMAILS.md): confirmar email, recuperar contraseña, correo propio (SMTP), plantillas y cifrado.
 - Por funcionalidad: XP-Y-RACHAS, AVISOS, FOTOS, FUEGO, RETOS, RECOMPENSAS, SKINS, MASCOTA, PWA.
 
 ## Siguiente

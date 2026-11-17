@@ -27,7 +27,8 @@ async function signUp(name: string, email: string, password: string) {
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
-    options: { data: { display_name: name, timezone: getUserTimezone() } },
+    // El enlace del email de confirmación vuelve a la app y entra solo (debe estar en Redirect URLs de Supabase)
+    options: { data: { display_name: name, timezone: getUserTimezone() }, emailRedirectTo: `${window.location.origin}/` },
   })
   if (error) throw error
   // Si la confirmación por email está activada, no hay sesión hasta que confirme

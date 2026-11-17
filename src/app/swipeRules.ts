@@ -6,8 +6,8 @@ export const EDGE_GUARD = 16 // px desde el borde: ahí manda el gesto del siste
 
 /** ¿El dedo va de lado (y no hacia abajo, haciendo scroll)? Se decide en los primeros píxeles. */
 export function isHorizontal(dx: number, dy: number): boolean | null {
-  if (Math.abs(dx) < 10 && Math.abs(dy) < 10) return null // aún no se sabe
-  return Math.abs(dx) > Math.abs(dy) * 1.4
+  if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return null // aún no se sabe
+  return Math.abs(dx) > Math.abs(dy) * 1.3
 }
 
 /** Al soltar: -1 = pestaña anterior, 1 = siguiente, 0 = quedarse. */
@@ -25,8 +25,14 @@ export function tabIndex(pathname: string, tabs: string[]): number {
   return tabs.indexOf(clean)
 }
 
-/** Lo que se mueve la página mientras arrastras: sigue al dedo, pero frena en los extremos. */
+/** Lo que se mueve la página mientras arrastras: sigue al dedo de cerca, y en los extremos frena como una goma. */
 export function dragOffset(dx: number, canGo: boolean): number {
-  const damped = dx * 0.35
-  return canGo ? damped : damped * 0.3
+  if (canGo) return dx * 0.6
+  const sign = dx < 0 ? -1 : 1
+  return sign * Math.min(Math.abs(dx) * 0.18, 40)
+}
+
+/** Se aclara un poco al alejarse, para que se note que vas a cambiar de pantalla. */
+export function dragOpacity(x: number, width: number): number {
+  return 1 - Math.min(Math.abs(x) / Math.max(width, 1), 0.35)
 }

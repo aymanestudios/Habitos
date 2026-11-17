@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import { Link, Navigate, useLocation } from 'react-router'
 import { Card } from '@/components/Card'
@@ -18,7 +18,7 @@ function friendlyAuthError(message: string): string {
   if (text.includes('already registered')) return 'Ese email ya tiene cuenta. Prueba a entrar.'
   if (text.includes('password should')) return 'La contraseña es demasiado corta o débil.'
   if (text.includes('email not confirmed'))
-    return 'Confirma tu email antes de entrar (revisa tu bandeja de entrada).'
+    return 'Aún no has confirmado tu email. Abre el enlace que te enviamos (mira también en spam) o pide otro abajo.'
   if (text.includes('rate limit')) return 'Demasiados intentos. Espera unos minutos.'
   if (text.includes('failed to fetch') || text.includes('network'))
     return 'No hay conexión. Revisa tu internet e inténtalo de nuevo.'
@@ -37,6 +37,31 @@ export function LoginPage() {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [info, setInfo] = useState<string | null>(null)
+  // Email pendiente de confirmar: se puede pedir otro enlace (con 60 s de espera entre envíos)
+  const [pendingEmail, setPendingEmail] = useState<string | null>(null)
+  const [resendWait, setResendWait] = useState(0)
+
+  useEffect(() => {
+    if (resendWait <= 0) return
+    const timer = window.setTimeout(() => setResendWait((value) => value - 1), 1000)
+    return () => window.clearTimeout(timer)
+  }, [resendWait])
+
+  async function resendConfirmation() {
+    if (!pendingEmail || resendWait > 0) return
+    setError(null)
+    const { error: resendError } = await supabase.auth.resend({
+      type: 'signup',
+      email: pendingEmail,
+      options: { emailRedirectTo: `${window.location.origin}/` },
+    })
+    if (resendError) {
+      setError(friendlyAuthError(resendError.message))
+      return
+    }
+    setInfo(`Te hemos enviado otro enlace a ${pendingEmail}. Mira también en spam.`)
+    setResendWait(60)
+  }
 
   // Si ya hay sesión (acabas de entrar o ya la tenías), fuera de aquí
   if (session) {
@@ -63,11 +88,15 @@ export function LoginPage() {
       } else {
         const { needsConfirmation } = await signUp(name.trim(), email.trim(), password)
         if (needsConfirmation) {
-          setInfo('Te hemos enviado un email para confirmar la cuenta. Ábrelo y vuelve a entrar.')
+          setPendingEmail(email.trim())
+          setResendWait(60)
+          setInfo(`¡Casi está! Te hemos enviado un email a ${email.trim()}. Pulsa el enlace para activar tu cuenta (mira también en spam).`)
         }
       }
     } catch (caught) {
-      setError(friendlyAuthError(caught instanceof Error ? caught.message : ''))
+      const message = caught instanceof Error ? caught.message : ''
+      if (message.toLowerCase().includes('email not confirmed')) setPendingEmail(email.trim())
+      setError(friendlyAuthError(message))
     } finally {
       setBusy(false)
     }
@@ -151,6 +180,16 @@ export function LoginPage() {
               </p>
             )}
             {info && <p className="rounded-2xl bg-good-soft px-4 py-3 text-sm text-good-ink">{info}</p>}
+            {pendingEmail && mode !== 'forgot' && (
+              <button
+                type="button"
+                onClick={() => void resendConfirmation()}
+                disabled={resendWait > 0}
+                className="w-full rounded-2xl border-2 border-line px-4 py-2.5 text-sm font-bold text-brand-ink disabled:text-muted"
+              >
+                {resendWait > 0 ? `Reenviar email de confirmación (${resendWait} s)` : 'Reenviar email de confirmación'}
+              </button>
+            )}
 
             <button
               type="submit"

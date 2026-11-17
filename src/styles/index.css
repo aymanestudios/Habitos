@@ -431,6 +431,8 @@
 @layer base {
   html {
     -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation; /* sin espera de "doble toque para ampliar": los toques responden al instante */
+    -webkit-text-size-adjust: 100%;
   }
 
   :focus-visible {

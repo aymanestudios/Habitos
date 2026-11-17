@@ -16,11 +16,9 @@ Marca cada punto antes de invitar a nadie. Lo que está ✅ se comprobó el 18/1
 - ✅ Site URL: `https://habitosandatomicos.onrender.com`.
 - ✅ Redirect URLs: la de arriba y `https://habitosandatomicos.onrender.com/nueva-contrasena` (recuperar contraseña).
 - ✅ "Confirm email" activado.
-- [ ] **Correo propio (SMTP)**: Authentication → Emails → SMTP Settings. Sin él, el correo integrado de Supabase
-  solo envía a los miembros del equipo del proyecto y muy pocos por hora: los testers **no recibirían** ni la
-  confirmación de cuenta ni el enlace de recuperar contraseña. Sirve un plan gratis de un proveedor de correo
-  (por ejemplo Brevo o Resend): crea la cuenta, copia sus datos SMTP en el panel tú mismo (son secretos) y
-  pon como remitente un correo tuyo.
+- ✅ Contraseña mínima de 8 caracteres y "Secure password change" activado.
+- [ ] **Correo propio (SMTP) + plantillas en español**: pasos en `docs/EMAILS.md`. Sin él, los testers **no recibirían**
+  ni la confirmación de cuenta ni el enlace de recuperar contraseña.
 - [ ] Probar con un email que NO sea del equipo: registrarse, confirmar, entrar, cerrar sesión y recuperar contraseña.
 - [ ] (Recomendado) Attack Protection: protección de contraseñas filtradas, si tu plan la incluye.
 - [ ] Activar la verificación en dos pasos (2FA) en tus cuentas de Supabase, GitHub y Render.
@@ -34,6 +32,9 @@ Marca cada punto antes de invitar a nadie. Lo que está ✅ se comprobó el 18/1
 - [ ] Regla de reescritura: `/*` → `/index.html` (Rewrite). Sin ella, recargar en `/amigos` o abrir el enlace de recuperar contraseña da 404.
 - [ ] Variables `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY` puestas (solo la clave pública).
 - [ ] Tras publicar: abrir la web, recargar en `/perfil` y comprobar que el icono nuevo sale en la pestaña.
+- [ ] Cabeceras de seguridad (Render → tu sitio → Headers, ruta `/*`):
+  `X-Frame-Options: DENY` · `X-Content-Type-Options: nosniff` · `Referrer-Policy: strict-origin-when-cross-origin` ·
+  `Permissions-Policy: camera=(self), microphone=(), geolocation=()`. Impiden que otra web meta la tuya dentro (clickjacking).
 
 ## 6. Copias
 - [ ] Copia completa hecha (`docs/COPIAS-SEGURIDAD.md`).

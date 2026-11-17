@@ -13,6 +13,8 @@ export type FriendRow = {
   week_xp: number | null
   current_streak: number | null
   friend_code: string | null // solo el tuyo
+  avatar_emoji: string | null
+  avatar_color: string | null
 }
 
 export type RankedFriend = FriendRow & { position: number }
@@ -41,6 +43,8 @@ export function buildOverview(raw: unknown): FriendsOverview {
       week_xp: numOrNull(row.week_xp),
       current_streak: numOrNull(row.current_streak),
       friend_code: row.friend_code ?? null,
+      avatar_emoji: row.avatar_emoji ?? null,
+      avatar_color: row.avatar_color ?? null,
     }))
 
   const sorted = rows

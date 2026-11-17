@@ -6,6 +6,7 @@ import { HabitRow } from '@/components/HabitRow'
 import { Icon } from '@/components/Icon'
 import { LevelBar } from '@/components/LevelBar'
 import { Mascot } from '@/components/Mascot'
+import { MOOD_ANIMATION, mascotMood } from './mascotRules'
 import { PageSkeleton } from '@/components/Skeleton'
 import { ProgressRing } from '@/components/ProgressRing'
 // Hoy es la pantalla que junta cosas de otras partes, por eso (y solo por eso) importa de habits y profile.
@@ -136,7 +137,8 @@ export function DashboardPage() {
   }
 
   const firstName = profile.data.display_name.split(' ')[0]
-  const greeting = greetingFor(localHour(new Date(), timeZone))
+  const hour = localHour(new Date(), timeZone)
+  const greeting = greetingFor(hour)
   // Mediodía en UTC para formatear una fecha "suelta" sin que ninguna zona horaria la mueva de día
   const dateLabel = new Intl.DateTimeFormat('es-ES', {
     weekday: 'long',
@@ -148,6 +150,17 @@ export function DashboardPage() {
   const hasHabits = habits.data.some((habit) => habit.archived_at === null)
   const dailyItems = items.filter((item) => isDailyKind(item.habit))
   const weeklyItems = items.filter((item) => !isDailyKind(item.habit))
+
+  // La mascota mira siempre HOY (aunque estés viendo la pestaña de ayer)
+  const todaySummary = isToday ? summary : summarizeDay(buildDayItems(habits.data, logs.data ?? [], today))
+  const mascot = mascotMood({
+    hasHabits,
+    total: todaySummary.total,
+    done: todaySummary.done,
+    streak: progress.data?.current_streak ?? 0,
+    hour,
+    date: today,
+  })
 
   // Recordatorios pendientes de hoy (y atrasados). Si la tabla aún no existe, la tarjeta simplemente no sale.
   const reminderGroups = groupReminders(reminders.data ?? [], now)
@@ -242,11 +255,20 @@ export function DashboardPage() {
               {greeting}, {firstName}
             </h1>
           </div>
-          {/* La mascota flota despacito; al completar el día baila */}
-          <div className="animate-float shrink-0">
+        </header>
+
+        {/* La mascota reacciona a cómo va el día (mascotRules.ts); al completarlo baila */}
+        <div className="flex items-end gap-3">
+          <div key={mascot.mood} className={`shrink-0 origin-bottom ${MOOD_ANIMATION[mascot.mood]}`}>
             <Mascot className={`h-20 origin-bottom ${celebrating ? 'animate-tada' : ''}`} />
           </div>
-        </header>
+          <p
+            key={mascot.text}
+            className="animate-pop-in relative mb-3 rounded-2xl rounded-bl-sm border-2 border-line bg-surface px-4 py-2.5 text-sm font-semibold shadow-card"
+          >
+            {mascot.text}
+          </p>
+        </div>
 
         {!hasHabits ? (
           <Card className="flex flex-col items-center text-center">

@@ -160,7 +160,7 @@ export function FriendsPage() {
           <ul className="divide-y divide-line">
             {overview.incoming.map((row) => (
               <li key={row.user_id} className="flex items-center gap-3 py-3">
-                <Avatar name={row.display_name} tone="accent" />
+                <Avatar name={row.display_name} tone="accent" emoji={row.avatar_emoji} color={row.avatar_color} />
                 <div className="min-w-0 flex-1">
                   <p className="truncate font-semibold">{row.display_name}</p>
                   <p className="truncate text-sm text-muted">@{row.username}</p>
@@ -217,7 +217,7 @@ export function FriendsPage() {
                     >
                       {row.position}
                     </span>
-                    <Avatar name={row.display_name} tone={isMe ? 'brand' : 'good'} />
+                    <Avatar name={row.display_name} tone={isMe ? 'brand' : 'good'} emoji={row.avatar_emoji} color={row.avatar_color} />
                     <div className="min-w-0 flex-1">
                       <p className="truncate font-semibold">{isMe ? `${row.display_name} (tú)` : row.display_name}</p>
                       <p className="flex items-center gap-1 truncate text-sm text-muted">
@@ -338,7 +338,7 @@ export function FriendsPage() {
           <ul className="divide-y divide-line">
             {overview.outgoing.map((row) => (
               <li key={row.user_id} className="flex items-center gap-3 py-3">
-                <Avatar name={row.display_name} tone="accent" />
+                <Avatar name={row.display_name} tone="accent" emoji={row.avatar_emoji} color={row.avatar_color} />
                 <p className="min-w-0 flex-1 truncate font-semibold">{row.display_name}</p>
                 <button
                   type="button"

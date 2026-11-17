@@ -121,3 +121,60 @@ export function cellLabel(cell: DayCell): string {
   if (cell.total === 0) return `${shortDate(cell.date)}: sin hábitos`
   return `${shortDate(cell.date)}: ${cell.done} de ${cell.total}`
 }
+
+// ---------------------------------------------------------------------------
+// Meses: cumplimiento de este mes y los anteriores que caben en el calendario (12 semanas)
+// ---------------------------------------------------------------------------
+
+export type MonthBar = {
+  month: string // YYYY-MM
+  label: string // "nov"
+  total: number
+  done: number
+  perfectDays: number // días con todo hecho
+  percent: number | null
+  current: boolean
+  partial: boolean // el calendario no cubre el mes entero (el primero)
+}
+
+const monthFormat = new Intl.DateTimeFormat('es-ES', { month: 'short', timeZone: 'UTC' })
+
+export function buildMonthBars(heatmap: DayCell[][], today: string): MonthBar[] {
+  const cells = heatmap.flat().filter((cell) => !cell.future)
+  const first = cells[0]?.date ?? today
+  const byMonth = new Map<string, DayCell[]>()
+  for (const cell of cells) {
+    const key = cell.date.slice(0, 7)
+    byMonth.set(key, [...(byMonth.get(key) ?? []), cell])
+  }
+  return [...byMonth.entries()]
+    .map(([month, list]) => {
+      const total = list.reduce((sum, cell) => sum + cell.total, 0)
+      const done = list.reduce((sum, cell) => sum + cell.done, 0)
+      return {
+        month,
+        label: monthFormat.format(new Date(`${month}-15T12:00:00Z`)).replace('.', ''),
+        total,
+        done,
+        perfectDays: list.filter((cell) => cell.total > 0 && cell.done >= cell.total).length,
+        percent: total === 0 ? null : Math.round((done / total) * 100),
+        current: month === today.slice(0, 7),
+        partial: month === first.slice(0, 7) && !first.endsWith('-01'),
+      }
+    })
+    .filter((bar) => !bar.partial)
+    .slice(-3)
+}
+
+/** Texto que compara este mes con el anterior. */
+export function compareMonths(bars: MonthBar[]): string {
+  const current = bars[bars.length - 1]
+  const previous = bars[bars.length - 2]
+  if (!current || current.percent === null) return 'Este mes aún no tocaba ningún hábito.'
+  if (!previous || previous.percent === null) return `Este mes llevas un ${current.percent} %.`
+  const diff = current.percent - previous.percent
+  if (diff === 0) return `Igual que el mes pasado: ${current.percent} %.`
+  return diff > 0
+    ? `${diff} puntos más que en ${previous.label}. ¡Este mes vas mejor!`
+    : `${Math.abs(diff)} puntos menos que en ${previous.label}. Aún queda mes para remontar.`
+}

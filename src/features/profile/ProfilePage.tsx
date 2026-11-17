@@ -9,6 +9,7 @@ import { useTheme } from '@/lib/theme'
 import type { ThemeChoice } from '@/lib/theme'
 import { achievementsSummary, buildAchievements } from './achievements'
 import { AccountCard } from './AccountCard'
+import { StyleCard } from './StyleCard'
 import { freezesText, xpToNext } from './progressRules'
 import { useProfile } from './useProfile'
 import { useProgress } from './useProgress'
@@ -38,10 +39,16 @@ export function ProfilePage() {
 
       {profile.data && (
         <Card className="flex items-center gap-5">
-          <Avatar name={profile.data.display_name} className="h-20 w-20 text-3xl" />
+          <Avatar
+            name={profile.data.display_name}
+            emoji={profile.data.avatar_emoji}
+            color={profile.data.avatar_color}
+            className="h-20 w-20 text-4xl"
+          />
           <div className="min-w-0 flex-1">
             <h2 className="truncate text-xl font-bold">{profile.data.display_name}</h2>
             <p className="truncate text-muted">@{profile.data.username}</p>
+            {profile.data.bio && <p className="mt-1 text-sm italic">“{profile.data.bio}”</p>}
             {progress.data && (
               <LevelBar
                 className="mt-3"
@@ -131,6 +138,8 @@ export function ProfilePage() {
         </span>
         <span className="text-2xl text-muted" aria-hidden="true">›</span>
       </Link>
+
+      {profile.data && <StyleCard key={profile.data.id} profile={profile.data} />}
 
       <Card>
         <h2 className="text-lg font-bold">Apariencia</h2>

@@ -1,3 +1,5 @@
+import { avatarColorClass, isAvatarEmoji } from '@/lib/avatarStyle'
+
 type Tone = 'brand' | 'accent' | 'good'
 
 const tones: Record<Tone, string> = {
@@ -6,16 +8,24 @@ const tones: Record<Tone, string> = {
   good: 'bg-good-soft text-good-ink',
 }
 
-type Props = { name: string; tone?: Tone; className?: string }
+type Props = {
+  name: string
+  tone?: Tone
+  emoji?: string | null // si la persona eligió uno (perfil), se ve en vez de la inicial
+  color?: string | null // color elegido en el perfil; si no hay, se usa el "tone"
+  className?: string
+}
 
-// Avatar con la inicial del nombre (en el MVP no hay fotos de perfil)
-export function Avatar({ name, tone = 'brand', className = 'h-11 w-11 text-base' }: Props) {
+// Avatar: emoji elegido o inicial del nombre, sobre el color elegido (no hay fotos de perfil)
+export function Avatar({ name, tone = 'brand', emoji, color, className = 'h-11 w-11 text-base' }: Props) {
+  const colorClass = avatarColorClass(color) ?? tones[tone]
+  const showEmoji = isAvatarEmoji(emoji)
   return (
     <span
-      className={`flex shrink-0 items-center justify-center rounded-full font-bold ${tones[tone]} ${className}`}
+      className={`flex shrink-0 items-center justify-center rounded-full font-bold ${colorClass} ${className}`}
       aria-hidden="true"
     >
-      {name.charAt(0).toUpperCase()}
+      {showEmoji ? <span className="leading-none">{emoji}</span> : name.charAt(0).toUpperCase()}
     </span>
   )
 }

@@ -227,6 +227,37 @@
   animation: tada 1s ease-in-out;
 }
 
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  20% { transform: rotate(-7deg); }
+  40% { transform: rotate(6deg); }
+  60% { transform: rotate(-4deg); }
+  80% { transform: rotate(2deg); }
+}
+
+@keyframes hop {
+  0%, 60%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-8px); }
+}
+
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.04, 0.97); }
+}
+
+/* Ánimos de la mascota (ver dashboard/mascotRules.ts) */
+@utility animate-wiggle {
+  animation: wiggle 1.2s ease-in-out 2;
+}
+
+@utility animate-hop {
+  animation: hop 2.2s ease-in-out infinite;
+}
+
+@utility animate-breathe {
+  animation: breathe 4s ease-in-out infinite;
+}
+
 @layer base {
   html {
     -webkit-tap-highlight-color: transparent;

@@ -15,7 +15,17 @@ import { useProfile } from '@/features/profile/useProfile'
 import { useProgress } from '@/features/profile/useProgress'
 import { getUserTimezone } from '@/lib/dates'
 import { useToday } from '@/lib/useToday'
-import { buildHeatmap, buildWeekBars, cellLabel, compareWeeks, rankHabits, shortDate, statsFrom } from './statsRules'
+import {
+  buildHeatmap,
+  buildMonthBars,
+  buildWeekBars,
+  cellLabel,
+  compareMonths,
+  compareWeeks,
+  rankHabits,
+  shortDate,
+  statsFrom,
+} from './statsRules'
 import type { DayCell } from './statsRules'
 
 // Clases completas (Tailwind no detecta clases montadas con texto). De menos a más hecho.
@@ -45,7 +55,15 @@ export function StatsPage() {
     if (!habits.data || !logs.data) return null
     const heatmap = buildHeatmap(habits.data, logs.data, today)
     const bars = buildWeekBars(heatmap)
-    return { heatmap, bars, comparison: compareWeeks(bars), ranking: rankHabits(habits.data, logs.data, today) }
+    const months = buildMonthBars(heatmap, today)
+    return {
+      heatmap,
+      bars,
+      months,
+      comparison: compareWeeks(bars),
+      monthComparison: compareMonths(months),
+      ranking: rankHabits(habits.data, logs.data, today),
+    }
   }, [habits.data, logs.data, today])
 
   if (habits.isError || logs.isError) {
@@ -113,6 +131,34 @@ export function StatsPage() {
                   </span>
                 ))}
               </div>
+            </Card>
+
+            <Card>
+              <h2 className="text-lg font-bold">Mes a mes</h2>
+              <p className="mt-1 text-sm text-muted">{stats.monthComparison}</p>
+              <ul className="mt-4 space-y-4">
+                {stats.months.map((month) => (
+                  <li key={month.month}>
+                    <div className="flex items-baseline justify-between gap-3">
+                      <span className="font-semibold capitalize">
+                        {month.label}
+                        {month.current && <span className="ml-2 text-xs font-normal text-muted">(en curso)</span>}
+                      </span>
+                      <span className="text-sm font-bold">{month.percent === null ? '—' : `${month.percent} %`}</span>
+                    </div>
+                    <div className="mt-1.5 h-3 overflow-hidden rounded-full bg-surface-2">
+                      <div
+                        className={`h-full rounded-full transition-all duration-700 ${month.current ? 'bg-brand-ink' : 'bg-brand'}`}
+                        style={{ width: `${month.percent ?? 0}%` }}
+                      />
+                    </div>
+                    <p className="mt-1 text-xs text-muted">
+                      {month.done} de {month.total} hechos · {month.perfectDays}{' '}
+                      {month.perfectDays === 1 ? 'día perfecto' : 'días perfectos'}
+                    </p>
+                  </li>
+                ))}
+              </ul>
             </Card>
 
             <Card>

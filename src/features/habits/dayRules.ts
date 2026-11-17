@@ -125,8 +125,16 @@ export function summarizeDay(items: DayItem[]): DaySummary {
  * Sirve para que la pantalla responda al instante (UI optimista); luego el servidor confirma.
  */
 export function applyDelta(logs: LogRow[], habit: Habit, date: string, delta: number): LogRow[] {
-  const max = habit.target_value === null ? 1 : MAX_VALUE
-  const next = Math.round(Math.max(0, Math.min(max, valueOn(logs, habit.id, date) + delta)) * 100) / 100
+  // Igual que el servidor (0020): si ya está hecho no cambia, y nunca pasa de la meta
+  const goal = habit.target_value ?? 1
+  const current = valueOn(logs, habit.id, date)
+  const otherDays =
+    habit.frequency_type === 'weekly_total'
+      ? weekDates(date).reduce((total, day) => (day === date ? total : total + valueOn(logs, habit.id, day)), 0)
+      : 0
+  if (reached(otherDays + current, goal)) return logs
+  const max = Math.min(habit.target_value === null ? 1 : MAX_VALUE, goal - otherDays)
+  const next = Math.round(Math.max(0, Math.min(max, current + delta)) * 100) / 100
   const others = logs.filter((log) => !(log.habit_id === habit.id && log.local_date === date))
   return next === 0 ? others : [...others, { habit_id: habit.id, local_date: date, value: next }]
 }

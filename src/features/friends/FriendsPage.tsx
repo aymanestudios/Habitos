@@ -117,11 +117,39 @@ export function FriendsPage() {
       />
 
       <Sheet open={adding} title="Añadir amigos" onClose={closeAdding}>
-        <div className="space-y-6">
+        <div className="space-y-5">
+          {/* Tu código: pequeño y en una línea */}
+          <section className="rounded-2xl bg-brand-soft p-4">
+            <p className="text-sm font-semibold text-brand-ink">Tu código</p>
+            <p className="mt-1 select-all text-center text-2xl font-extrabold tracking-[0.2em] text-brand-ink">
+              {prettyCode(overview.myCode)}
+            </p>
+            <div className="mt-3 flex gap-2">
+              <button
+                type="button"
+                onClick={copyCode}
+                className="flex h-11 flex-1 items-center justify-center gap-1.5 rounded-full bg-surface text-sm font-bold text-brand-ink transition-transform active:scale-95"
+              >
+                <Icon name={copied ? 'check' : 'copy'} className="h-4 w-4" />
+                {copied ? 'Copiado' : 'Copiar'}
+              </button>
+              {typeof navigator.share === 'function' && (
+                <button
+                  type="button"
+                  onClick={shareCode}
+                  className="flex h-11 flex-1 items-center justify-center rounded-full bg-brand text-sm font-bold text-on-brand transition-transform active:scale-95"
+                >
+                  Compartir
+                </button>
+              )}
+            </div>
+            <p className="mt-2 text-center text-xs text-brand-ink/80">Pásaselo a un amigo para que te añada.</p>
+          </section>
+
+          {/* Su código: campo + botón en la misma fila */}
           <section>
-            <h3 className="font-bold">Con su código</h3>
-            <p className="mt-1 text-sm text-muted">Escribe su código de 8 letras y números.</p>
-            <form onSubmit={submit} className="mt-3 space-y-3">
+            <p className="text-sm font-semibold">¿Tienes el código de un amigo?</p>
+            <form onSubmit={submit} className="mt-2 flex gap-2">
               <input
                 value={prettyCode(cleanCode(code))}
                 onChange={(event) => setCode(cleanCode(event.target.value))}
@@ -130,10 +158,10 @@ export function FriendsPage() {
                 autoCapitalize="characters"
                 autoComplete="off"
                 spellCheck={false}
-                className="w-full rounded-2xl border-2 border-line bg-surface px-4 py-3 text-center text-xl font-bold tracking-[0.2em] outline-none transition-colors placeholder:font-semibold placeholder:text-muted/60 focus:border-brand"
+                className="min-w-0 flex-1 rounded-2xl border-2 border-line bg-surface px-3 py-2.5 text-center text-lg font-bold tracking-[0.15em] outline-none transition-colors placeholder:font-semibold placeholder:text-muted/60 focus:border-brand"
               />
-              <button type="submit" disabled={!isCompleteCode(code) || send.isPending} className="btn-primary w-full px-4 py-3">
-                {send.isPending ? 'Enviando...' : 'Enviar solicitud'}
+              <button type="submit" disabled={!isCompleteCode(code) || send.isPending} className="btn-primary shrink-0 px-4 py-2.5 text-sm">
+                {send.isPending ? 'Enviando…' : 'Enviar'}
               </button>
             </form>
             {notice && (
@@ -147,27 +175,7 @@ export function FriendsPage() {
               </p>
             )}
           </section>
-          <section>
-            <h3 className="font-bold">Tu código</h3>
-            <p className="mt-1 text-sm text-muted">Pásaselo a un amigo para que te añada.</p>
-            <p className="mt-3 select-all rounded-2xl bg-brand-soft py-4 text-center text-2xl font-extrabold tracking-[0.2em] text-brand-ink">
-              {prettyCode(overview.myCode)}
-            </p>
-            <div className="mt-3 flex gap-3">
-              <button type="button" onClick={copyCode} className="btn-primary flex-1 px-4 py-3">
-                {copied ? '¡Copiado!' : 'Copiar'}
-              </button>
-              {typeof navigator.share === 'function' && (
-                <button
-                  type="button"
-                  onClick={shareCode}
-                  className="flex-1 rounded-2xl border-2 border-line px-4 py-2.5 font-bold text-muted transition-colors hover:text-ink"
-                >
-                  Compartir
-                </button>
-              )}
-            </div>
-          </section>
+
           {overview.outgoing.length > 0 && (
             <section>
               <h3 className="font-bold">Esperando respuesta</h3>

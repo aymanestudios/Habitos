@@ -39,3 +39,8 @@ XP para llegar al nivel N = 25 × (N − 1) × (N + 2): nivel 2 = 100, 3 = 250, 
 ## Pruebas
 
 La migración se probó en un Postgres temporal con 103 comprobaciones (niveles, XP sin duplicar, tope, bonus, semanales, rachas con fechas fijas, permisos y aislamiento entre usuarios).
+
+## Hábito hecho = cerrado (0020)
+Cuando un hábito llega a su meta (el tic verde), ya no se puede sumar ni quitar ese día: desaparecen − y + y la fila no se desmarca.
+Lo comprueba el servidor (`add_habit_progress` devuelve `already_done`), así el XP no se puede inflar ni deshacer.
+El progreso se queda en la meta (3 de 3 litros, no 4 de 3). En los de "total semanal", cerrado = la semana ya llegó a la meta.

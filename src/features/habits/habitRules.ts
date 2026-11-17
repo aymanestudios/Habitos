@@ -276,6 +276,7 @@ export function friendlyHabitError(message: string): string {
 // Traduce los errores de add_habit_progress (0003_habit_logs.sql) a algo que se entienda.
 export function friendlyProgressError(message: string): string {
   const text = message.toLowerCase()
+  if (text.includes('already_done')) return 'Ese hábito ya está hecho: se queda así.'
   if (text.includes('habit_archived')) return 'Ese hábito está archivado.'
   if (text.includes('before_start')) return 'Ese día es anterior al inicio del hábito.'
   if (text.includes('after_end')) return 'El hábito ya había terminado ese día.'

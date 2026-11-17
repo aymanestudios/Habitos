@@ -300,6 +300,7 @@ export function DashboardPage() {
   )
 
   function change(item: DayItem, delta: number) {
+    if (item.checked) return // hecho = cerrado: ni sumar ni quitar
     addProgress.mutate({ habit: item.habit, date, dayOffset: isToday ? 0 : -1, delta })
     // Al completarlo, ofrecemos (sin obligar) compartir una foto
     if (completesHabit(item.value, delta, item.numeric ? item.habit.target_value : 1)) {

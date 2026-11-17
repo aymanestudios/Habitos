@@ -15,8 +15,8 @@ type Props = {
   meta?: string
   done: boolean
   progress?: number // 0-100, solo para hábitos con objetivo numérico
-  onToggle?: () => void // hábito de sí/no: tocar la fila lo marca o desmarca
-  counter?: Counter // hábito numérico: botones − y +
+  onToggle?: () => void // hábito de sí/no: tocar la fila lo marca (hecho = ya no se desmarca)
+  counter?: Counter // hábito numérico: botones − y + (desaparecen al completarlo)
   share?: { onShare: () => void; shared: boolean } // botón de cámara cuando está hecho
 }
 
@@ -70,8 +70,9 @@ export function HabitRow({ title, meta, done, progress, onToggle, counter, share
           type="button"
           role="checkbox"
           aria-checked={done}
-          onClick={onToggle}
-          className="flex min-w-0 flex-1 items-center gap-4 py-3 text-left transition-transform active:scale-[0.99]"
+          aria-disabled={done}
+          onClick={done ? undefined : onToggle}
+          className={`flex min-w-0 flex-1 items-center gap-4 py-3 text-left ${done ? 'cursor-default' : 'transition-transform active:scale-[0.99]'}`}
         >
           {circle}
           {text}
@@ -86,7 +87,7 @@ export function HabitRow({ title, meta, done, progress, onToggle, counter, share
       {circle}
       {text}
       {shareButton}
-      {counter && (
+      {counter && !done && (
         <div className="flex shrink-0 items-center gap-2">
           <button
             type="button"

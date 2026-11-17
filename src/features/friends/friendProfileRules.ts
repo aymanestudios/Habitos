@@ -21,7 +21,7 @@ export type FriendProfile = {
     habitsDone: number
     monthPercent: number | null
     habits: { title: string; category: string; done30: number }[]
-    posts: { id: string; photoPath: string; caption: string | null; localDate: string; habitTitle: string }[]
+    posts: { id: string; photoPath: string; caption: string | null; localDate: string; habitTitle: string | null }[]
   } | null // null = no comparte estadísticas
 }
 
@@ -58,13 +58,13 @@ export function buildFriendProfile(raw: unknown): FriendProfile | null {
               category: String(habit.category),
               done30: Number(habit.done_30 ?? 0),
             })),
-            posts: arr<{ id: string; photo_path: string; caption: string | null; local_date: string; habit_title: string }>(r.posts).map(
+            posts: arr<{ id: string; photo_path: string; caption: string | null; local_date: string; habit_title: string | null }>(r.posts).map(
               (post) => ({
                 id: String(post.id),
                 photoPath: String(post.photo_path),
                 caption: post.caption ?? null,
                 localDate: String(post.local_date),
-                habitTitle: String(post.habit_title),
+                habitTitle: post.habit_title ?? null,
               }),
             ),
           }

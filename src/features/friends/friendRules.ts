@@ -182,7 +182,7 @@ export function activityText(item: ActivityItem): string {
       ? `${item.name} cumplió su meta semanal de «${item.habitTitle}»`
       : `${item.name} cumplió una meta semanal`
   }
-  if (item.itemType === 'post') return `${item.name} ha completado «${item.habitTitle ?? 'un hábito'}»`
+  if (item.itemType === 'post') return item.habitTitle ? `${item.name} ha completado «${item.habitTitle}»` : `${item.name} ha completado un hábito`
   return item.habitTitle ? `${item.name} completó «${item.habitTitle}»` : `${item.name} completó un hábito`
 }
 

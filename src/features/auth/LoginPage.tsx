@@ -7,8 +7,9 @@ import { TextField } from '@/components/TextField'
 import { APP_NAME } from '@/lib/constants'
 import { isSupabaseConfigured } from '@/lib/env'
 import { useAuth } from './AuthProvider'
+import { supabase } from '@/lib/supabase'
 
-type Mode = 'login' | 'register'
+type Mode = 'login' | 'register' | 'forgot'
 
 // Supabase devuelve los errores en inglés; aquí los traducimos a algo que se entienda.
 function friendlyAuthError(message: string): string {
@@ -49,7 +50,15 @@ export function LoginPage() {
     setInfo(null)
     setBusy(true)
     try {
-      if (mode === 'login') {
+      if (mode === 'forgot') {
+        // Enlace para elegir contraseña nueva (página /nueva-contrasena).
+        // Siempre el mismo mensaje, exista o no la cuenta: así nadie puede averiguar qué emails están registrados.
+        const { error: resetError } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+          redirectTo: `${window.location.origin}/nueva-contrasena`,
+        })
+        if (resetError && resetError.message.toLowerCase().includes('rate limit')) throw resetError
+        setInfo('Si hay una cuenta con ese email, te llegará un enlace para elegir una contraseña nueva. Mira también en spam.')
+      } else if (mode === 'login') {
         await signIn(email.trim(), password)
       } else {
         const { needsConfirmation } = await signUp(name.trim(), email.trim(), password)
@@ -90,6 +99,12 @@ export function LoginPage() {
             </p>
           )}
 
+          {mode === 'forgot' ? (
+            <div className="mb-5">
+              <h2 className="text-lg font-bold">Recuperar contraseña</h2>
+              <p className="mt-1 text-sm text-muted">Te enviamos un enlace a tu email para elegir una nueva.</p>
+            </div>
+          ) : (
           <div className="mb-5 grid grid-cols-2 rounded-2xl bg-surface-2 p-1">
             <button type="button" className={tabClass('login')} onClick={() => setMode('login')}>
               Entrar
@@ -98,6 +113,7 @@ export function LoginPage() {
               Crear cuenta
             </button>
           </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {mode === 'register' && (
@@ -117,15 +133,17 @@ export function LoginPage() {
               autoComplete="email"
               required
             />
-            <TextField
-              label="Contraseña"
-              type="password"
-              value={password}
-              onChange={setPassword}
-              autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
-              required
-              minLength={8}
-            />
+            {mode !== 'forgot' && (
+              <TextField
+                label="Contraseña"
+                type="password"
+                value={password}
+                onChange={setPassword}
+                autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
+                required
+                minLength={8}
+              />
+            )}
 
             {error && (
               <p className="rounded-2xl bg-danger-soft px-4 py-3 text-sm text-danger" role="alert">
@@ -139,9 +157,23 @@ export function LoginPage() {
               disabled={busy}
               className="w-full btn-primary px-4 py-3"
             >
-              {busy ? 'Un momento...' : mode === 'login' ? 'Entrar' : 'Crear cuenta'}
+              {busy ? 'Un momento...' : mode === 'login' ? 'Entrar' : mode === 'register' ? 'Crear cuenta' : 'Enviar enlace'}
             </button>
           </form>
+
+          {mode !== 'register' && (
+            <button
+              type="button"
+              onClick={() => {
+                setMode(mode === 'forgot' ? 'login' : 'forgot')
+                setError(null)
+                setInfo(null)
+              }}
+              className="mt-4 w-full text-center text-sm font-semibold text-brand-ink"
+            >
+              {mode === 'forgot' ? 'Volver a entrar' : '¿Has olvidado la contraseña?'}
+            </button>
+          )}
         </Card>
       </div>
     </div>

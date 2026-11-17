@@ -2,7 +2,19 @@
 
 App web de hábitos con XP, rachas y amigos. Se instalará como PWA, pensada primero para iPhone y adaptada a escritorio.
 
-**Estado: Fase 1 en curso.** Hecho: 1.1 login y perfiles, 1.2 hábitos (crear, editar y archivar), identidad visual nueva (paleta naranja/crema/marrón/verde y mascota panda), 1.3 marcar hábitos en la pantalla Hoy (con "ayer" y efectos), 1.4 XP, nivel y racha (ver `docs/XP-Y-RACHAS.md`). 1.5 app instalable (ver `docs/PWA.md`). recordatorios (crear, posponer, repetir, completar), logros en Perfil, estadísticas reales (calendario de actividad, 8 semanas y hábitos más constantes) y rediseño crema + turquesa con modo oscuro. Amigos: código, solicitudes y ranking semanal (0006). Pendiente: actividad y reacciones entre amigos, retos y avisos push. Amigos y la privacidad de Perfil llegan en la Fase 2 (la pantalla de Amigos dice "Muy pronto").
+**Estado: lista para beta privada (5-8 personas).** Publicada en https://habitosandatomicos.onrender.com (Render, sitio estático) con Supabase como servidor.
+
+Qué hay:
+- **Cuenta:** registro, login, recuperar contraseña (`/nueva-contrasena`) y tutorial de bienvenida con el panda (una sola vez). Ver `docs/BIENVENIDA.md`.
+- **Hábitos:** diarios, ciertos días, X veces por semana o total semanal; con meta de número, dificultad, categoría y privacidad ("Solo yo" / "Mis amigos"). Un hábito hecho queda cerrado ese día. Recordatorios con repetición.
+- **XP, niveles y rachas:** calculados en el servidor (`docs/XP-Y-RACHAS.md`), con congelaciones y bonus de día completo.
+- **Amigos:** código de amigo, solicitudes, ranking semanal, actividad con reacciones, perfil de amigo con privacidad, fotos de progreso (`docs/FOTOS.md`).
+- **Rachas compartidas** con fuego que evoluciona (`docs/FUEGO.md`) y **retos relámpago** (`docs/RETOS.md`).
+- **Logros:** 31 recompensas cosméticas (`docs/RECOMPENSAS.md`) y **skins del panda** con cápsula sorpresa cada 7 días cumplidos (`docs/SKINS.md`).
+- **Avisos al móvil** (recordatorios, toques, racha en peligro, retos, buenos días): `docs/AVISOS.md`.
+- **PWA instalable** con modo oscuro (`docs/PWA.md`).
+
+Antes de invitar a alguien: `docs/BETA.md` (configuración manual de Supabase y Render, y comprobaciones).
 
 ## Qué usamos y para qué
 
@@ -48,9 +60,9 @@ Con `dev:movil`, Vite muestra una dirección `Network` (por ejemplo `http://192.
 
 1. `npm run typecheck`: no debe mostrar errores.
 2. `npm run build`: debe terminar con "built in ...".
-3. `npm run dev` y abre la web: ves Hoy, Hábitos, Amigos y Perfil, y puedes cambiar entre ellas con la barra inferior (móvil) o la lateral (escritorio).
+3. `npm run dev` y abre la web: ves Inicio, Hábitos, Amigos, Logros y Perfil, y puedes cambiar entre ellas con la barra inferior (móvil) o la lateral (escritorio).
 4. Abre `/estado`: las tres primeras filas deben salir en **OK** (la de Supabase, tras rellenar `.env.local`).
-5. Reduce la ventana del navegador por debajo de 768 px: la barra lateral pasa a barra inferior con el "+" central.
+5. Reduce la ventana del navegador por debajo de 768 px: la barra lateral pasa a barra inferior de 5 pestañas.
 6. Cambia el modo claro/oscuro del sistema: los colores se adaptan.
 
 ## Estructura
@@ -60,15 +72,24 @@ src/
 ├── app/          # arranque: rutas (routes.tsx), marco con navegación (AppLayout.tsx), proveedores (App.tsx)
 ├── components/   # piezas reutilizables sin lógica de negocio (Card, ProgressRing, HabitRow...)
 ├── features/     # una carpeta por funcionalidad
-│   ├── dashboard/   # pantalla Hoy
-│   ├── habits/      # pantalla Hábitos
-│   ├── friends/     # pantalla Amigos
+│   ├── auth/        # login, registro, recuperar contraseña
+│   ├── dashboard/   # pantalla Inicio
+│   ├── habits/      # pantalla Hábitos (y recordatorios en reminders/)
+│   ├── friends/     # pantalla Amigos y perfil de amigo
+│   ├── challenges/  # retos relámpago
+│   ├── streaks/     # rachas compartidas (fuego)
+│   ├── posts/       # fotos de progreso
+│   ├── rewards/     # pantalla Logros
+│   ├── skins/       # skins del panda y cápsulas
+│   ├── onboarding/  # tutorial de bienvenida
 │   ├── profile/     # pantalla Perfil
+│   ├── stats/       # estadísticas
 │   └── system/      # página /estado (diagnóstico)
 ├── lib/          # utilidades: cliente de Supabase, variables de entorno, fechas, TanStack Query
 └── styles/       # colores y estilos globales (index.css)
-supabase/         # migraciones SQL (desde la Fase 1)
-docs/             # AJUSTES.md, DISENO.md, COPIAS-SEGURIDAD.md
+supabase/         # migraciones SQL (0001-0025) y Edge Function send-reminders
+docs/             # una guía por funcionalidad (ver abajo)
+tools/            # scripts para preparar imágenes (skins, icono)
 ```
 
 ## Reglas del proyecto
@@ -88,8 +109,10 @@ Con el botón de control de código fuente de VS Code (Commit y Sync). `.env.loc
 - [docs/AJUSTES.md](docs/AJUSTES.md): decisiones sobre XP, hábitos numéricos, frecuencias, RLS y zonas horarias.
 - [docs/BIENVENIDA.md](docs/BIENVENIDA.md): tutorial de bienvenida con el panda (una sola vez) e icono de la app.
 - [docs/DISENO.md](docs/DISENO.md): identidad visual y navegación.
-- [docs/COPIAS-SEGURIDAD.md](docs/COPIAS-SEGURIDAD.md): estrategia de copias.
+- [docs/COPIAS-SEGURIDAD.md](docs/COPIAS-SEGURIDAD.md): copias completas (base de datos, cuentas y fotos) y cómo restaurar.
+- [docs/BETA.md](docs/BETA.md): lista de comprobación antes de la beta privada.
+- Por funcionalidad: XP-Y-RACHAS, AVISOS, FOTOS, FUEGO, RETOS, RECOMPENSAS, SKINS, MASCOTA, PWA.
 
 ## Siguiente
 
-**Fase 1:** login, tabla de hábitos con RLS, marcar hábitos, XP y racha calculados en el servidor, PWA instalable.
+Beta privada con 5-8 personas. Antes: `docs/BETA.md`. Después: recoger opiniones y corregir.

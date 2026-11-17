@@ -33,3 +33,8 @@ abrirla desde el icono y activar los avisos dentro (iOS 16.4 o superior).
 - ⚡ "Último día del reto con X": de 18:00 a 21:59 del último día, solo si aún no está cumplido. Tono amable ("si os apetece, aún estáis a tiempo").
 - 🎉 "¡Reto cumplido con X!": a los dos, una vez.
 Una sola vez por persona, reto y tipo (`challenge_pings`, tabla interna).
+
+## Configuración que no está en el código (comprobada el 18/11/2026)
+- La Edge Function `send-reminders` tiene **Verify JWT desactivado**: el cron no envía sesión de usuario, sino el secreto `x-cron-secret` (Vault), que la función comprueba con `verify_push_cron`.
+- La URL a la que llama el cron está escrita en `0009_push.sql`. En un proyecto nuevo hay que cambiarla.
+- Desde `0025`, una zona horaria inválida ya no se puede guardar (antes paraba los avisos de todos).

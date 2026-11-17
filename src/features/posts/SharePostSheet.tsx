@@ -23,7 +23,8 @@ function PublishedBadge() {
   )
 }
 
-type Target = { habitId: string; title: string; dayOffset: 0 | -1 }
+// isPrivate: el hábito es "Solo yo" → si compartes la foto, tus amigos no ven su nombre (lo hace el servidor, 0025)
+type Target = { habitId: string; title: string; dayOffset: 0 | -1; isPrivate?: boolean }
 
 // "¿Quieres compartir tu progreso?": foto (cámara o galería) + comentario + quién lo ve → publicar.
 export function SharePostSheet({ target, onClose }: { target: Target | null; onClose: () => void }) {
@@ -171,6 +172,9 @@ export function SharePostSheet({ target, onClose }: { target: Target | null; onC
               ))}
             </div>
             {option && <p className="mt-2 text-xs text-muted">{option.hint}</p>}
+            {target?.isPrivate && visibility === 'friends' && (
+              <p className="mt-1 text-xs text-muted">🔒 Tu hábito es privado: verán la foto, pero no su nombre.</p>
+            )}
           </div>
 
           <div className="flex gap-2">

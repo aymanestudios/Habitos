@@ -1,6 +1,6 @@
 # Supabase
 
-Aquí vivirá todo lo del servidor.
+Todo lo del servidor: 25 migraciones y la Edge Function `send-reminders`.
 
 - `migrations/`: cambios de la base de datos en archivos SQL numerados. Se ejecutan **una vez cada uno y en orden**, pegándolos en el editor SQL de Supabase (SQL Editor → New query → Run):
   1. `0001_profiles.sql`: perfiles de usuario (se crean solos al registrarse).
@@ -10,9 +10,9 @@ Aquí vivirá todo lo del servidor.
   5. `0005_reminders.sql`: recordatorios personales (privados, con repetición diaria o semanal).
   6. `0006_friends.sql`: amigos (código de amigo, solicitudes y ranking semanal). De un amigo solo se comparte nivel, XP y racha.
 
-Siguen `docs/AJUSTES.md`. Las fases siguientes (XP y racha, amigos) añadirán más archivos con el siguiente número.
+Los cambios nuevos siempre van en un archivo con el siguiente número; nunca se edita uno ya aplicado.
 
-En la Fase 0 solo creas el proyecto en supabase.com y copias su URL y su clave pública en `.env.local`.
+**Proyecto nuevo desde cero:** aplica 0001-0025 en orden. Antes de 0009, cambia en ese archivo la URL `gcuxnycrxunmrsbgfybi.supabase.co` por la de tu proyecto (es la dirección a la que llama el cron). Resto de pasos manuales: `docs/BETA.md`.
 
 - `0007_activity_categories.sql`: categorías de hábitos, actividad de amigos y reacciones (🔥 👏 💪 🎉). El nombre de un hábito solo se ve si tiene visibilidad "Mis amigos".
 - `0008_challenges.sql`: retos cooperativos semanales (tú + un amigo, meta de XP conjunta). Solo se crean con amigos aceptados.
@@ -32,3 +32,4 @@ En la Fase 0 solo creas el proyecto en supabase.com y copias su URL y su clave p
 - `0022_skins_gacha.sql`: skins del panda (tickets, cápsula misteriosa, colección). Ver docs/SKINS.md. Incluye el MODO PRUEBA (tickets infinitos).
 - `0023_skin_silhouettes.sql`: siluetas de las skins para la apertura especial (la cápsula devuelve las sombras y cuál es la tuya).
 - `0024_onboarding.sql`: tutorial de bienvenida. `profiles.onboarded_at` + `finish_onboarding()`; las cuentas que ya existían se marcan como vistas.
+- `0025_beta_hardening.sql`: seguridad para la beta. Zona horaria siempre válida (una inventada rompía los avisos de todos), el nombre de un hábito privado no se ve en sus fotos compartidas, las recompensas no se pierden al terminar una racha, quitar un amigo o borrar fotos (`reward_metric_peaks`), modo prueba de tickets apagado y perfiles que solo crea el servidor.

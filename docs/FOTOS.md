@@ -47,3 +47,6 @@ que el amigo deja de verla.
 - Opción "Público" (necesita denuncias/moderación).
 - Si se borra un hábito entero, sus publicaciones se borran pero los archivos quedan en Storage
   (privados, nadie más los ve). Limpiarlos requiere una función de servidor programada.
+
+## Hábitos privados (0025)
+Si compartes con "Mis amigos" la foto de un hábito "Solo yo", tus amigos ven la foto y el comentario, pero **no el nombre del hábito** (sale "Hábito privado" / "ha completado un hábito"). Al compartir, la app te lo avisa.

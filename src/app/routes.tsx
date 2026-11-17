@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from 'react-router'
 import { AuthProvider } from '@/features/auth/AuthProvider'
 import { LoginPage } from '@/features/auth/LoginPage'
 import { RequireAuth } from '@/features/auth/RequireAuth'
+import { ResetPasswordPage } from '@/features/auth/ResetPasswordPage'
 import { DashboardPage } from '@/features/dashboard/DashboardPage'
 import { FriendsPage } from '@/features/friends/FriendsPage'
 import { HabitsPage } from '@/features/habits/HabitsPage'
@@ -19,7 +20,7 @@ const StatsPage = lazyPage(() => import('@/features/stats/StatsPage'), 'StatsPag
 const StatusPage = lazyPage(() => import('@/features/system/StatusPage'), 'StatusPage')
 
 // Mapa de la app: cada dirección (URL) muestra una pantalla.
-// - /login y /estado son públicas.
+// - /login, /nueva-contrasena (enlace del email de recuperar contraseña) y /estado son públicas.
 // - Todo lo demás está dentro de <RequireAuth />: hay que haber iniciado sesión.
 preloadPages()
 
@@ -28,6 +29,7 @@ export function AppRoutes() {
     <AuthProvider>
       <Routes>
         <Route path="login" element={<LoginPage />} />
+        <Route path="nueva-contrasena" element={<ResetPasswordPage />} />
         <Route element={<AppLayout />}>
           <Route path="estado" element={<StatusPage />} />
           <Route element={<RequireAuth />}>

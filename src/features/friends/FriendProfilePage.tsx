@@ -133,9 +133,9 @@ export function FriendProfilePage() {
           <ul className="mt-3 grid grid-cols-3 gap-2">
             {posts.map((post) => (
               <li key={post.id} className="relative">
-                <PostImage url={urls.data?.[post.photoPath]} loading={urls.isPending} alt={post.caption ?? post.habitTitle} className="aspect-square w-full" />
+                <PostImage url={urls.data?.[post.photoPath]} loading={urls.isPending} alt={post.caption ?? post.habitTitle ?? 'Foto de un hábito'} className="aspect-square w-full" />
                 <span className="absolute bottom-1 left-1 right-1 truncate rounded-full bg-black/55 px-2 py-0.5 text-[10px] font-bold text-white">
-                  {post.habitTitle} · {shortDate(post.localDate)}
+                  {post.habitTitle ?? 'Hábito privado'} · {shortDate(post.localDate)}
                 </span>
               </li>
             ))}

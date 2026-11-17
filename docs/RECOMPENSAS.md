@@ -30,3 +30,8 @@ Inicio · Hábitos (con Recordatorios dentro) · Amigos · Logros · Perfil (con
 - Selector de emojis del avatar (la columna `avatar_emoji` sigue en la base de datos: no se borró nada).
 - Lista antigua de 10 logros calculados en el navegador (`achievements.ts`), sustituida por esto.
 - Botón "+" central del móvil y enlace a "Estado del proyecto" del menú.
+
+## Lo conseguido no se pierde (0025)
+Algunas recompensas dependen de cosas que se pueden deshacer: la racha compartida (si la terminas), los amigos (si quitas uno) y las fotos (si las borras).
+Antes de borrarse, el servidor guarda el récord en `reward_metric_peaks` y `get_reward_metrics` usa el mayor entre lo actual y lo guardado. Así una insignia o un marco no vuelven a bloquearse.
+Las rachas compartidas terminadas ANTES de 0025 no guardaron su récord y no se pueden recuperar.

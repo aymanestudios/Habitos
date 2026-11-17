@@ -129,7 +129,7 @@ export function DashboardPage() {
   }, [newReward])
 
   // Fotos de logros: aviso "¿Quieres compartir tu progreso?" y panel para publicar
-  type ShareTarget = { habitId: string; title: string; dayOffset: 0 | -1 }
+  type ShareTarget = { habitId: string; title: string; dayOffset: 0 | -1; isPrivate: boolean }
   const [sharePrompt, setSharePrompt] = useState<ShareTarget | null>(null)
   const [shareTarget, setShareTarget] = useState<ShareTarget | null>(null)
   const recentPosts = useMyRecentPosts(addDays(today, -1))
@@ -310,7 +310,7 @@ export function DashboardPage() {
     addProgress.mutate({ habit: item.habit, date, dayOffset: isToday ? 0 : -1, delta })
     // Al completarlo, ofrecemos (sin obligar) compartir una foto
     if (completesHabit(item.value, delta, item.numeric ? item.habit.target_value : 1)) {
-      setSharePrompt({ habitId: item.habit.id, title: item.habit.title, dayOffset: isToday ? 0 : -1 })
+      setSharePrompt({ habitId: item.habit.id, title: item.habit.title, dayOffset: isToday ? 0 : -1, isPrivate: item.habit.visibility === 'private' })
     }
   }
 
@@ -319,7 +319,7 @@ export function DashboardPage() {
       shared: postedKeys.has(`${item.habit.id}|${date}`),
       onShare: () => {
         setSharePrompt(null)
-        setShareTarget({ habitId: item.habit.id, title: item.habit.title, dayOffset: isToday ? 0 : -1 })
+        setShareTarget({ habitId: item.habit.id, title: item.habit.title, dayOffset: isToday ? 0 : -1, isPrivate: item.habit.visibility === 'private' })
       },
     }
   }

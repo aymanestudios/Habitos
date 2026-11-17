@@ -14,6 +14,8 @@ import { useTheme } from '@/lib/theme'
 import type { ThemeChoice } from '@/lib/theme'
 import { AccountCard } from './AccountCard'
 import { AvatarEditor } from './AvatarEditor'
+import { Mascot } from '@/components/Mascot'
+import { useEquippedSkin } from '@/features/skins/useSkins'
 import { PrivacyCard } from './PrivacyCard'
 import { StyleCard } from './StyleCard'
 import { freezesText, xpToNext } from './progressRules'
@@ -27,6 +29,7 @@ const THEMES: { value: ThemeChoice; label: string }[] = [
 ]
 
 export function ProfilePage() {
+  const companion = useEquippedSkin()
   const [theme, setTheme] = useTheme()
   const profile = useProfile()
   const progress = useProgress()
@@ -93,6 +96,20 @@ export function ProfilePage() {
                 {showcase.length > 0 ? 'Cambiar' : 'Personalizar con tus logros →'}
               </Link>
             </div>
+          </div>
+        </Card>
+      )}
+
+      {/* Tu compañero: la skin equipada (se cambia en Logros) */}
+      {companion && (
+        <Card className="flex items-center gap-4">
+          <Mascot className="h-20 shrink-0" />
+          <div className="min-w-0 flex-1">
+            <p className="text-sm text-muted">Tu compañero</p>
+            <p className="truncate text-lg font-bold">{companion.name}</p>
+            <Link to="/logros" className="text-sm font-bold text-brand-ink">
+              Cambiar skin →
+            </Link>
           </div>
         </Card>
       )}

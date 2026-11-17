@@ -9,6 +9,7 @@ import { Mascot } from '@/components/Mascot'
 import { MOOD_ANIMATION, MOOD_POSE, mascotMood, reactionFor } from './mascotRules'
 import { easyStart, takeRecap, welcomeFor } from './homeRules'
 import { HomeChallenges } from '@/features/challenges/HomeChallenges'
+import { TicketNotice } from '@/features/skins/TicketNotice'
 import type { Welcome } from './homeRules'
 import { useTodayGlance, useWeekRecap } from './useHome'
 import { WeekRecapSheet } from './WeekRecapSheet'
@@ -437,6 +438,9 @@ export function DashboardPage() {
 
         {/* Retos relámpago activos (y la celebración del panda al cumplir uno) */}
         <HomeChallenges />
+
+        {/* Ticket de skin ganado (7 días cumplidos) */}
+        <TicketNotice />
 
         {!hasHabits ? (
           <Card className="flex flex-col items-center text-center">

@@ -9,6 +9,9 @@
 //   cheer    → ¡día completo!
 //   laptop   → amigos (aún sin amigos)
 
+import { useEquippedSkin } from '@/features/skins/useSkins'
+import { skinSrc } from '@/features/skins/skinRules'
+
 export type MascotPose = 'default' | 'sleep' | 'gym' | 'star' | 'cheer' | 'laptop'
 
 // Tamaño real de cada imagen (evita saltos de la página al cargar)
@@ -24,10 +27,12 @@ const POSES: Record<MascotPose, { src: string; width: number; height: number }> 
 type Props = { className?: string; pose?: MascotPose }
 
 export function Mascot({ className = 'h-32', pose = 'default' }: Props) {
-  const image = POSES[pose]
+  // Si tienes una skin equipada, ella es tu panda en toda la app (cosmético: no cambia nada más)
+  const skin = useEquippedSkin()
+  const image = skin ? { src: skinSrc(skin), width: skin.width, height: skin.height } : POSES[pose]
   return (
     <img
-      key={pose}
+      key={skin ? skin.id : pose}
       src={image.src}
       alt=""
       aria-hidden="true"

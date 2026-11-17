@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Card } from '@/components/Card'
 import { Mascot } from '@/components/Mascot'
 import { PageHeader } from '@/components/PageHeader'
+import { SkinsCard } from '@/features/skins/SkinsCard'
 import { ProfileAvatar } from '@/components/ProfileAvatar'
 import { Sheet } from '@/components/Sheet'
 import { PageSkeleton } from '@/components/Skeleton'
@@ -49,6 +50,9 @@ export function AchievementsPage() {
   return (
     <div className="stagger space-y-6">
       <PageHeader title="Logros" subtitle="Consigue recompensas y luce tu progreso" />
+
+      {/* Skins del panda: tickets y cápsula misteriosa */}
+      <SkinsCard />
 
       {/* Resumen + cómo te ven tus amigos */}
       <Card className="flex items-center gap-5">

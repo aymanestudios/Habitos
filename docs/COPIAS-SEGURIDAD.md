@@ -42,6 +42,12 @@ npx supabase storage cp -r ss:///evidence $D/evidence --experimental
 - `backups/` está en `.gitignore`: tiene datos personales y **nunca se sube a GitHub**. Guarda una copia fuera del ordenador (disco externo o nube privada) y bórrala cuando termine la beta.
 - Las copias automáticas de Supabase dependen del plan; míralas en el panel, pero no dependas solo de ellas.
 
+## Copia rápida dentro de la base de datos (antes de una migración)
+El 18/11/2026, antes de aplicar 0025, se copiaron las 19 tablas de `public` al esquema `backup_20261118`
+(no lo ve la app: no está expuesto y no tiene permisos para `anon` ni `authenticated`).
+Sirve para deshacer un error de una migración, **no** sustituye a la copia completa (si se pierde el proyecto, se pierde también).
+Cuando ya no haga falta: `drop schema backup_20261118 cascade;`
+
 ## Restaurar (en un proyecto NUEVO de Supabase)
 
 1. Crea el proyecto nuevo y copia su cadena de conexión.

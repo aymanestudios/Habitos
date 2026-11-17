@@ -8,7 +8,7 @@ Marca cada punto antes de invitar a nadie. Lo que está ✅ se comprobó el 18/1
 - [ ] `npm audit`: revisar las vulnerabilidades altas (si son de herramientas de desarrollo como Vite, no llegan a la web publicada).
 
 ## 2. Base de datos (Supabase → SQL Editor)
-- [ ] Aplicar `0025_beta_hardening.sql` (hacer antes una copia: `docs/COPIAS-SEGURIDAD.md`).
+- ✅ Copia dentro de la base de datos (`backup_20261118`, 19 tablas) y `0025_beta_hardening.sql` aplicada (18/11/2026).
 - ✅ Modo prueba de tickets apagado (`app_flags.infinite_tickets = false`).
 - ✅ Ninguna zona horaria inválida.
 
@@ -17,7 +17,7 @@ Marca cada punto antes de invitar a nadie. Lo que está ✅ se comprobó el 18/1
 - ✅ Redirect URLs: la de arriba y `https://habitosandatomicos.onrender.com/nueva-contrasena` (recuperar contraseña).
 - ✅ "Confirm email" activado.
 - ✅ Contraseña mínima de 8 caracteres y "Secure password change" activado.
-- [ ] **Correo propio (SMTP) + plantillas en español**: pasos en `docs/EMAILS.md`. Sin él, los testers **no recibirían**
+- [ ] **Correo propio (SMTP) + plantillas en español** (Brevo: servidor, puerto, usuario y remitente ya puestos; falta pegar la clave SMTP): pasos en `docs/EMAILS.md`. Sin él, los testers **no recibirían**
   ni la confirmación de cuenta ni el enlace de recuperar contraseña.
 - [ ] Probar con un email que NO sea del equipo: registrarse, confirmar, entrar, cerrar sesión y recuperar contraseña.
 - [ ] (Recomendado) Attack Protection: protección de contraseñas filtradas, si tu plan la incluye.

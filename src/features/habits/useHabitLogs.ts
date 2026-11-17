@@ -76,6 +76,7 @@ export function useAddProgress(from: string, to: string, onXp?: (xpDelta: number
       if (queryClient.isMutating({ mutationKey: ['add-progress'] }) === 1) {
         void queryClient.invalidateQueries({ queryKey: ['habit-logs', user?.id] })
         void queryClient.invalidateQueries({ queryKey: ['progress', user?.id] })
+        void queryClient.invalidateQueries({ queryKey: ['glance', user?.id] }) // XP de hoy en Inicio
         void queryClient.invalidateQueries({ queryKey: ['shared-streaks', user?.id] }) // el fuego se actualiza al momento
         void queryClient.invalidateQueries({ queryKey: ['rewards', user?.id] }) // por si desbloqueas algo
       }

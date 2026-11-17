@@ -1,12 +1,19 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router'
 import { Card } from '@/components/Card'
-import { ChoiceChips } from '@/components/ChoiceChips'
 import { HabitRow } from '@/components/HabitRow'
 import { Icon } from '@/components/Icon'
 import { LevelBar } from '@/components/LevelBar'
 import { Mascot } from '@/components/Mascot'
 import { MOOD_ANIMATION, MOOD_POSE, mascotMood } from './mascotRules'
+import { takeRecap, welcomeFor } from './homeRules'
+import type { Welcome } from './homeRules'
+import { useTodayGlance, useWeekRecap } from './useHome'
+import { WeekRecapSheet } from './WeekRecapSheet'
+import { Avatar } from '@/components/Avatar'
+import { activityText, timeAgo } from '@/features/friends/friendRules'
+import { useFriendActivity } from '@/features/friends/useFriends'
+import { nextRewards, remainingText } from '@/features/rewards/rewardRules'
 import { completesHabit } from '@/features/posts/postRules'
 import { SharePostSheet } from '@/features/posts/SharePostSheet'
 import { useMyRecentPosts } from '@/features/posts/usePosts'
@@ -23,7 +30,7 @@ import type { DayItem } from '@/features/habits/dayRules'
 import { errorMessage, friendlyProgressError } from '@/features/habits/habitRules'
 import { useAddProgress, useHabitLogs } from '@/features/habits/useHabitLogs'
 import { useHabits } from '@/features/habits/useHabits'
-import { streakHint, streakLabel, xpToastText } from '@/features/profile/progressRules'
+import { streakLabel, xpToastText } from '@/features/profile/progressRules'
 import { completeChanges, groupReminders, timeLabel } from '@/features/reminders/reminderRules'
 import { useReminders, useUpdateReminder } from '@/features/reminders/useReminders'
 import { useProfile } from '@/features/profile/useProfile'
@@ -34,11 +41,6 @@ import { useNow } from '@/lib/useNow'
 import { useToday } from '@/lib/useToday'
 
 type View = 'today' | 'yesterday'
-
-const VIEWS: { value: View; label: string }[] = [
-  { value: 'today', label: 'Hoy' },
-  { value: 'yesterday', label: 'Ayer' },
-]
 
 export function DashboardPage() {
   const profile = useProfile()
@@ -89,6 +91,23 @@ export function DashboardPage() {
   // Al abrir la app o cambiar entre Hoy/Ayer no se dispara (solo cuando TÚ completas el día).
   const [celebrating, setCelebrating] = useState(false)
   const [levelUp, setLevelUp] = useState<number | null>(null) // tarjeta "¡Nivel N!" con el panda de la estrella
+
+  // Datos de un vistazo, resumen semanal y actividad de amigos (0017 y 0012)
+  const glance = useTodayGlance()
+  const recap = useWeekRecap()
+  const friendActivity = useFriendActivity(true)
+  const [recapOpen, setRecapOpen] = useState(false)
+  const [welcome, setWelcome] = useState<Welcome | null>(null)
+  const firstNameForWelcome = profile.data?.display_name.split(' ')[0] ?? ''
+  useEffect(() => {
+    // El resumen sale una vez por semana; la bienvenida, si vuelves tras unos días (una vez al día)
+    if (recap.isSuccess && takeRecap(recap.data ?? null)) setRecapOpen(true)
+  }, [recap.isSuccess, recap.data])
+  useEffect(() => {
+    if (!glance.data || !firstNameForWelcome) return
+    const next = welcomeFor(firstNameForWelcome, glance.data.daysAway, today)
+    if (next) setWelcome(next) // solo se abre; se cierra con la X
+  }, [glance.data, firstNameForWelcome, today])
 
   // ¡Nueva recompensa! (lo desbloqueado lo calcula el servidor; aquí solo se celebra una vez)
   const rewards = useMyRewards()
@@ -201,6 +220,9 @@ export function DashboardPage() {
     hour,
     date: today,
   })
+
+  const nearestReward = rewards.data ? (nextRewards(rewards.data, 1)[0] ?? null) : null
+  const recentFriends = (friendActivity.data ?? []).slice(0, 2)
 
   // Recordatorios pendientes de hoy (y atrasados). Si la tabla aún no existe, la tarjeta simplemente no sale.
   const reminderGroups = groupReminders(reminders.data ?? [], now)
@@ -339,51 +361,117 @@ export function DashboardPage() {
         </div>
       )}
 
-      <div className="stagger space-y-6">
-        <header className="flex items-start justify-between gap-4">
-          <div className="min-w-0">
-            <p className="text-sm text-muted first-letter:uppercase">{dateLabel}</p>
-            <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
-              {greeting}, {firstName}
-            </h1>
-          </div>
+      <div className="stagger space-y-5">
+        <header className="min-w-0">
+          <p className="text-sm text-muted first-letter:uppercase">{dateLabel}</p>
+          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+            {greeting}, {firstName}
+          </h1>
         </header>
+
+        {/* Bienvenida al volver tras unos días: cálida y sin reproches (se cierra y no vuelve hoy) */}
+        {welcome && (
+          <Card className="animate-pop-in flex items-center gap-3">
+            <Mascot pose="default" className="animate-hop h-16 shrink-0" />
+            <div className="min-w-0 flex-1">
+              <p className="font-bold">{welcome.title}</p>
+              <p className="text-sm text-muted">{welcome.text}</p>
+            </div>
+            <button
+              type="button"
+              aria-label="Cerrar"
+              onClick={() => setWelcome(null)}
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-muted hover:text-ink"
+            >
+              <Icon name="close" className="h-4 w-4" />
+            </button>
+          </Card>
+        )}
 
         {/* Rachas compartidas: lo primero que se ve al entrar */}
         <HomeStreaks />
-
-        {/* La mascota reacciona a cómo va el día (mascotRules.ts); al completarlo baila */}
-        <div className="flex items-end gap-3">
-          <div key={mascot.mood} className={`shrink-0 origin-bottom ${MOOD_ANIMATION[mascot.mood]}`}>
-            <Mascot
-              pose={levelUp ? 'star' : MOOD_POSE[mascot.mood]}
-              className={`h-24 max-w-[132px] object-contain origin-bottom ${celebrating ? 'animate-tada' : ''}`}
-            />
-          </div>
-          <p
-            key={mascot.text}
-            className="animate-pop-in relative mb-3 rounded-2xl rounded-bl-sm border-2 border-line bg-surface px-4 py-2.5 text-sm font-semibold shadow-card"
-          >
-            {mascot.text}
-          </p>
-        </div>
 
         {!hasHabits ? (
           <Card className="flex flex-col items-center text-center">
             <Mascot pose="gym" className="mb-2 h-32" />
             <h2 className="text-lg font-bold">Aún no tienes hábitos</h2>
             <p className="mt-1 text-muted">Crea el primero y empieza tu racha.</p>
-            <Link
-              to="/habitos/nuevo"
-              className="mt-4 inline-flex items-center gap-2 btn-primary px-5 py-3"
-            >
+            <Link to="/habitos/nuevo" className="mt-4 inline-flex items-center gap-2 btn-primary px-5 py-3">
               <Icon name="plus" className="h-5 w-5" />
               Crear mi primer hábito
             </Link>
           </Card>
         ) : (
           <>
-            <ChoiceChips label="Día" options={VIEWS} value={view} onChange={setView} />
+            {/* TU DÍA: progreso, XP de hoy, racha y nivel en una sola tarjeta, con el panda */}
+            <Card className="relative overflow-hidden">
+              <div className="flex items-center gap-4">
+                <ProgressRing value={summary.percent} size={104} stroke={10} tone={allDone ? 'good' : 'brand'}>
+                  <span className="text-2xl font-bold">{summary.total === 0 ? '—' : `${summary.percent}%`}</span>
+                  <span className="text-xs text-muted">{isToday ? 'de hoy' : 'de ayer'}</span>
+                </ProgressRing>
+                <div className="min-w-0 flex-1">
+                  <h2 className="text-lg font-bold leading-tight">{message.title}</h2>
+                  <p key={mascot.text} className="animate-pop-in mt-1 text-sm text-muted">
+                    {isToday ? mascot.text : message.text}
+                  </p>
+                </div>
+                <div key={mascot.mood} className={`hidden shrink-0 origin-bottom min-[400px]:block ${MOOD_ANIMATION[mascot.mood]}`}>
+                  <Mascot
+                    pose={levelUp ? 'star' : MOOD_POSE[mascot.mood]}
+                    className={`h-20 max-w-[110px] object-contain origin-bottom ${celebrating ? 'animate-tada' : ''}`}
+                  />
+                </div>
+              </div>
+
+              <div className="mt-4 flex flex-wrap gap-2 text-sm font-bold">
+                <span className="flex items-center gap-1.5 rounded-full bg-accent-soft px-3 py-1.5 text-accent-ink">
+                  <Icon name="bolt" className="h-4 w-4" />+{glance.data?.xpToday ?? 0} XP hoy
+                </span>
+                {progress.data && (
+                  <span className="flex items-center gap-1.5 rounded-full bg-brand-soft px-3 py-1.5 text-brand-ink">
+                    <Icon name="flame" className="h-4 w-4" />
+                    {streakLabel(progress.data.current_streak)}
+                  </span>
+                )}
+                <span className="flex items-center gap-1.5 rounded-full bg-surface-2 px-3 py-1.5 text-muted">
+                  {summary.done}/{summary.total} hechos
+                </span>
+              </div>
+              {progress.data && (
+                <LevelBar
+                  className="mt-3"
+                  level={progress.data.level}
+                  xpIntoLevel={progress.data.xp_into_level}
+                  xpLevelSize={progress.data.xp_level_size}
+                />
+              )}
+            </Card>
+
+            {/* La recompensa más cercana: un objetivo claro y alcanzable */}
+            {nearestReward && (
+              <Link
+                to="/logros"
+                className="flex items-center gap-3 rounded-3xl border-2 border-line bg-surface p-3 pr-4 transition-transform active:scale-[0.98]"
+              >
+                <KindPreview
+                  kind={nearestReward.kind}
+                  id={nearestReward.id}
+                  rarity={nearestReward.rarity}
+                  metric={nearestReward.metric}
+                  locked={false}
+                  size={44}
+                />
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-sm font-bold">Próxima recompensa: {nearestReward.title}</span>
+                  <span className="mt-1 block h-1.5 overflow-hidden rounded-full bg-surface-2">
+                    <span className="block h-full rounded-full bg-brand" style={{ width: `${nearestReward.percent}%` }} />
+                  </span>
+                  <span className="mt-1 block text-xs text-muted">{remainingText(nearestReward)}</span>
+                </span>
+                <span className="text-xl text-muted" aria-hidden="true">›</span>
+              </Link>
+            )}
 
             {addProgress.isError && (
               <p className="rounded-2xl bg-danger-soft px-4 py-3 text-sm text-danger" role="alert">
@@ -391,46 +479,59 @@ export function DashboardPage() {
               </p>
             )}
 
-            <div className={`grid gap-6 ${weeklyItems.length > 0 ? 'lg:grid-cols-3' : ''}`}>
-              <div className={`space-y-6 ${weeklyItems.length > 0 ? 'lg:col-span-2' : ''}`}>
-                {progress.data && (
-                  <Card className="grid gap-4 sm:grid-cols-2 sm:items-center">
-                    <div className="flex items-center gap-3">
-                      <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-brand-soft text-brand-ink">
-                        <Icon name="flame" className="h-7 w-7" />
-                      </span>
-                      <div className="min-w-0">
-                        <p className="text-lg font-bold leading-tight">{streakLabel(progress.data.current_streak)}</p>
-                        <p className="text-sm text-muted">{streakHint(progress.data)}</p>
-                      </div>
-                    </div>
-                    <LevelBar
-                      level={progress.data.level}
-                      xpIntoLevel={progress.data.xp_into_level}
-                      xpLevelSize={progress.data.xp_level_size}
-                    />
-                  </Card>
-                )}
-
-                <Card className="flex items-center gap-5">
-                  <ProgressRing value={summary.percent} size={112} stroke={11} tone={allDone ? 'good' : 'brand'}>
-                    <span className="text-2xl font-bold">{summary.total === 0 ? '—' : `${summary.percent}%`}</span>
-                    <span className="text-xs text-muted">{isToday ? 'de hoy' : 'de ayer'}</span>
-                  </ProgressRing>
-                  <div className="min-w-0">
-                    <h2 className="text-lg font-bold">{message.title}</h2>
-                    <p className="mt-1 text-muted">{message.text}</p>
-                  </div>
-                </Card>
-
+            <div className={`grid gap-5 ${weeklyItems.length > 0 ? 'lg:grid-cols-3' : ''}`}>
+              <div className={`space-y-5 ${weeklyItems.length > 0 ? 'lg:col-span-2' : ''}`}>
                 {dailyItems.length > 0 && (
                   <Card>
-                    <h2 className="mb-1 text-lg font-bold">{isToday ? 'Tus hábitos de hoy' : 'Tus hábitos de ayer'}</h2>
+                    <div className="mb-1 flex items-center justify-between gap-3">
+                      <h2 className="text-lg font-bold">{isToday ? 'Tus hábitos de hoy' : 'Tus hábitos de ayer'}</h2>
+                      {/* Ayer solo para corregir algo que olvidaste marcar */}
+                      <button
+                        type="button"
+                        onClick={() => setView(isToday ? 'yesterday' : 'today')}
+                        className="text-sm font-bold text-brand-ink"
+                      >
+                        {isToday ? '¿Olvidaste algo ayer?' : 'Volver a hoy'}
+                      </button>
+                    </div>
                     <div className="divide-y divide-line">{dailyItems.map(renderRow)}</div>
                   </Card>
                 )}
 
-                {isToday && remindersCard}
+                {isToday && pendingReminders.length > 0 && remindersCard}
+
+                {/* Qué hacen tus amigos (lo último, en pequeño) */}
+                {isToday && recentFriends.length > 0 && (
+                  <Card>
+                    <div className="flex items-center justify-between gap-3">
+                      <h2 className="text-lg font-bold">Tus amigos</h2>
+                      <Link to="/amigos" className="text-sm font-bold text-brand-ink">
+                        Ver más
+                      </Link>
+                    </div>
+                    <ul className="mt-1 divide-y divide-line">
+                      {recentFriends.map((item) => (
+                        <li key={`${item.itemType}-${item.itemId}`}>
+                          <Link to={`/amigos/${item.userId}`} className="flex items-center gap-3 py-2.5">
+                            <Avatar
+                              name={item.name}
+                              color={item.avatarColor}
+                              photo={item.avatarPath}
+                              className="h-9 w-9 text-sm"
+                            />
+                            <span className="min-w-0 flex-1">
+                              <span className="block truncate text-sm font-semibold">{activityText(item)}</span>
+                              <span className="block text-xs text-muted">
+                                {timeAgo(item.createdAt)}
+                                {item.photoPath && ' · con foto'}
+                              </span>
+                            </span>
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </Card>
+                )}
               </div>
 
               {weeklyItems.length > 0 && (
@@ -442,6 +543,7 @@ export function DashboardPage() {
             </div>
           </>
         )}
+      <WeekRecapSheet recap={recap.data ?? null} open={recapOpen} onClose={() => setRecapOpen(false)} />
     </div>
       {sharePrompt && !shareTarget && (
         <div

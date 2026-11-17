@@ -24,3 +24,4 @@ En la Fase 0 solo creas el proyecto en supabase.com y copias su URL y su clave p
 - `0014_streak_nudges.sql`: "dar un toque" al amigo de racha y aviso automático a las 20:00 si la racha peligra. La Edge Function usa ahora `claim_push_queue`.
 - `0015_morning_ping.sql`: aviso "☀️ Nuevo día para empezar" a las 9:00 si hoy tienes hábitos sin empezar.
 - `0016_rewards_profiles.sql`: recompensas cosméticas calculadas en el servidor, equipar con validación, privacidad y perfil de amigo. Ver docs/RECOMPENSAS.md.
+- `0017_home_week.sql`: solo lectura. XP de hoy y días sin entrar (Inicio) y resumen de la última semana completa.

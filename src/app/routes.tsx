@@ -3,21 +3,26 @@ import { AuthProvider } from '@/features/auth/AuthProvider'
 import { LoginPage } from '@/features/auth/LoginPage'
 import { RequireAuth } from '@/features/auth/RequireAuth'
 import { DashboardPage } from '@/features/dashboard/DashboardPage'
-import { FriendProfilePage } from '@/features/friends/FriendProfilePage'
 import { FriendsPage } from '@/features/friends/FriendsPage'
-import { EditHabitPage } from '@/features/habits/EditHabitPage'
 import { HabitsPage } from '@/features/habits/HabitsPage'
-import { NewHabitPage } from '@/features/habits/NewHabitPage'
 import { ProfilePage } from '@/features/profile/ProfilePage'
-import { RemindersPage } from '@/features/reminders/RemindersPage'
-import { AchievementsPage } from '@/features/rewards/AchievementsPage'
-import { StatsPage } from '@/features/stats/StatsPage'
-import { StatusPage } from '@/features/system/StatusPage'
+import { lazyPage, preloadPages } from '@/lib/lazyPage'
 import { AppLayout } from './AppLayout'
+
+// Pantallas que no se ven al abrir la app: se descargan solo cuando hacen falta (la app arranca antes en el móvil)
+const FriendProfilePage = lazyPage(() => import('@/features/friends/FriendProfilePage'), 'FriendProfilePage')
+const EditHabitPage = lazyPage(() => import('@/features/habits/EditHabitPage'), 'EditHabitPage')
+const NewHabitPage = lazyPage(() => import('@/features/habits/NewHabitPage'), 'NewHabitPage')
+const RemindersPage = lazyPage(() => import('@/features/reminders/RemindersPage'), 'RemindersPage')
+const AchievementsPage = lazyPage(() => import('@/features/rewards/AchievementsPage'), 'AchievementsPage')
+const StatsPage = lazyPage(() => import('@/features/stats/StatsPage'), 'StatsPage')
+const StatusPage = lazyPage(() => import('@/features/system/StatusPage'), 'StatusPage')
 
 // Mapa de la app: cada dirección (URL) muestra una pantalla.
 // - /login y /estado son públicas.
 // - Todo lo demás está dentro de <RequireAuth />: hay que haber iniciado sesión.
+preloadPages()
+
 export function AppRoutes() {
   return (
     <AuthProvider>

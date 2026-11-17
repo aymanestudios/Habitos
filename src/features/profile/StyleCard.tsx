@@ -70,7 +70,7 @@ export function StyleCard({ profile }: { profile: Profile }) {
       </div>
       {save.isError && (
         <p className="mt-3 rounded-2xl bg-danger-soft px-4 py-3 text-sm text-danger" role="alert">
-          {errorMessage(save.error).includes('column') ? 'Falta una migración en Supabase.' : 'No se pudo guardar. Inténtalo otra vez.'}
+          {errorMessage(save.error).includes('column') ? 'Esto no está disponible ahora mismo.' : 'No se pudo guardar. Inténtalo otra vez.'}
         </p>
       )}
     </Card>

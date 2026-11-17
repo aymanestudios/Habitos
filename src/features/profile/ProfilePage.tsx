@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { LoadError } from '@/components/LoadError'
 import { Link } from 'react-router'
 import { Card } from '@/components/Card'
 import { ChoiceChips } from '@/components/ChoiceChips'
@@ -97,9 +98,7 @@ export function ProfilePage() {
       )}
 
       {progress.isError && (
-        <p className="rounded-2xl bg-danger-soft px-4 py-3 text-sm text-danger" role="alert">
-          No se pudo cargar tu progreso. ¿Has ejecutado la migración 0004_xp_streaks.sql en Supabase?
-        </p>
+        <LoadError what="tu progreso" onRetry={() => void progress.refetch()} />
       )}
 
       {progress.data && (

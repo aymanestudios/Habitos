@@ -118,3 +118,9 @@ Inspirado en el estilo de Duolingo (referencia: styles.refero.design), pero con 
 - **Tema:** `src/lib/theme.ts`. Selector en Perfil (Claro / Oscuro / Automático), guardado en el dispositivo (`localStorage`, clave `pg-theme`). Se aplica con `data-theme` en `<html>`; un script en `index.html` lo pone antes de pintar para que no haya destello.
 - **Nuevo:** esqueletos de carga (`Skeleton`), contador de XP que sube (`useCountUp`), sombra sutil en tarjetas, foco visible.
 - La mascota (panda) y el icono siguen siendo los tuyos: `Mascot.tsx` es un hueco, basta cambiar `public/mascota.webp`.
+
+## Repaso general (pulido)
+- Errores de carga sin jerga técnica: `LoadError` (panda dormido + "Reintentar"), en lugar de mensajes sobre migraciones.
+- Al volver a la app (PWA en segundo plano) los datos se refrescan solos (`refetchOnWindowFocus`).
+- Pantallas secundarias (estadísticas, logros, recordatorios, crear/editar hábito, perfil de amigo, estado) se cargan aparte (`lib/lazyPage.ts`): la app arranca antes. Se precargan en segundo plano y, si tras publicar falta un archivo viejo, la app se recarga una vez.
+- Avisos más amables: sin "se apaga" ni "en peligro".

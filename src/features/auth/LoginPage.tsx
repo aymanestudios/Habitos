@@ -20,9 +20,9 @@ function friendlyAuthError(message: string): string {
     return 'Confirma tu email antes de entrar (revisa tu bandeja de entrada).'
   if (text.includes('rate limit')) return 'Demasiados intentos. Espera unos minutos.'
   if (text.includes('failed to fetch') || text.includes('network'))
-    return 'No se pudo conectar con Supabase. Revisa .env.local y tu conexión.'
+    return 'No hay conexión. Revisa tu internet e inténtalo de nuevo.'
   if (text.includes('database error'))
-    return 'No se pudo crear el perfil. ¿Has ejecutado la migración 0001_profiles.sql en Supabase?'
+    return 'No se pudo crear tu cuenta ahora mismo. Inténtalo más tarde.'
   return message || 'Algo ha salido mal. Inténtalo de nuevo.'
 }
 

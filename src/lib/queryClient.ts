@@ -6,7 +6,7 @@ export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: 30_000, // durante 30 s consideramos los datos "frescos"
-      refetchOnWindowFocus: false,
+      refetchOnWindowFocus: true, // al volver a la app (PWA en segundo plano) se ponen al día los datos viejos
       retry: 1,
     },
   },

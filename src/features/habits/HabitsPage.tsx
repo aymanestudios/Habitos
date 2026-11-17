@@ -1,4 +1,5 @@
 import { PageSkeleton } from '@/components/Skeleton'
+import { LoadError } from '@/components/LoadError'
 import { useState } from 'react'
 import { Link } from 'react-router'
 import { Card } from '@/components/Card'
@@ -88,11 +89,7 @@ export function HabitsPage() {
       {habits.isPending && <PageSkeleton />}
 
       {habits.isError && (
-        <Card>
-          <p className="text-danger">
-            No se pudieron cargar tus hábitos. ¿Has ejecutado la migración 0002_habits.sql en Supabase?
-          </p>
-        </Card>
+        <LoadError what="tus hábitos" onRetry={() => void habits.refetch()} />
       )}
 
       {habits.isSuccess && active.length === 0 && (

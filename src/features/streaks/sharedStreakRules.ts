@@ -122,6 +122,6 @@ export function friendlyStreakError(message: string): string {
   if (message.includes('already_nudged')) return 'Hoy ya le has dado un toque.'
   if (message.includes('partner_done')) return '¡Ya ha cumplido! No hace falta avisar.'
   if (message.includes('streak_not_found')) return 'Esa racha ya no existe.'
-  if (/shared_streak|schema cache/i.test(message)) return 'Falta ejecutar la migración 0013_shared_streaks.sql en Supabase.'
+  if (/shared_streak|schema cache/i.test(message)) return 'Esto no está disponible ahora mismo. Inténtalo más tarde.'
   return 'No se pudo completar. Inténtalo otra vez.'
 }

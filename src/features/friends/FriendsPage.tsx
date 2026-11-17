@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react'
+import { LoadError } from '@/components/LoadError'
 import { Link } from 'react-router'
 import type { FormEvent } from 'react'
 import { Avatar } from '@/components/Avatar'
@@ -61,11 +62,7 @@ export function FriendsPage() {
 
   if (friends.isError) {
     return (
-      <Card>
-        <p className="text-danger">
-          No se pudo cargar la parte de amigos. ¿Has ejecutado la migración 0006_friends.sql en Supabase?
-        </p>
-      </Card>
+      <LoadError what="la parte de amigos" onRetry={() => void friends.refetch()} />
     )
   }
   if (!friends.data) return <PageSkeleton />
@@ -336,9 +333,7 @@ export function FriendsPage() {
             Actividad reciente
           </h2>
           {activity.isError && (
-            <p className="mt-2 text-sm text-danger">
-              No se pudo cargar la actividad. ¿Has ejecutado las migraciones 0007 y 0012 en Supabase?
-            </p>
+            <LoadError compact what="la actividad" onRetry={() => void activity.refetch()} />
           )}
           {activity.isSuccess && activityItems.length === 0 && (
             <p className="mt-2 text-muted">

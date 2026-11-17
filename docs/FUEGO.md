@@ -43,7 +43,7 @@ Marcad los dos vuestros hábitos de hoy → la tarjeta debe mostrar "¡Racha man
 ## Que no se apague (0014_streak_nudges.sql)
 - **En el inicio**: las rachas compartidas salen arriba del todo en "Hoy" (con "En peligro" si alguno no ha cumplido).
 - **Dar un toque**: si tu amigo aún no ha cumplido, le mandas un aviso al móvil
-  ("🔥 Aymane te da un toque · ¡Que se apaga vuestra racha!"). Uno al día por persona y racha.
+  ("🔥 Aymane te da un toque · Os quiere ver a los dos con el día hecho"). Uno al día por persona y racha.
   Si no tiene los avisos activados, lo verá en la tarjeta ("Aymane te ha dado un toque").
 - **Aviso automático a las 20:00** (hora de cada uno): si hay racha (1+ días) y aún no has cumplido.
   Una comprobación al día por persona y racha.

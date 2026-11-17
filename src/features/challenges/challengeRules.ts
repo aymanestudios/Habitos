@@ -126,7 +126,7 @@ export function friendlyChallengeError(message: string): string {
   if (message.includes('not_friends')) return 'Solo puedes crear retos con tus amigos.'
   if (message.includes('invalid_target') || message.includes('invalid_days')) return 'Ese reto no es válido.'
   if (message.includes('challenge_not_found')) return 'Ese reto ya no existe.'
-  if (/create_flash_challenge|schema cache/i.test(message)) return 'Falta ejecutar la migración 0018_flash_challenges.sql en Supabase.'
+  if (/create_flash_challenge|schema cache/i.test(message)) return 'Esto no está disponible ahora mismo. Inténtalo más tarde.'
   return 'No se pudo completar. Revisa la conexión e inténtalo otra vez.'
 }
 

@@ -37,7 +37,7 @@ export function friendlyPostError(message: string): string {
   if (message.includes('habit_not_found')) return 'Ese hábito ya no existe.'
   if (/mime|type/i.test(message)) return 'Ese formato no está permitido. Usa JPG, PNG o WebP.'
   if (/size|large|exceed/i.test(message)) return 'La foto pesa demasiado. Prueba con otra.'
-  if (/habit_posts|publish_habit_post|schema cache/i.test(message)) return 'Falta ejecutar la migración 0012_photos.sql en Supabase.'
+  if (/habit_posts|publish_habit_post|schema cache/i.test(message)) return 'Esto no está disponible ahora mismo. Inténtalo más tarde.'
   if (/abrir|navegador|preparar/i.test(message)) return message
   return 'No se pudo publicar. Revisa la conexión e inténtalo otra vez.'
 }

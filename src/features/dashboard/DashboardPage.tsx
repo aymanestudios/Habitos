@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { LoadError } from '@/components/LoadError'
 import { Link } from 'react-router'
 import { Card } from '@/components/Card'
 import { HabitRow } from '@/components/HabitRow'
@@ -207,12 +208,14 @@ export function DashboardPage() {
 
   if (profile.isError || habits.isError || logs.isError) {
     return (
-      <Card>
-        <p className="text-danger">
-          No se pudieron cargar tus hábitos. ¿Has ejecutado las migraciones 0002_habits.sql, 0003_habit_logs.sql y
-          0004_xp_streaks.sql en Supabase?
-        </p>
-      </Card>
+      <LoadError
+        what="tu día"
+        onRetry={() => {
+          void profile.refetch()
+          void habits.refetch()
+          void logs.refetch()
+        }}
+      />
     )
   }
 

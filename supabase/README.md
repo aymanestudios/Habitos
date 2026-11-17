@@ -28,3 +28,4 @@ En la Fase 0 solo creas el proyecto en supabase.com y copias su URL y su clave p
 - `0018_flash_challenges.sql`: retos relámpago (tipos xp, hábitos, categoría, días; 3 o 7 días). Amplía `challenges` y recrea `get_my_challenges`. Ver docs/RETOS.md.
 - `0019_challenge_pings.sql`: avisos de retos (te proponen un reto, último día, reto cumplido). Solo amplía `claim_push_queue`; no hay que redesplegar la Edge Function.
 - `0020_lock_done.sql`: un hábito hecho ya no se puede cambiar (ni + ni −) y el progreso no pasa de la meta. Cambia solo `add_habit_progress`.
+- `0021_polish.sql`: repaso. Cierra las funciones de los triggers y suaviza dos textos de avisos (toque y racha compartida).

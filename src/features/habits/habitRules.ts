@@ -267,7 +267,7 @@ export function friendlyHabitError(message: string): string {
     text.includes('schema cache') ||
     text.includes('could not find the table')
   )
-    return 'Falta crear la tabla de hábitos. ¿Has ejecutado la migración 0002_habits.sql en Supabase?'
+    return 'Esto no está disponible ahora mismo. Inténtalo más tarde.'
   if (text.includes('failed to fetch') || text.includes('network'))
     return 'No se pudo conectar con Supabase. Revisa .env.local y tu conexión.'
   return message || 'Algo ha salido mal. Inténtalo de nuevo.'
@@ -285,7 +285,7 @@ export function friendlyProgressError(message: string): string {
   if (text.includes('habit_not_found')) return 'No se encontró el hábito.'
   if (text.includes('not_authenticated') || text.includes('jwt')) return 'Tu sesión ha caducado. Vuelve a entrar.'
   if (text.includes('add_habit_progress') || text.includes('habit_logs'))
-    return 'No se pudo guardar. ¿Has ejecutado la migración 0003_habit_logs.sql en Supabase?'
+    return 'No se pudo guardar. Inténtalo más tarde.'
   if (text.includes('failed to fetch') || text.includes('network')) return 'No hay conexión. Inténtalo de nuevo.'
   return 'No se pudo guardar. Inténtalo de nuevo.'
 }

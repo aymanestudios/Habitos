@@ -1,4 +1,6 @@
+import { Suspense } from 'react'
 import { Link, NavLink, Outlet } from 'react-router'
+import { PageSkeleton } from '@/components/Skeleton'
 import { Icon } from '@/components/Icon'
 import { APP_NAME } from '@/lib/constants'
 import { navItems } from './navigation'
@@ -91,7 +93,9 @@ export function AppLayout() {
               : { transition: 'transform 0.25s ease, opacity 0.25s ease' }
           }
         >
-          <Outlet />
+          <Suspense fallback={<PageSkeleton />}>
+            <Outlet />
+          </Suspense>
         </div>
       </main>
 

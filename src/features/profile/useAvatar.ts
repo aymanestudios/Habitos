@@ -64,6 +64,6 @@ export function friendlyPhotoError(message: string): string {
   if (/mime|type/i.test(message)) return 'Ese formato no está permitido. Usa JPG, PNG o WebP.'
   if (/size|large|exceed/i.test(message)) return 'La foto pesa demasiado incluso comprimida. Prueba con otra.'
   if (/abrir|navegador|preparar/i.test(message)) return message
-  if (/avatar_path|column/i.test(message)) return 'Falta ejecutar la migración 0012_photos.sql en Supabase.'
+  if (/avatar_path|column/i.test(message)) return 'Esto no está disponible ahora mismo. Inténtalo más tarde.'
   return 'No se pudo guardar la foto. Revisa la conexión e inténtalo otra vez.'
 }

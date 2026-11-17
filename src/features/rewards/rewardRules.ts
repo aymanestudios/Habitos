@@ -125,7 +125,7 @@ export function isWorn(equipment: Equipment, reward: Reward): boolean {
 export function friendlyRewardError(message: string): string {
   if (message.includes('reward_locked')) return 'Aún no tienes desbloqueado ese objeto.'
   if (message.includes('too_many_badges')) return 'Puedes destacar hasta 3 insignias.'
-  if (/get_my_rewards|reward_catalog|schema cache/i.test(message)) return 'Falta ejecutar la migración 0016_rewards_profiles.sql en Supabase.'
+  if (/get_my_rewards|reward_catalog|schema cache/i.test(message)) return 'Esto no está disponible ahora mismo. Inténtalo más tarde.'
   return 'No se pudo guardar. Inténtalo otra vez.'
 }
 

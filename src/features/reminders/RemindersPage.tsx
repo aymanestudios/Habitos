@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { LoadError } from '@/components/LoadError'
 import type { FormEvent } from 'react'
 import { Card } from '@/components/Card'
 import { ChoiceChips } from '@/components/ChoiceChips'
@@ -80,11 +81,7 @@ export function RemindersPage() {
 
   if (reminders.isError) {
     return (
-      <Card>
-        <p className="text-danger">
-          No se pudieron cargar tus recordatorios. ¿Has ejecutado la migración 0005_reminders.sql en Supabase?
-        </p>
-      </Card>
+      <LoadError what="tus recordatorios" onRetry={() => void reminders.refetch()} />
     )
   }
   if (!reminders.data) return <PageSkeleton />

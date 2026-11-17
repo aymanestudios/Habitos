@@ -1,4 +1,5 @@
 import { Card } from '@/components/Card'
+import { LoadError } from '@/components/LoadError'
 import { useAuth } from '@/features/auth/AuthProvider'
 import { useProfile } from './useProfile'
 
@@ -23,9 +24,7 @@ export function AccountCard() {
       {profile.isPending && <p className="py-3 text-muted">Cargando...</p>}
 
       {profile.isError && (
-        <p className="py-3 text-sm text-danger">
-          No se pudo cargar tu perfil. ¿Has ejecutado la migración 0001_profiles.sql en Supabase?
-        </p>
+        <LoadError compact what="tu perfil" onRetry={() => void profile.refetch()} />
       )}
 
       {profile.data && (

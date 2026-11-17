@@ -473,3 +473,68 @@
 @media (prefers-reduced-motion: reduce) {
   .animate-capsule-shake { animation: none; }
 }
+
+/* ===== Skins animadas (capas: cola, cuerpo, orejas, corona y lo de alrededor) ===== */
+.skin-layer { position: absolute; max-width: none; user-select: none; pointer-events: none; }
+@keyframes skin-breathe { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.012, 1.025); } }
+@keyframes skin-bounce { 0%, 100% { transform: translateY(0) scale(1, 1); } 40% { transform: translateY(-4%) scale(0.98, 1.03); } 60% { transform: translateY(0) scale(1.03, 0.97); } }
+@keyframes skin-beat { 0%, 100% { transform: translateY(0) rotate(0deg); } 25% { transform: translateY(1.5%) rotate(-1.2deg); } 75% { transform: translateY(1.5%) rotate(1.2deg); } }
+@keyframes skin-swimbody { 0%, 100% { transform: translate(0, 0) rotate(0deg); } 50% { transform: translate(1.5%, -2.5%) rotate(-1.5deg); } }
+@keyframes skin-ear {
+  0%, 62%, 100% { transform: rotate(0deg); }
+  68% { transform: rotate(calc(var(--dir) * -9deg)); }
+  74% { transform: rotate(calc(var(--dir) * 4deg)); }
+  80% { transform: rotate(calc(var(--dir) * -5deg)); }
+  86% { transform: rotate(0deg); }
+}
+@keyframes skin-tail { 0%, 100% { transform: rotate(calc(var(--dir) * -2.5deg)); } 50% { transform: rotate(calc(var(--dir) * 2.5deg)); } }
+@keyframes skin-crown { 0%, 100% { transform: rotate(-2deg) translateY(0); } 50% { transform: rotate(2deg) translateY(-2%); } }
+@keyframes skin-twinkle { 0%, 100% { transform: scale(0.7) rotate(0deg); opacity: 0.55; } 50% { transform: scale(1.15) rotate(18deg); opacity: 1; } }
+@keyframes skin-planet { 0%, 100% { transform: translateY(0) rotate(-8deg); } 50% { transform: translateY(-14%) rotate(8deg); } }
+@keyframes skin-bubble { 0% { transform: translateY(0) scale(0.85); opacity: 0; } 15% { opacity: 1; } 80% { opacity: 1; } 100% { transform: translateY(-60%) scale(1.08); opacity: 0; } }
+@keyframes skin-fish { 0%, 100% { transform: translateX(0) rotate(0deg); } 25% { transform: translateX(-12%) rotate(-6deg); } 50% { transform: translateX(-20%) rotate(0deg); } 75% { transform: translateX(-8%) rotate(6deg); } }
+@keyframes skin-note { 0%, 100% { transform: translateY(0) rotate(calc(var(--dir) * -10deg)); } 50% { transform: translateY(-18%) rotate(calc(var(--dir) * 10deg)); } }
+@keyframes skin-pulse { 0%, 100% { transform: scale(0.85); opacity: 0.6; } 50% { transform: scale(1.2); opacity: 1; } }
+
+.skin-anim-breathe { animation: skin-breathe 2.8s ease-in-out infinite; transform-origin: 50% 100%; }
+.skin-anim-bounce { animation: skin-bounce 1.6s ease-in-out infinite; transform-origin: 50% 100%; }
+.skin-anim-beat { animation: skin-beat 0.9s ease-in-out infinite; transform-origin: 50% 90%; }
+.skin-anim-swimbody { animation: skin-swimbody 3.2s ease-in-out infinite; transform-origin: 50% 50%; }
+.skin-anim-ear { animation: skin-ear 3.6s ease-in-out infinite; }
+.skin-anim-tail { animation: skin-tail 2.2s ease-in-out infinite; }
+.skin-anim-crown { animation: skin-crown 3s ease-in-out infinite; }
+.skin-anim-twinkle { animation: skin-twinkle 1.8s ease-in-out infinite; }
+.skin-anim-planet { animation: skin-planet 3.4s ease-in-out infinite; }
+.skin-anim-bubble { animation: skin-bubble 2.8s ease-in infinite; }
+.skin-anim-fish { animation: skin-fish 4s ease-in-out infinite; }
+.skin-anim-note { animation: skin-note 1.2s ease-in-out infinite; }
+.skin-anim-pulse { animation: skin-pulse 0.9s ease-in-out infinite; }
+
+/* ===== Apertura de la cápsula ===== */
+@keyframes capsule-rays { to { transform: rotate(360deg); } }
+.capsule-rays {
+  background: repeating-conic-gradient(from 0deg, rgb(255 210 90 / 0.28) 0deg 10deg, transparent 10deg 30deg);
+  -webkit-mask-image: radial-gradient(circle, #000 0%, transparent 68%);
+  mask-image: radial-gradient(circle, #000 0%, transparent 68%);
+  animation: capsule-rays 14s linear infinite;
+}
+@keyframes capsule-glow { 0%, 100% { opacity: 0.55; transform: scale(0.95); } 50% { opacity: 1; transform: scale(1.08); } }
+.capsule-glow { animation: capsule-glow 2.4s ease-in-out infinite; }
+@keyframes capsule-flash { 0% { opacity: 0; } 25% { opacity: 1; } 100% { opacity: 0; } }
+.capsule-flash { animation: capsule-flash 0.7s ease-out forwards; }
+@keyframes sil-in { from { opacity: 0; transform: translate(-50%, -50%) scale(0.4); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+.sil-in { animation: sil-in 0.45s cubic-bezier(.2,1.4,.4,1) both; }
+@keyframes sil-chosen { 0%, 100% { filter: brightness(1) drop-shadow(0 0 10px rgb(255 205 80)) drop-shadow(0 0 26px rgb(255 170 40)); } 50% { filter: brightness(1) drop-shadow(0 0 18px rgb(255 225 120)) drop-shadow(0 0 44px rgb(255 170 40)); } }
+.sil-chosen { animation: sil-chosen 0.8s ease-in-out infinite; }
+@keyframes skin-reveal { from { opacity: 0; transform: scale(0.6); filter: brightness(3); } to { opacity: 1; transform: scale(1); filter: brightness(1); } }
+.skin-reveal { animation: skin-reveal 0.7s cubic-bezier(.2,1.3,.4,1) both; }
+@keyframes ticket-shine { 0% { background-position: -150% 0; } 60%, 100% { background-position: 250% 0; } }
+.ticket-shine {
+  background-image: linear-gradient(110deg, transparent 35%, rgb(255 255 255 / 0.55) 50%, transparent 65%);
+  background-size: 200% 100%; background-repeat: no-repeat;
+  animation: ticket-shine 2.6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [class*='skin-anim-'], .capsule-rays, .capsule-glow, .sil-chosen, .ticket-shine { animation: none !important; }
+}

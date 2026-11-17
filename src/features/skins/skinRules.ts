@@ -15,7 +15,14 @@ export type SkinState = {
   owned: Skin[]
 }
 
-export type CapsuleResult = { skin: Skin; isNew: boolean; available: number; unlimited: boolean }
+export type CapsuleResult = {
+  skin: Skin
+  isNew: boolean
+  available: number
+  unlimited: boolean
+  silhouettes: string[] // sombras de TODAS las skins (en orden aleatorio, sin decir cuál es cuál)
+  winner: number // posición de la tuya en esa lista
+}
 
 function toSkin(row: Record<string, unknown>): Skin {
   return {
@@ -50,11 +57,37 @@ export function buildCapsuleResult(raw: unknown): CapsuleResult {
     isNew: Boolean(data.is_new),
     available: Number(data.available ?? 0),
     unlimited: Boolean(data.unlimited),
+    ...silhouettesOf(data),
   }
+}
+
+function silhouettesOf(data: Record<string, unknown>): { silhouettes: string[]; winner: number } {
+  const raw = Array.isArray(data.silhouettes) ? data.silhouettes.map(String) : []
+  const list = raw.every((s) => /^[a-z0-9]+\.webp$/i.test(s)) ? raw : [] // si algo no cuadra, sin ruleta
+  const winner = Number(data.winner ?? -1)
+  if (list.length === 0 || !Number.isInteger(winner) || winner < 0 || winner >= list.length) return { silhouettes: [], winner: -1 }
+  return { silhouettes: list, winner }
+}
+
+/** Secuencia del foco de la ruleta: varias vueltas y frena hasta caer en la tuya. Devuelve [índice, espera ms]. */
+export function rouletteSteps(count: number, winner: number, laps = 2): Array<[number, number]> {
+  if (count <= 1) return [[Math.max(0, winner), 400]]
+  const total = laps * count + winner + 1
+  const steps: Array<[number, number]> = []
+  for (let i = 0; i < total; i += 1) {
+    const t = i / (total - 1)
+    steps.push([i % count, Math.round(70 + 380 * t * t * t)]) // rápido al principio, lento al final
+  }
+  return steps
 }
 
 export function skinSrc(skin: Pick<Skin, 'file'>): string {
   return `/skins/${skin.file}`
+}
+
+/** Código de la skin (nombre del archivo sin extensión): carpeta de sus capas animadas. */
+export function skinCode(skin: Pick<Skin, 'file'>): string {
+  return skin.file.replace(/\.[a-z0-9]+$/i, '').replace(/[^a-z0-9_-]/gi, '')
 }
 
 export function equippedSkin(state: SkinState | undefined): Skin | null {

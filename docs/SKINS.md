@@ -27,3 +27,15 @@ update public.app_flags set value = false where key = 'infinite_tickets';
 1. Recorta la imagen (PNG/WebP con fondo transparente, ~500 px) y ponla en `public/skins/` con un nombre aleatorio.
 2. `insert into public.skin_catalog (id, name, file, width, height) values ('s_xxxx', 'Nombre', 'xxxx.webp', ancho, alto);`
    (`weight` > 1 = más probable; por defecto 1.)
+
+## Animación de las skins
+Cada skin está partida en capas (`public/skins/<código>/manifest.json` + `l0.webp`, `l1.webp`…):
+cola (detrás), cuerpo, orejas/corona (delante) y lo de alrededor (estrellas, planeta, burbujas, pez, notas…).
+`SkinArt` las monta y las anima con CSS: el cuerpo respira/bota/baila, las orejas dan "tics", la cola se mueve,
+las burbujas suben, el pez nada, las notas bailan y las estrellas brillan. Con "reducir movimiento" se quedan quietas.
+Las capas se generan con `tools/build_skin_layers.py` (los polígonos de orejas, cola y corona están a mano).
+
+## Apertura de la cápsula (el momento especial)
+Pantalla completa: cápsula brillando → se sacude → destello → aparecen las **sombras de todas las skins** en círculo →
+un foco pasa de una a otra cada vez más lento → **se ilumina la tuya** → va al centro, destello y se revela en color con confeti.
+El servidor sigue decidiendo la skin: solo envía las siluetas (con nombres aleatorios, sin ids) y la posición de la ganadora.

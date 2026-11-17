@@ -10,7 +10,7 @@
 //   laptop   → amigos (aún sin amigos)
 
 import { useEquippedSkin } from '@/features/skins/useSkins'
-import { skinSrc } from '@/features/skins/skinRules'
+import { SkinArt } from '@/features/skins/SkinArt'
 
 export type MascotPose = 'default' | 'sleep' | 'gym' | 'star' | 'cheer' | 'laptop'
 
@@ -27,12 +27,13 @@ const POSES: Record<MascotPose, { src: string; width: number; height: number }> 
 type Props = { className?: string; pose?: MascotPose }
 
 export function Mascot({ className = 'h-32', pose = 'default' }: Props) {
-  // Si tienes una skin equipada, ella es tu panda en toda la app (cosmético: no cambia nada más)
+  // Si tienes una skin equipada, ella es tu panda en toda la app (animada; cosmético: no cambia nada más)
   const skin = useEquippedSkin()
-  const image = skin ? { src: skinSrc(skin), width: skin.width, height: skin.height } : POSES[pose]
+  if (skin) return <SkinArt skin={skin} className={className} />
+  const image = POSES[pose]
   return (
     <img
-      key={skin ? skin.id : pose}
+      key={pose}
       src={image.src}
       alt=""
       aria-hidden="true"

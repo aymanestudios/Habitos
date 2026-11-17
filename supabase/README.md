@@ -30,3 +30,4 @@ En la Fase 0 solo creas el proyecto en supabase.com y copias su URL y su clave p
 - `0020_lock_done.sql`: un hábito hecho ya no se puede cambiar (ni + ni −) y el progreso no pasa de la meta. Cambia solo `add_habit_progress`.
 - `0021_polish.sql`: repaso. Cierra las funciones de los triggers y suaviza dos textos de avisos (toque y racha compartida).
 - `0022_skins_gacha.sql`: skins del panda (tickets, cápsula misteriosa, colección). Ver docs/SKINS.md. Incluye el MODO PRUEBA (tickets infinitos).
+- `0023_skin_silhouettes.sql`: siluetas de las skins para la apertura especial (la cápsula devuelve las sombras y cuál es la tuya).

@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { Card } from '@/components/Card'
 import { errorMessage } from '@/features/habits/habitRules'
-import { CapsuleSheet } from './CapsuleSheet'
-import { cycle, friendlySkinError, skinSrc, ticketText } from './skinRules'
+import { CapsuleOpening } from './CapsuleOpening'
+import { SkinArt } from './SkinArt'
+import { cycle, friendlySkinError, ticketText } from './skinRules'
 import { useEquipSkin, useMySkins } from './useSkins'
 
 function TicketIcon({ className = 'h-5 w-5' }: { className?: string }) {
@@ -46,7 +47,7 @@ export function SkinsCard() {
             type="button"
             onClick={() => setOpening(true)}
             disabled={!canOpen}
-            className="btn-primary shrink-0 px-4 py-2 text-sm"
+            className={`btn-primary shrink-0 px-4 py-2 text-sm ${canOpen ? 'ticket-shine' : ''}`}
           >
             Abrir cápsula
           </button>
@@ -90,7 +91,7 @@ export function SkinsCard() {
                       active ? 'border-brand bg-brand-soft' : 'border-line bg-surface'
                     }`}
                   >
-                    <img src={skinSrc(skin)} alt="" width={skin.width} height={skin.height} loading="lazy" className="h-20 w-auto max-w-full object-contain" />
+                    <SkinArt skin={skin} className="h-20 max-w-full" />
                     <span className="mt-1 line-clamp-1 text-xs font-bold">{skin.name}</span>
                     <span className={`text-[11px] font-semibold ${active ? 'text-brand-ink' : 'text-muted'}`}>
                       {active ? 'Tu compañero' : 'Toca para usarla'}
@@ -110,7 +111,7 @@ export function SkinsCard() {
         </p>
       )}
 
-      <CapsuleSheet open={opening} onClose={() => setOpening(false)} canOpen={canOpen} unlimited={state.unlimited} equippedId={state.equipped} />
+      <CapsuleOpening open={opening} onClose={() => setOpening(false)} canOpen={canOpen} unlimited={state.unlimited} equippedId={state.equipped} />
     </Card>
   )
 }

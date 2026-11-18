@@ -15,6 +15,10 @@ type Props = {
 // Se cierra con la X, tocando fuera o con la tecla Escape.
 export function Sheet({ open, title, onClose, children, closeDisabled = false }: Props) {
   const panel = useRef<HTMLDivElement>(null)
+  // onClose y closeDisabled cambian en cada render del padre (p. ej. al escribir una letra).
+  // Si el efecto dependiera de ellos, se repetiría en cada tecla y panel.focus() cerraría el teclado del móvil.
+  const latest = useRef({ onClose, closeDisabled })
+  latest.current = { onClose, closeDisabled }
 
   useEffect(() => {
     if (!open) return
@@ -23,7 +27,7 @@ export function Sheet({ open, title, onClose, children, closeDisabled = false }:
     document.body.style.overflow = 'hidden' // que no se mueva la página de detrás
     panel.current?.focus()
     function onKey(event: KeyboardEvent) {
-      if (event.key === 'Escape' && !closeDisabled) onClose()
+      if (event.key === 'Escape' && !latest.current.closeDisabled) latest.current.onClose()
     }
     window.addEventListener('keydown', onKey)
     return () => {
@@ -31,7 +35,7 @@ export function Sheet({ open, title, onClose, children, closeDisabled = false }:
       document.body.style.overflow = overflow
       previous?.focus()
     }
-  }, [open, onClose, closeDisabled])
+  }, [open])
 
   if (!open) return null
 

@@ -429,6 +429,25 @@
 }
 
 @layer base {
+  /* Campos de fecha/hora: en iPhone Safari se salen del contenedor y salen más altos. Se igualan a los de texto. */
+  input[type='date'],
+  input[type='datetime-local'] {
+    -webkit-appearance: none;
+    appearance: none;
+    display: block;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    min-height: 3rem;
+    text-align: left;
+  }
+  input[type='date']::-webkit-date-and-time-value,
+  input[type='datetime-local']::-webkit-date-and-time-value {
+    text-align: left;
+    min-height: 1.5em;
+    margin: 0;
+  }
+
   html {
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation; /* sin espera de "doble toque para ampliar": los toques responden al instante */

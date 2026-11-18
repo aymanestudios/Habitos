@@ -47,6 +47,22 @@ export function LoginPage() {
     return () => window.clearTimeout(timer)
   }, [resendWait])
 
+  // Si confirmas el email desde otro dispositivo (el móvil), este se entera solo:
+  // mientras espera, reintenta entrar cada 12 s (máx. 6 min). Si aún no está confirmado, falla en silencio.
+  useEffect(() => {
+    if (!pendingEmail || !password) return
+    let tries = 0
+    const timer = window.setInterval(() => {
+      tries += 1
+      if (tries > 30) {
+        window.clearInterval(timer)
+        return
+      }
+      void supabase.auth.signInWithPassword({ email: pendingEmail, password })
+    }, 12000)
+    return () => window.clearInterval(timer)
+  }, [pendingEmail, password])
+
   async function resendConfirmation() {
     if (!pendingEmail || resendWait > 0) return
     setError(null)

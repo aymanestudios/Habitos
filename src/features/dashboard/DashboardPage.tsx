@@ -465,8 +465,8 @@ export function DashboardPage() {
               </p>
             )}
 
-            <div className={`grid gap-5 ${weeklyItems.length > 0 ? 'lg:grid-cols-3' : ''}`}>
-              <div className={`space-y-5 ${weeklyItems.length > 0 ? 'lg:col-span-2' : ''}`}>
+            <div className={`grid grid-cols-1 gap-5 ${weeklyItems.length > 0 ? 'lg:grid-cols-3' : ''}`}>
+              <div className={`min-w-0 space-y-5 ${weeklyItems.length > 0 ? 'lg:col-span-2' : ''}`}>
                 {dailyItems.length > 0 && (
                   <Card>
                     <div className="mb-1 flex items-center justify-between gap-3">
@@ -475,7 +475,7 @@ export function DashboardPage() {
                       <button
                         type="button"
                         onClick={() => setView(isToday ? 'yesterday' : 'today')}
-                        className="text-sm font-bold text-brand-ink"
+                        className="text-sm font-bold text-brand-ink text-right"
                       >
                         {isToday ? '¿Olvidaste algo ayer?' : 'Volver a hoy'}
                       </button>
@@ -521,7 +521,7 @@ export function DashboardPage() {
               </div>
 
               {weeklyItems.length > 0 && (
-                <Card className="self-start">
+                <Card className="min-w-0 self-start">
                   <h2 className="mb-1 text-lg font-bold">Esta semana</h2>
                   <div className="divide-y divide-line">{weeklyItems.map(renderRow)}</div>
                 </Card>

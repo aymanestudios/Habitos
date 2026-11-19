@@ -132,11 +132,13 @@ export function friendlyRewardError(message: string): string {
 // --- "¡Nueva recompensa!": recuerdo local de cuáles ya celebraste (el dato real está en Supabase) ---
 const SEEN_KEY = 'pg-rewards-seen'
 
-export function takeNewUnlocks(rewards: Reward[]): Reward[] {
+export function takeNewUnlocks(rewards: Reward[], userId?: string): Reward[] {
   const unlocked = rewards.filter((reward) => reward.unlocked)
+  // Una lista por usuario (en un mismo móvil pueden entrar dos personas). La antigua (sin usuario) se reaprovecha.
+  const key = userId ? `${SEEN_KEY}:${userId}` : SEEN_KEY
   try {
-    const raw = localStorage.getItem(SEEN_KEY)
-    localStorage.setItem(SEEN_KEY, JSON.stringify(unlocked.map((reward) => reward.id)))
+    const raw = localStorage.getItem(key) ?? (userId ? localStorage.getItem(SEEN_KEY) : null)
+    localStorage.setItem(key, JSON.stringify(unlocked.map((reward) => reward.id)))
     if (raw === null) return [] // primera vez en este dispositivo: no celebramos lo antiguo
     const seen = new Set(JSON.parse(raw) as string[])
     return unlocked.filter((reward) => !seen.has(reward.id))

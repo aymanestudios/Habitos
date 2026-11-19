@@ -9,7 +9,8 @@ Qué hay:
 - **Hábitos:** diarios, ciertos días, X veces por semana o total semanal; con meta de número, dificultad, categoría y privacidad ("Solo yo" / "Mis amigos"). Un hábito hecho queda cerrado ese día. Recordatorios con repetición.
 - **XP, niveles y rachas:** calculados en el servidor (`docs/XP-Y-RACHAS.md`), con congelaciones y bonus de día completo.
 - **Amigos:** código de amigo, solicitudes, ranking semanal, actividad con reacciones, perfil de amigo con privacidad, fotos de progreso (`docs/FOTOS.md`).
-- **Rachas compartidas** con fuego que evoluciona (`docs/FUEGO.md`) y **retos relámpago** (`docs/RETOS.md`).
+- **Rachas compartidas** con fuego que evoluciona (`docs/FUEGO.md`) y **retos en equipo**: dos amigos suman km, páginas, minutos… hasta una meta común (`docs/RETOS.md`).
+- **Celebraciones** con cola (XP que vuela a la barra, subida de nivel, logros, reto cumplido) (`docs/CELEBRACIONES.md`) y **"Tu día"**, el resumen animado del día anterior con el panda (`docs/TU-DIA.md`).
 - **Logros:** 31 recompensas cosméticas (`docs/RECOMPENSAS.md`) y **skins del panda** con cápsula sorpresa cada 7 días cumplidos (`docs/SKINS.md`).
 - **Avisos al móvil** (recordatorios, toques, racha en peligro, retos, buenos días): `docs/AVISOS.md`.
 - **PWA instalable** con modo oscuro (`docs/PWA.md`).
@@ -76,7 +77,10 @@ src/
 │   ├── dashboard/   # pantalla Inicio
 │   ├── habits/      # pantalla Hábitos (y recordatorios en reminders/)
 │   ├── friends/     # pantalla Amigos y perfil de amigo
-│   ├── challenges/  # retos relámpago
+│   ├── celebrations/ # celebraciones con cola (XP, nivel, logros, retos)
+│   ├── challenges/  # retos relámpago (antiguos: ya no se crean)
+│   ├── dayRecap/    # "Tu día": resumen animado del día anterior
+│   ├── team/        # retos en equipo
 │   ├── streaks/     # rachas compartidas (fuego)
 │   ├── posts/       # fotos de progreso
 │   ├── rewards/     # pantalla Logros
@@ -87,7 +91,7 @@ src/
 │   └── system/      # página /estado (diagnóstico)
 ├── lib/          # utilidades: cliente de Supabase, variables de entorno, fechas, TanStack Query
 └── styles/       # colores y estilos globales (index.css)
-supabase/         # migraciones SQL (0001-0025) y Edge Function send-reminders
+supabase/         # migraciones SQL (0001-0027) y Edge Function send-reminders
 docs/             # una guía por funcionalidad (ver abajo)
 tools/            # scripts para preparar imágenes (skins, icono)
 ```

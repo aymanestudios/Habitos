@@ -35,3 +35,16 @@ Inicio · Hábitos (con Recordatorios dentro) · Amigos · Logros · Perfil (con
 Algunas recompensas dependen de cosas que se pueden deshacer: la racha compartida (si la terminas), los amigos (si quitas uno) y las fotos (si las borras).
 Antes de borrarse, el servidor guarda el récord en `reward_metric_peaks` y `get_reward_metrics` usa el mayor entre lo actual y lo guardado. Así una insignia o un marco no vuelven a bloquearse.
 Las rachas compartidas terminadas ANTES de 0025 no guardaron su récord y no se pueden recuperar.
+
+## Logros de equipo (0026)
+Misma métrica que "Trabajo en equipo" (`challenges_won`: retos cumplidos, relámpago o en equipo, con cualquier amigo):
+| Logro | Retos | Rareza |
+|---|---|---|
+| Trabajo en equipo (ya existía) | 1 | Especial |
+| Compañeros de aventura | 5 | Común |
+| Dúo imparable | 10 | Especial |
+| Espíritu de equipo | 20 | Especial |
+| Equipo legendario | 50 | Épico |
+| Inseparables | 100 | Legendario |
+
+**Dúo** (perfil de cada amigo): retos cumplidos con esa persona (`get_duo`), con niveles 1 · 5 · 10 · 25 · 50. Quitar una amistad NO borra los retos cumplidos, así que ni los logros ni el dúo se pierden. Si se borra un reto (p. ej. al borrar una cuenta), antes se guarda el récord (`challenges_keep_count`).

@@ -38,3 +38,9 @@ Una sola vez por persona, reto y tipo (`challenge_pings`, tabla interna).
 - La Edge Function `send-reminders` tiene **Verify JWT desactivado**: el cron no envía sesión de usuario, sino el secreto `x-cron-secret` (Vault), que la función comprueba con `verify_push_cron`.
 - La URL a la que llama el cron está escrita en `0009_push.sql`. En un proyecto nuevo hay que cambiarla.
 - Desde `0025`, una zona horaria inválida ya no se puede guardar (antes paraba los avisos de todos).
+
+## Retos en equipo (0026)
+- 🤝 "X te invita a un reto en equipo": al invitado, una vez.
+- 🤝 "X ha aceptado tu reto": a quien invitó, una vez.
+- 🎉 "¡Reto cumplido con X!" y ⚡ "Último día del reto" (18:00-21:59): igual que antes, solo si el reto sigue en marcha.
+No hay aviso por cada aportación (sería demasiado): eso se ve dentro de la app ("¡Beto ha sumado 3 km!").

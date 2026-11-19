@@ -2,6 +2,7 @@ import { Suspense, useLayoutEffect } from 'react'
 import { Link, NavLink, Outlet, useLocation } from 'react-router'
 import { PageSkeleton } from '@/components/Skeleton'
 import { Icon } from '@/components/Icon'
+import { CelebrationProvider } from '@/features/celebrations/CelebrationProvider'
 import { APP_NAME } from '@/lib/constants'
 import { navItems } from './navigation'
 import { useSwipeTabs } from './useSwipeTabs'
@@ -56,6 +57,7 @@ export function AppLayout() {
   }, [pathname])
 
   return (
+    <CelebrationProvider>
     <div className="pt-safe">
       {/* Barra lateral: solo escritorio */}
       <aside className="fixed inset-y-0 left-0 hidden w-64 flex-col border-r border-line bg-surface px-4 py-6 md:flex">
@@ -113,5 +115,6 @@ export function AppLayout() {
         </div>
       </nav>
     </div>
+    </CelebrationProvider>
   )
 }

@@ -44,3 +44,9 @@ La migración se probó en un Postgres temporal con 103 comprobaciones (niveles,
 Cuando un hábito llega a su meta (el tic verde), ya no se puede sumar ni quitar ese día: desaparecen − y + y la fila no se desmarca.
 Lo comprueba el servidor (`add_habit_progress` devuelve `already_done`), así el XP no se puede inflar ni deshacer.
 El progreso se queda en la meta (3 de 3 litros, no 4 de 3). En los de "total semanal", cerrado = la semana ya llegó a la meta.
+
+## XP de los retos en equipo (0026)
+- Al cumplir un reto en equipo, cada uno gana **20 XP** (1 día), **35 XP** (2-4 días) o **50 XP** (5 días o más).
+- Va **aparte del tope diario de 150** (ese tope es de los hábitos), pero solo se premian **2 retos por persona y semana**; el tercero cuenta para logros pero da 0 XP.
+- Un evento por persona y reto (clave única `xp_events_team_key`): no se puede cobrar dos veces. Cancelar, rechazar o caducar no da XP.
+- La curva de niveles y el XP de los hábitos no cambian.

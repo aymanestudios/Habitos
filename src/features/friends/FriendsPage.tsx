@@ -4,7 +4,7 @@ import { Link } from 'react-router'
 import type { FormEvent } from 'react'
 import { Avatar } from '@/components/Avatar'
 import { Card } from '@/components/Card'
-import { ChallengesCard } from '@/features/challenges/ChallengesCard'
+import { TeamChallengesCard } from '@/features/team/TeamChallengesCard'
 import { PostImage } from '@/features/posts/PostImage'
 import { SharedStreaksCard } from '@/features/streaks/SharedStreaksCard'
 import { useSignedUrls } from '@/lib/storage'
@@ -324,7 +324,7 @@ export function FriendsPage() {
 
       <SharedStreaksCard friends={overview.ranking.filter((row) => row.kind === 'friend')} />
 
-      <ChallengesCard friends={overview.ranking.filter((row) => row.kind === 'friend')} />
+      <TeamChallengesCard friends={overview.ranking.filter((row) => row.kind === 'friend')} />
 
       {overview.friendCount > 0 && (
         <Card>

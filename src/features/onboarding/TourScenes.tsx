@@ -180,8 +180,8 @@ function FriendsScene() {
       </div>
       <div className="ob-up mt-4 rounded-2xl bg-surface-2 p-3" style={d(550)}>
         <div className="mb-2 flex items-center justify-between">
-          <span className="text-sm font-extrabold">Reto relámpago</span>
-          <span className="rounded-full bg-surface px-2 py-0.5 text-[11px] font-bold text-muted">3 días</span>
+          <span className="text-sm font-extrabold">Reto en equipo · 20 km</span>
+          <span className="rounded-full bg-surface px-2 py-0.5 text-[11px] font-bold text-muted">1 semana</span>
         </div>
         {[
           { who: 'Tú', to: '78%', tone: 'bg-brand', delay: 700 },

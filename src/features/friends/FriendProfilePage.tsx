@@ -10,6 +10,7 @@ import { BadgeArt } from '@/features/rewards/RewardArt'
 import { RARITY } from '@/features/rewards/rewardRules'
 import type { Rarity } from '@/features/rewards/rewardRules'
 import { shortDate } from '@/features/stats/statsRules'
+import { DuoCard } from '@/features/team/DuoCard'
 import { useSignedUrls } from '@/lib/storage'
 import { useFriendProfile, useRewardCatalog } from './useFriendProfile'
 
@@ -88,6 +89,8 @@ export function FriendProfilePage() {
           ))}
         </div>
       </Card>
+
+      {id && <DuoCard friendId={id} friendName={p.name} />}
 
       {p.stats && (
         <Card>

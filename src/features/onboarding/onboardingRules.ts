@@ -48,7 +48,7 @@ export const TOUR_STEPS: TourStep[] = [
     tab: 'Amigos',
     title: 'Amigos y retos',
     says: '¡Esto es todavía más divertido acompañado! Añade amigos, mira sus progresos y motivaos mutuamente.',
-    points: ['Añádelos con tu código de amigo', 'Retos relámpago de unos días entre los dos', 'Comparte fotos de tus hábitos (si quieres)'],
+    points: ['Añádelos con tu código de amigo', 'Retos en equipo: sumad juntos hasta la meta', 'Comparte fotos de tus hábitos (si quieres)'],
     pose: 'laptop',
     side: 'right',
   },

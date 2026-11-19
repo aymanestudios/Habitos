@@ -15,6 +15,7 @@ import { useProfile } from '@/features/profile/useProfile'
 import { useProgress } from '@/features/profile/useProgress'
 import { getUserTimezone } from '@/lib/dates'
 import { useToday } from '@/lib/useToday'
+import { DayHistoryCard } from '@/features/dayRecap/DayHistoryCard'
 import {
   buildHeatmap,
   buildMonthBars,
@@ -107,6 +108,8 @@ export function StatsPage() {
               ))}
             </div>
           )}
+
+          <DayHistoryCard today={today} />
 
           <div className="grid gap-6 lg:grid-cols-2">
             <Card>

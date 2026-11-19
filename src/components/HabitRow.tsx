@@ -21,7 +21,7 @@ type Props = {
 }
 
 // Fila de hábito de la pantalla "Hoy".
-// Al completarse, el círculo hace un "rebote" y suelta un chispazo de confeti.
+// Al completarse: el círculo rebota, suelta un chispazo de confeti y un barrido de luz cruza la fila.
 export function HabitRow({ title, meta, done, progress, onToggle, counter, share }: Props) {
   const badge = useRef<HTMLSpanElement>(null)
   const pulse = usePulse(done)
@@ -65,7 +65,7 @@ export function HabitRow({ title, meta, done, progress, onToggle, counter, share
 
   if (onToggle) {
     return (
-      <div className="flex items-center gap-2">
+      <div className={`flex items-center gap-2 ${pulse ? 'habit-row-done' : ''}`}>
         <button
           type="button"
           role="checkbox"
@@ -83,7 +83,7 @@ export function HabitRow({ title, meta, done, progress, onToggle, counter, share
   }
 
   return (
-    <div className="flex items-center gap-4 py-3">
+    <div className={`flex items-center gap-4 py-3 ${pulse ? 'habit-row-done' : ''}`}>
       {circle}
       {text}
       {shareButton}

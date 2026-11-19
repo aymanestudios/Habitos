@@ -51,3 +51,10 @@ Marca cada punto antes de invitar a nadie. Lo que está ✅ se comprobó el 18/1
 - La foto de perfil es pública para quien tenga el enlace (se ve en solicitudes de amistad). El nombre del archivo es aleatorio.
 - Cambiar la categoría de un hábito cambia a qué insignia de categoría cuentan sus días (solo cosmético).
 - Si un compañero de reto borra su cuenta, ese reto desaparece (y puede contar uno menos en "retos cumplidos").
+
+## Actualización "Progress&Go más vivo" (19/11/2026)
+Orden para publicarla sin romper nada:
+1. Copia de seguridad (docs/COPIAS-SEGURIDAD.md).
+2. Supabase → SQL Editor: ejecutar `0026_team_challenges.sql` y después `0027_day_recap.sql` (se pueden repetir sin problema).
+3. Subir el código (Render publica solo).
+Si el código se sube antes que las migraciones, la app sigue funcionando: los retos en equipo muestran "aún no están activados" y "Tu día" simplemente no aparece.

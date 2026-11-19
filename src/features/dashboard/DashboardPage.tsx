@@ -9,10 +9,13 @@ import { Mascot } from '@/components/Mascot'
 import { MOOD_ANIMATION, MOOD_POSE, mascotMood, reactionFor } from './mascotRules'
 import { easyStart, takeRecap, welcomeFor } from './homeRules'
 import { HomeChallenges } from '@/features/challenges/HomeChallenges'
+import { HomeTeam } from '@/features/team/HomeTeam'
 import { TicketNotice } from '@/features/skins/TicketNotice'
 import type { Welcome } from './homeRules'
 import { useTodayGlance, useWeekRecap } from './useHome'
 import { WeekRecapSheet } from './WeekRecapSheet'
+import { DayRecapInvite } from '@/features/dayRecap/DayRecapInvite'
+import { useDayRecap } from '@/features/dayRecap/useDayRecap'
 import { Avatar } from '@/components/Avatar'
 import { activityText, timeAgo } from '@/features/friends/friendRules'
 import { useFriendActivity } from '@/features/friends/useFriends'
@@ -22,8 +25,6 @@ import { SharePostSheet } from '@/features/posts/SharePostSheet'
 import { useMyRecentPosts } from '@/features/posts/usePosts'
 import { HomeStreaks } from '@/features/streaks/HomeStreaks'
 import { KindPreview } from '@/features/rewards/RewardArt'
-import { RARITY, takeNewUnlocks } from '@/features/rewards/rewardRules'
-import type { Reward } from '@/features/rewards/rewardRules'
 import { useMyRewards } from '@/features/rewards/useRewards'
 import { PageSkeleton } from '@/components/Skeleton'
 import { ProgressRing } from '@/components/ProgressRing'
@@ -33,12 +34,12 @@ import type { DayItem } from '@/features/habits/dayRules'
 import { errorMessage, friendlyProgressError } from '@/features/habits/habitRules'
 import { useAddProgress, useHabitLogs } from '@/features/habits/useHabitLogs'
 import { useHabits } from '@/features/habits/useHabits'
-import { streakLabel, xpToastText } from '@/features/profile/progressRules'
+import { streakLabel } from '@/features/profile/progressRules'
 import { completeChanges, groupReminders, timeLabel } from '@/features/reminders/reminderRules'
 import { useReminders, useUpdateReminder } from '@/features/reminders/useReminders'
 import { useProfile } from '@/features/profile/useProfile'
 import { useProgress } from '@/features/profile/useProgress'
-import { burst } from '@/lib/confetti'
+import { useCelebrations } from '@/features/celebrations/CelebrationProvider'
 import { addDays, getUserTimezone, greetingFor, localHour, weekStart } from '@/lib/dates'
 import { useNow } from '@/lib/useNow'
 import { useToday } from '@/lib/useToday'
@@ -65,21 +66,14 @@ export function DashboardPage() {
   const updateReminder = useUpdateReminder()
   const now = useNow()
 
-  // Aviso flotante "+20 XP": el servidor dice cuántos XP ha ganado (o quitado) cada toque
-  const [toast, setToast] = useState<{ id: number; text: string; gain: boolean } | null>(null)
-  const toastTimer = useRef<number | undefined>(undefined)
-  function showToast(text: string, gain: boolean, ms = 1800) {
-    window.clearTimeout(toastTimer.current)
-    setToast({ id: Date.now(), text, gain })
-    toastTimer.current = window.setTimeout(() => setToast(null), ms)
-  }
+  // "+20 XP" que vuela a la barra de nivel: la cantidad la dice el servidor en cada toque
+  const celebrations = useCelebrations()
   const addProgress = useAddProgress(from, today, (xpDelta, change) => {
-    const text = xpToastText(xpDelta)
-    if (text) {
-      showToast(text, xpDelta > 0)
+    if (xpDelta !== 0) {
+      celebrations.xp(xpDelta)
     } else if (change.delta > 0 && change.habit.target_value === null && change.date === change.habit.start_date) {
       // El día que se crea un hábito no da XP (regla anti-trampas): se lo explicamos en vez de callar
-      showToast('Primer día: mañana ya suma XP', false, 2600)
+      celebrations.xp(0, 'Primer día: mañana ya suma XP')
     }
   })
 
@@ -95,38 +89,30 @@ export function DashboardPage() {
   // Celebración: confeti y baile de la mascota al pasar de "día incompleto" a "día completo".
   // Al abrir la app o cambiar entre Hoy/Ayer no se dispara (solo cuando TÚ completas el día).
   const [celebrating, setCelebrating] = useState(false)
-  const [levelUp, setLevelUp] = useState<number | null>(null) // tarjeta "¡Nivel N!" con el panda de la estrella
 
   // Datos de un vistazo, resumen semanal y actividad de amigos (0017 y 0012)
   const glance = useTodayGlance()
   const recap = useWeekRecap()
   const friendActivity = useFriendActivity(true)
   const [recapOpen, setRecapOpen] = useState(false)
+  const dayRecap = useDayRecap(null)
+  const dayPending = dayRecap.isPending || Boolean(dayRecap.data && dayRecap.data.worth && !dayRecap.data.seen)
   const [welcome, setWelcome] = useState<Welcome | null>(null)
   const firstNameForWelcome = profile.data?.display_name.split(' ')[0] ?? ''
   useEffect(() => {
     // El resumen sale una vez por semana; la bienvenida, si vuelves tras unos días (una vez al día)
+    // Mientras el resumen de AYER está pendiente, el semanal espera (nunca dos ventanas a la vez)
+    if (dayPending) return
     if (recap.isSuccess && takeRecap(recap.data ?? null)) setRecapOpen(true)
-  }, [recap.isSuccess, recap.data])
+  }, [recap.isSuccess, recap.data, dayPending])
   useEffect(() => {
     if (!glance.data || !firstNameForWelcome) return
     const next = welcomeFor(firstNameForWelcome, glance.data.daysAway, today)
     if (next) setWelcome(next) // solo se abre; se cierra con la X
   }, [glance.data, firstNameForWelcome, today])
 
-  // ¡Nueva recompensa! (lo desbloqueado lo calcula el servidor; aquí solo se celebra una vez)
+  // Las recompensas nuevas y las subidas de nivel se celebran en CelebrationProvider (con cola)
   const rewards = useMyRewards()
-  const [newReward, setNewReward] = useState<Reward | null>(null)
-  useEffect(() => {
-    if (!rewards.data) return
-    const fresh = takeNewUnlocks(rewards.data)
-    if (fresh.length > 0) setNewReward(fresh[fresh.length - 1])
-  }, [rewards.data])
-  useEffect(() => {
-    if (!newReward) return
-    const timer = window.setTimeout(() => setNewReward(null), 6000)
-    return () => window.clearTimeout(timer)
-  }, [newReward])
 
   // Fotos de logros: aviso "¿Quieres compartir tu progreso?" y panel para publicar
   type ShareTarget = { habitId: string; title: string; dayOffset: 0 | -1; isPrivate: boolean }
@@ -149,32 +135,13 @@ export function DashboardPage() {
     if (!ready) return
     const last = lastDay.current
     if (last && last.date === date && !last.allDone && allDone) {
-      burst(window.innerWidth / 2, window.innerHeight * 0.35, { count: 70, power: 1.4 })
+      celebrations.celebrate({ kind: 'day', done: summary.done, total: summary.total })
       setCelebrating(true)
       window.clearTimeout(celebrationTimer.current)
       celebrationTimer.current = window.setTimeout(() => setCelebrating(false), 1200)
     }
     lastDay.current = { date, allDone }
   }, [ready, date, allDone])
-
-  // Subida de nivel: solo cuando el nivel SUBE mientras estás en la pantalla (no al abrir la app)
-  const lastLevel = useRef<number | null>(null)
-  const levelTimer = useRef<number | undefined>(undefined)
-  const level = progress.data?.level
-  useEffect(() => {
-    if (level === undefined) return
-    const previous = lastLevel.current
-    lastLevel.current = level
-    if (previous !== null && level > previous) {
-      burst(window.innerWidth / 2, window.innerHeight * 0.3, { count: 90, power: 1.6 })
-      setCelebrating(true)
-      window.clearTimeout(celebrationTimer.current)
-      celebrationTimer.current = window.setTimeout(() => setCelebrating(false), 1200)
-      window.clearTimeout(levelTimer.current)
-      setLevelUp(level)
-      levelTimer.current = window.setTimeout(() => setLevelUp(null), 3200)
-    }
-  }, [level])
 
   // El panda reacciona al momento cada vez que completas un hábito de hoy (unos segundos)
   const todayDone = useMemo(
@@ -203,8 +170,6 @@ export function DashboardPage() {
     () => () => {
       window.clearTimeout(reactionTimer.current)
       window.clearTimeout(celebrationTimer.current)
-      window.clearTimeout(toastTimer.current)
-      window.clearTimeout(levelTimer.current)
     },
     [],
   )
@@ -353,48 +318,6 @@ export function DashboardPage() {
 
   return (
     <>
-      {toast && (
-        <div
-          key={toast.id}
-          role="status"
-          className={`animate-xp pointer-events-none fixed left-1/2 top-20 z-50 rounded-full px-5 py-2 text-lg font-bold shadow-lg ${
-            toast.gain ? 'bg-accent text-on-brand' : 'bg-surface-2 text-muted'
-          }`}
-        >
-          {toast.text}
-        </div>
-      )}
-
-      {newReward && levelUp === null && (
-        <Link
-          to="/logros"
-          role="status"
-          onClick={() => setNewReward(null)}
-          className="animate-published fixed inset-x-3 top-20 z-50 mx-auto flex max-w-sm items-center gap-3 rounded-3xl border-2 border-accent bg-surface p-3 pr-5 shadow-2xl"
-        >
-          <Mascot pose="star" className="h-14" />
-          <span className="min-w-0 flex-1">
-            <span className="block text-xs font-bold uppercase tracking-wide text-muted">¡Nueva recompensa!</span>
-            <span className="block truncate font-extrabold">{newReward.title}</span>
-            <span className={`block text-xs font-bold ${RARITY[newReward.rarity].text}`}>{RARITY[newReward.rarity].label} · Toca para verla</span>
-          </span>
-          <KindPreview kind={newReward.kind} id={newReward.id} rarity={newReward.rarity} metric={newReward.metric} locked={false} size={44} />
-        </Link>
-      )}
-
-      {levelUp !== null && (
-        <div
-          role="status"
-          className="animate-published pointer-events-none fixed inset-x-0 top-20 z-50 mx-auto flex w-fit items-center gap-3 rounded-3xl border-2 border-accent bg-surface py-2 pl-2 pr-6 shadow-2xl"
-        >
-          <Mascot pose="star" className="h-16" />
-          <span>
-            <span className="block text-xl font-extrabold">¡Nivel {levelUp}!</span>
-            <span className="block text-sm text-muted">Sigue así, vas imparable.</span>
-          </span>
-        </div>
-      )}
-
       <div className="stagger space-y-5">
         <header className="min-w-0">
           <p className="text-sm text-muted first-letter:uppercase">{dateLabel}</p>
@@ -402,6 +325,9 @@ export function DashboardPage() {
             {greeting}, {firstName}
           </h1>
         </header>
+
+        {/* "Tu día de ayer está listo" (0027): una vez, discreto, se abre solo si lo tocas */}
+        <DayRecapInvite today={today} />
 
         {/* Bienvenida al volver tras unos días: cálida y sin reproches (se cierra y no vuelve hoy) */}
         {welcome && (
@@ -438,7 +364,8 @@ export function DashboardPage() {
         {/* Rachas compartidas: lo primero que se ve al entrar */}
         <HomeStreaks />
 
-        {/* Retos relámpago activos (y la celebración del panda al cumplir uno) */}
+        {/* Retos en equipo (0026) y el último relámpago antiguo mientras dure */}
+        <HomeTeam />
         <HomeChallenges />
 
         {/* Ticket de skin ganado (7 días cumplidos) */}
@@ -477,7 +404,7 @@ export function DashboardPage() {
                   className={`hidden shrink-0 origin-bottom min-[400px]:block ${reaction ? 'animate-hop' : MOOD_ANIMATION[mascot.mood]}`}
                 >
                   <Mascot
-                    pose={levelUp ? 'star' : reaction ? 'gym' : MOOD_POSE[mascot.mood]}
+                    pose={reaction ? 'gym' : MOOD_POSE[mascot.mood]}
                     className={`h-20 max-w-[110px] object-contain origin-bottom ${celebrating ? 'animate-tada' : ''}`}
                   />
                 </div>
